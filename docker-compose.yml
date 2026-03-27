@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: xarxa
+      POSTGRES_PASSWORD: xarxa
+      POSTGRES_DB: xarxa
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://xarxa:xarxa@postgres:5432/xarxa?schema=public"
+      NEXTAUTH_SECRET: "dev-secret-change-in-production"
+      NEXTAUTH_URL: "http://localhost:3000"
+    depends_on:
+      - postgres
+
+volumes:
+  pgdata:
