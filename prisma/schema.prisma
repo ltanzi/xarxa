@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserType {
+  PRIVATE
+  COLLECTIVE
+}
+
+enum PostType {
+  OFFER
+  REQUEST
+}
+
+enum Category {
+  LEGAL
+  EDUCATION
+  HEALTH
+  TECHNOLOGY
+  MANUAL_WORK
+  TRANSLATION
+  OTHER
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  password     String?
+  name         String
+  type         UserType  @default(PRIVATE)
+  location     String?
+  bio          String?
+  skills       String?
+  mission      String?
+  profilePhoto String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  posts         Post[]
+  connections   Connection[]    @relation("requester")
+  messages      Message[]
+  conversations Conversation[]  @relation("ConversationParticipants")
+}
+
+model Post {
+  id           String   @id @default(cuid())
+  title        String
+  type         PostType
+  category     Category
+  description  String
+  availability String?
+  location     String?
+  isRemote     Boolean  @default(false)
+  tags         String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  authorId    String
+  author      User         @relation(fields: [authorId], references: [id])
+  connections Connection[]
+}
+
+model Connection {
+  id        String           @id @default(cuid())
+  status    ConnectionStatus @default(PENDING)
+  createdAt DateTime         @default(now())
+
+  postId    String
+  post      Post    @relation(fields: [postId], references: [id])
+
+  requesterId String
+  requester   User   @relation("requester", fields: [requesterId], references: [id])
+
+  conversationId String?       @unique
+  conversation   Conversation? @relation(fields: [conversationId], references: [id])
+
+  @@unique([postId, requesterId])
+}
+
+model Conversation {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  participants User[]      @relation("ConversationParticipants")
+  messages     Message[]
+  connection   Connection?
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
+}
