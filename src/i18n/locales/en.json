@@ -1,0 +1,106 @@
+{
+  "common": {
+    "appName": "xarxa",
+    "tagline": "Volunteer service exchange platform",
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "register": "Register",
+    "save": "Save",
+    "cancel": "Cancel",
+    "submit": "Submit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "back": "Back",
+    "search": "Search",
+    "filter": "Filter",
+    "noResults": "No results found"
+  },
+  "nav": {
+    "board": "Board",
+    "dashboard": "Dashboard",
+    "chat": "Chat",
+    "profile": "Profile",
+    "newPost": "New Post"
+  },
+  "auth": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "signInTitle": "Sign in to xarxa",
+    "registerTitle": "Join xarxa",
+    "accountType": "Account type",
+    "private": "Private individual",
+    "collective": "Collective / Organization",
+    "alreadyHaveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "orContinueWith": "Or continue with",
+    "google": "Google"
+  },
+  "posts": {
+    "offer": "Offer",
+    "request": "Request",
+    "createPost": "Create Post",
+    "title": "Title",
+    "type": "Type",
+    "category": "Category",
+    "description": "Description",
+    "availability": "Availability",
+    "location": "Location",
+    "remote": "Remote",
+    "tags": "Tags",
+    "tagsHelp": "Comma-separated",
+    "interested": "I'm interested",
+    "alreadyInterested": "Interest sent",
+    "postedBy": "Posted by",
+    "allCategories": "All categories",
+    "allTypes": "All types",
+    "allLocations": "All locations"
+  },
+  "categories": {
+    "LEGAL": "Legal",
+    "EDUCATION": "Education",
+    "HEALTH": "Health",
+    "TECHNOLOGY": "Technology",
+    "MANUAL_WORK": "Manual Work",
+    "TRANSLATION": "Translation",
+    "OTHER": "Other"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "myPosts": "My Posts",
+    "incomingRequests": "Incoming Requests",
+    "sentRequests": "Sent Requests",
+    "accept": "Accept",
+    "reject": "Reject",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "rejected": "Rejected",
+    "noPosts": "You haven't created any posts yet",
+    "noIncoming": "No incoming connection requests",
+    "noSent": "No sent connection requests"
+  },
+  "chat": {
+    "title": "Messages",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "noConversations": "No conversations yet",
+    "startChat": "Connect with someone to start chatting"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "bio": "Bio",
+    "skills": "Skills",
+    "mission": "Mission",
+    "location": "Location",
+    "photo": "Profile Photo",
+    "uploadPhoto": "Upload Photo",
+    "memberSince": "Member since"
+  },
+  "landing": {
+    "hero": "Exchange services, build community",
+    "subtitle": "A platform where individuals and collectives offer and request volunteer services for free.",
+    "browseBoard": "Browse the Board",
+    "joinNow": "Join Now",
+    "featuredPosts": "Featured Posts"
+  }
+}
