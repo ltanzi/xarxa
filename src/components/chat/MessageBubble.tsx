@@ -1,5 +1,3 @@
-import { Avatar } from "@/components/ui/Avatar";
-
 interface MessageBubbleProps {
   content: string;
   senderName: string;
@@ -8,21 +6,14 @@ interface MessageBubbleProps {
   timestamp: string;
 }
 
-export function MessageBubble({ content, senderName, senderPhoto, isOwn, timestamp }: MessageBubbleProps) {
+export function MessageBubble({ content, isOwn, timestamp }: MessageBubbleProps) {
   return (
-    <div className={`flex gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
-      <Avatar name={senderName} src={senderPhoto} size="sm" />
-      <div className={`max-w-[70%] ${isOwn ? "items-end" : "items-start"}`}>
-        <div
-          className={`rounded-2xl px-4 py-2.5 text-sm ${
-            isOwn
-              ? "bg-violet text-white rounded-br-sm"
-              : "bg-white border-2 border-gray-100 text-gray-800 rounded-bl-sm"
-          }`}
-        >
+    <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+      <div className={`max-w-[70%] ${isOwn ? "text-right" : ""}`}>
+        <p className={`text-sm leading-relaxed ${isOwn ? "bg-fg text-bg" : "bg-soft text-fg"} px-4 py-2.5 inline-block`}>
           {content}
-        </div>
-        <p className={`text-xs text-gray-400 mt-1 ${isOwn ? "text-right" : ""}`}>
+        </p>
+        <p className="text-[10px] text-muted mt-1">
           {new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
         </p>
       </div>

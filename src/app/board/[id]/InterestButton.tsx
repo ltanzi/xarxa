@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { useTranslation } from "@/i18n/hook";
 
 interface InterestButtonProps {
   postId: string;
@@ -14,22 +13,13 @@ export function InterestButton({ postId, existingStatus }: InterestButtonProps) 
   const [status, setStatus] = useState(existingStatus);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { t } = useTranslation();
 
   if (status === "ACCEPTED") {
-    return (
-      <span className="inline-flex items-center rounded-full px-3 py-1 text-sm font-medium bg-green-100 text-green-800">
-        Connected
-      </span>
-    );
+    return <span className="font-mono text-[11px] uppercase tracking-wider text-muted">Connected</span>;
   }
 
   if (status === "PENDING") {
-    return (
-      <Button variant="secondary" disabled>
-        {t("posts.alreadyInterested")}
-      </Button>
-    );
+    return <span className="font-mono text-[11px] uppercase tracking-wider text-muted">Interest sent</span>;
   }
 
   if (status === "REJECTED") {
@@ -52,8 +42,8 @@ export function InterestButton({ postId, existingStatus }: InterestButtonProps) 
   }
 
   return (
-    <Button onClick={handleInterest} disabled={loading}>
-      {loading ? t("common.loading") : t("posts.interested")}
+    <Button onClick={handleInterest} disabled={loading} size="sm">
+      {loading ? "..." : "I\u2019m interested"}
     </Button>
   );
 }

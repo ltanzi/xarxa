@@ -23,11 +23,9 @@ export default async function ChatPage() {
   });
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Messages</h1>
-      <div className="bg-white rounded-lg border shadow-sm">
-        <ChatList conversations={JSON.parse(JSON.stringify(conversations))} />
-      </div>
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
+      <h1 className="text-3xl font-light mb-12">Messages</h1>
+      <ChatList conversations={JSON.parse(JSON.stringify(conversations))} />
     </div>
   );
 }

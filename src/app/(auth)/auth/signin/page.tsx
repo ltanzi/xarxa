@@ -6,11 +6,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { useTranslation } from "@/i18n/hook";
 
 export default function SignInPage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -38,20 +36,17 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900">{t("auth.signInTitle")}</h1>
-          <p className="font-handwritten text-lg text-violet mt-1">welcome back!</p>
-        </div>
+    <div className="flex min-h-[80vh] items-center justify-center px-6">
+      <div className="w-full max-w-sm">
+        <h1 className="text-3xl font-light mb-12">Sign in</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white/80 rounded-2xl border-2 border-gray-100 p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="rounded-xl bg-coral/10 border border-coral/20 p-3 text-sm text-coral font-medium">{error}</div>
+            <p className="text-xs text-accent">{error}</p>
           )}
           <Input
             id="email"
-            label={t("auth.email")}
+            label="Email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,38 +54,30 @@ export default function SignInPage() {
           />
           <Input
             id="password"
-            label={t("auth.password")}
+            label="Password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? t("common.loading") : t("common.signIn")}
+            {loading ? "..." : "Sign in"}
           </Button>
         </form>
 
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t-2 border-dashed border-gray-200" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="bg-cream px-4 text-gray-400 font-handwritten text-base">{t("auth.orContinueWith")}</span>
-          </div>
+        <div className="mt-8 pt-8 border-t border-fg/10">
+          <button
+            onClick={() => signIn("google", { callbackUrl: "/board" })}
+            className="w-full text-sm text-muted hover:text-fg transition-colors text-center"
+          >
+            Continue with Google
+          </button>
         </div>
 
-        <Button
-          variant="outline"
-          className="w-full"
-          onClick={() => signIn("google", { callbackUrl: "/board" })}
-        >
-          {t("auth.google")}
-        </Button>
-
-        <p className="text-center text-sm text-gray-600">
-          {t("auth.noAccount")}{" "}
-          <Link href="/auth/register" className="text-indigo-600 hover:underline">
-            {t("common.register")}
+        <p className="mt-8 text-xs text-muted">
+          No account?{" "}
+          <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline">
+            Join
           </Link>
         </p>
       </div>

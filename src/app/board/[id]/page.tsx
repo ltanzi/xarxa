@@ -2,19 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { Badge } from "@/components/ui/Badge";
-import { Avatar } from "@/components/ui/Avatar";
 import { InterestButton } from "./InterestButton";
-
-const categoryBadgeColors: Record<string, "violet" | "sky" | "coral" | "lime" | "peach" | "sunflower" | "blush"> = {
-  LEGAL: "violet",
-  EDUCATION: "sky",
-  HEALTH: "coral",
-  TECHNOLOGY: "lime",
-  MANUAL_WORK: "peach",
-  TRANSLATION: "sunflower",
-  OTHER: "blush",
-};
 
 interface PostPageProps {
   params: Promise<{ id: string }>;
@@ -27,7 +15,7 @@ export default async function PostPage({ params }: PostPageProps) {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
-      author: { select: { id: true, name: true, type: true, profilePhoto: true, location: true, bio: true } },
+      author: { select: { id: true, name: true, type: true, profilePhoto: true, location: true } },
       connections: {
         select: { id: true, requesterId: true, status: true },
       },
@@ -42,55 +30,59 @@ export default async function PostPage({ params }: PostPageProps) {
     : null;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
-      <div className={`bg-white/80 rounded-2xl border-2 border-gray-100 shadow-sm p-8 category-${post.category.toLowerCase()}`}>
-        <div className="flex items-center gap-2 mb-4">
-          <Badge variant={post.type === "OFFER" ? "offer" : "request"}>
-            {post.type === "OFFER" ? "Offer" : "Request"}
-          </Badge>
-          <Badge color={categoryBadgeColors[post.category]}>
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
+      <Link href="/board" className="text-xs text-muted hover:text-fg transition-colors font-mono uppercase tracking-wider">
+        &larr; Board
+      </Link>
+
+      <div className="mt-8">
+        <div className="flex items-baseline gap-4 mb-6">
+          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+            {post.type}
+          </span>
+          <span className="font-mono text-[11px] text-muted">
             {post.category.replace("_", " ")}
-          </Badge>
-          {post.isRemote && <Badge color="mint">Remote</Badge>}
+          </span>
+          {post.isRemote && (
+            <span className="font-mono text-[11px] text-muted">Remote</span>
+          )}
         </div>
 
-        <h1 className="text-2xl font-extrabold text-gray-900">{post.title}</h1>
+        <h1 className="text-3xl sm:text-4xl font-light leading-tight">{post.title}</h1>
 
-        <div className="mt-6">
-          <p className="text-gray-600 whitespace-pre-wrap leading-relaxed">{post.description}</p>
-        </div>
+        <p className="mt-8 text-fg/80 leading-relaxed whitespace-pre-wrap">{post.description}</p>
 
-        {post.availability && (
-          <div className="mt-4">
-            <span className="text-sm font-semibold text-gray-500">Availability: </span>
-            <span className="text-sm text-gray-600 font-handwritten text-base">{post.availability}</span>
-          </div>
-        )}
-
-        {post.location && (
-          <div className="mt-2">
-            <span className="text-sm font-semibold text-gray-500">Location: </span>
-            <span className="text-sm text-gray-600 font-handwritten text-base">{post.location}</span>
+        {(post.availability || post.location) && (
+          <div className="mt-8 flex gap-8 text-sm text-muted">
+            {post.availability && (
+              <div>
+                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">Availability</span>
+                <span className="text-fg">{post.availability}</span>
+              </div>
+            )}
+            {post.location && (
+              <div>
+                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">Location</span>
+                <span className="text-fg">{post.location}</span>
+              </div>
+            )}
           </div>
         )}
 
         {post.tags.length > 0 && (
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-6 flex flex-wrap gap-3">
             {post.tags.map((tag) => (
-              <span key={tag} className="text-xs text-violet bg-violet/10 px-3 py-1 rounded-full font-medium">
+              <span key={tag} className="font-mono text-[11px] text-muted">
                 {tag}
               </span>
             ))}
           </div>
         )}
 
-        <div className="mt-8 pt-6 border-t-2 border-dashed border-gray-200 flex items-center justify-between">
-          <Link href={`/profile/${post.author.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <Avatar name={post.author.name} src={post.author.profilePhoto} />
-            <div>
-              <p className="text-sm font-bold text-gray-900">{post.author.name}</p>
-              <p className="text-xs text-gray-500">{post.author.type}</p>
-            </div>
+        <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
+          <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
+            <p className="text-sm">{post.author.name}</p>
+            <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type}</p>
           </Link>
 
           {!isAuthor && session && (
@@ -100,11 +92,8 @@ export default async function PostPage({ params }: PostPageProps) {
             />
           )}
           {!session && (
-            <Link
-              href="/auth/signin"
-              className="text-sm text-violet font-semibold hover:underline"
-            >
-              Sign in to express interest
+            <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline">
+              Sign in to connect
             </Link>
           )}
         </div>

@@ -1,84 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Caveat:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #FFF8F0;
-  --foreground: #2D2D2D;
+  --background: #F5F3EF;
+  --foreground: #1A1A1A;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Nunito', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Hand-drawn style underlines */
-.hand-underline {
-  text-decoration: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='12' viewBox='0 0 200 12'%3E%3Cpath d='M1 8 C30 4, 60 10, 100 6 C140 2, 170 9, 199 5' stroke='%23F24445' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-position: bottom;
-  background-repeat: repeat-x;
-  background-size: 200px 12px;
-  padding-bottom: 6px;
+::selection {
+  background: #1A1A1A;
+  color: #F5F3EF;
 }
 
-.hand-underline-violet {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='12' viewBox='0 0 200 12'%3E%3Cpath d='M1 8 C30 4, 60 10, 100 6 C140 2, 170 9, 199 5' stroke='%238F74FF' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-position: bottom;
-  background-repeat: repeat-x;
-  background-size: 200px 12px;
-  padding-bottom: 6px;
-}
-
-.hand-underline-lime {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='12' viewBox='0 0 200 12'%3E%3Cpath d='M1 8 C30 4, 60 10, 100 6 C140 2, 170 9, 199 5' stroke='%23AEC340' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-position: bottom;
-  background-repeat: repeat-x;
-  background-size: 200px 12px;
-  padding-bottom: 6px;
-}
-
-/* Squiggly border */
-.squiggly-border {
-  border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Cpath d='M0 20 Q10 10 20 20 Q30 30 40 20' stroke='%232D2D2D' stroke-width='1.5' fill='none'/%3E%3C/svg%3E") 20 round;
-}
-
-/* Handwritten font for accents */
-.font-handwritten {
-  font-family: 'Caveat', cursive;
-}
-
-/* Playful card hover */
-.card-playful {
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.card-playful:hover {
-  transform: translateY(-4px) rotate(-0.5deg);
-}
-
-/* Category color bands */
-.category-legal { border-left: 4px solid #8F74FF; }
-.category-education { border-left: 4px solid #6CC4E0; }
-.category-health { border-left: 4px solid #F24445; }
-.category-technology { border-left: 4px solid #AEC340; }
-.category-manual_work { border-left: 4px solid #FFAB7B; }
-.category-translation { border-left: 4px solid #FFD63F; }
-.category-other { border-left: 4px solid #FFB5C2; }
-
-/* Doodle circle */
-.doodle-circle {
-  position: relative;
-}
-.doodle-circle::after {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border: 2.5px solid currentColor;
-  border-radius: 50% 45% 55% 50% / 55% 50% 45% 50%;
-  opacity: 0.3;
+a {
+  text-underline-offset: 3px;
 }
 
 @layer utilities {

@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { MessageBubble } from "./MessageBubble";
-import { Button } from "@/components/ui/Button";
-import { useTranslation } from "@/i18n/hook";
 import { io, Socket } from "socket.io-client";
 
 interface Message {
@@ -17,7 +15,6 @@ interface Message {
 
 export function ChatRoom({ conversationId, initialMessages }: { conversationId: string; initialMessages: Message[] }) {
   const { data: session } = useSession();
-  const { t } = useTranslation();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
@@ -81,8 +78,8 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-12rem)]">
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+    <div className="flex flex-col h-[calc(100vh-10rem)]">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg) => (
           <MessageBubble
             key={msg.id}
@@ -96,17 +93,21 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSend} className="border-t p-4 flex gap-2">
+      <form onSubmit={handleSend} className="border-t border-fg/10 p-4 flex gap-3">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          placeholder={t("chat.typeMessage")}
-          className="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="Write a message..."
+          className="flex-1 bg-transparent border-b border-fg/15 px-0 py-2 text-sm focus:outline-none focus:border-fg transition-colors"
         />
-        <Button type="submit" disabled={sending || !newMessage.trim()}>
-          {t("chat.send")}
-        </Button>
+        <button
+          type="submit"
+          disabled={sending || !newMessage.trim()}
+          className="text-sm underline underline-offset-4 hover:no-underline disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Send
+        </button>
       </form>
     </div>
   );

@@ -6,17 +6,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: "bg-coral text-white hover:bg-coral/90 shadow-sm hover:shadow-md hover:-translate-y-0.5",
-  secondary: "bg-violet/10 text-violet hover:bg-violet/20",
-  outline: "border-2 border-dashed border-gray-300 text-gray-700 hover:border-coral hover:text-coral",
-  ghost: "text-gray-600 hover:text-coral hover:bg-coral/5",
-  danger: "bg-coral text-white hover:bg-red-600",
+  primary: "bg-fg text-bg hover:opacity-80",
+  secondary: "bg-soft text-fg hover:bg-soft/70",
+  outline: "border border-fg/20 text-fg hover:border-fg/50",
+  ghost: "text-muted hover:text-fg",
+  danger: "bg-accent text-white hover:opacity-80",
 };
 
 const sizes = {
-  sm: "px-3 py-1.5 text-sm",
-  md: "px-5 py-2.5 text-sm",
-  lg: "px-7 py-3 text-base",
+  sm: "px-3 py-1.5 text-xs",
+  md: "px-4 py-2 text-sm",
+  lg: "px-6 py-2.5 text-sm",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -24,7 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`inline-flex items-center justify-center rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-coral/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
+        className={`inline-flex items-center justify-center rounded-none font-medium transition-all duration-150 focus:outline-none focus:ring-1 focus:ring-fg/20 disabled:opacity-40 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
         disabled={disabled}
         {...props}
       >

@@ -1,8 +1,6 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { Badge } from "@/components/ui/Badge";
-import { Avatar } from "@/components/ui/Avatar";
 import Link from "next/link";
 import { ConnectionActions } from "./ConnectionActions";
 
@@ -31,23 +29,20 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">Dashboard</h1>
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
+      <h1 className="text-3xl font-light mb-16">Dashboard</h1>
 
-      <section className="mb-10">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Incoming Requests</h2>
+      <section className="mb-16">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">Incoming</p>
         {incomingConnections.length === 0 ? (
-          <p className="text-gray-500 text-sm">No incoming connection requests.</p>
+          <p className="text-sm text-muted">No pending requests.</p>
         ) : (
-          <div className="space-y-3">
+          <div className="divide-y divide-fg/10">
             {incomingConnections.map((conn) => (
-              <div key={conn.id} className="flex items-center justify-between bg-white border rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <Avatar name={conn.requester.name} src={conn.requester.profilePhoto} size="sm" />
-                  <div>
-                    <p className="text-sm font-medium">{conn.requester.name}</p>
-                    <p className="text-xs text-gray-500">interested in: {conn.post.title}</p>
-                  </div>
+              <div key={conn.id} className="flex items-center justify-between py-4">
+                <div>
+                  <p className="text-sm">{conn.requester.name}</p>
+                  <p className="text-xs text-muted">{conn.post.title}</p>
                 </div>
                 <ConnectionActions connectionId={conn.id} />
               </div>
@@ -56,27 +51,22 @@ export default async function DashboardPage() {
         )}
       </section>
 
-      <section className="mb-10">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Sent Requests</h2>
+      <section className="mb-16">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">Sent</p>
         {sentConnections.length === 0 ? (
-          <p className="text-gray-500 text-sm">No sent connection requests.</p>
+          <p className="text-sm text-muted">No sent requests.</p>
         ) : (
-          <div className="space-y-3">
+          <div className="divide-y divide-fg/10">
             {sentConnections.map((conn) => (
-              <div key={conn.id} className="flex items-center justify-between bg-white border rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <Avatar name={conn.post.author.name} src={conn.post.author.profilePhoto} size="sm" />
-                  <div>
-                    <p className="text-sm font-medium">{conn.post.title}</p>
-                    <p className="text-xs text-gray-500">by {conn.post.author.name}</p>
-                  </div>
+              <div key={conn.id} className="flex items-center justify-between py-4">
+                <div>
+                  <p className="text-sm">{conn.post.title}</p>
+                  <p className="text-xs text-muted">{conn.post.author.name}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant={conn.status === "PENDING" ? "pending" : conn.status === "ACCEPTED" ? "accepted" : "rejected"}>
-                    {conn.status}
-                  </Badge>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{conn.status}</span>
                   {conn.status === "ACCEPTED" && conn.conversationId && (
-                    <Link href={`/chat/${conn.conversationId}`} className="text-sm text-indigo-600 hover:underline">
+                    <Link href={`/chat/${conn.conversationId}`} className="text-xs underline underline-offset-4 hover:no-underline">
                       Chat
                     </Link>
                   )}
@@ -88,19 +78,18 @@ export default async function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">My Posts</h2>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">My posts</p>
         {myPosts.length === 0 ? (
-          <p className="text-gray-500 text-sm">You haven&apos;t created any posts yet.</p>
+          <p className="text-sm text-muted">No posts yet.</p>
         ) : (
-          <div className="space-y-3">
+          <div className="divide-y divide-fg/10">
             {myPosts.map((post) => (
-              <Link key={post.id} href={`/board/${post.id}`} className="block bg-white border rounded-lg p-4 hover:shadow-sm">
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge variant={post.type === "OFFER" ? "offer" : "request"}>{post.type}</Badge>
-                  <Badge>{post.category.replace("_", " ")}</Badge>
+              <Link key={post.id} href={`/board/${post.id}`} className="block py-4 hover:opacity-60 transition-opacity">
+                <div className="flex items-baseline gap-4">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{post.type}</span>
+                  <span className="text-sm">{post.title}</span>
+                  <span className="text-xs text-muted ml-auto">{post.connections.length}</span>
                 </div>
-                <h3 className="font-medium text-gray-900">{post.title}</h3>
-                <p className="text-sm text-gray-500 mt-1">{post.connections.length} connection(s)</p>
               </Link>
             ))}
           </div>

@@ -2,62 +2,44 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useTranslation } from "@/i18n/hook";
-import { Button } from "../ui/Button";
-import { Avatar } from "../ui/Avatar";
 
 export function Navbar() {
   const { data: session } = useSession();
-  const { t } = useTranslation();
 
   return (
-    <nav className="border-b-2 border-dashed border-gray-200 bg-cream/80 backdrop-blur-sm sticky top-0 z-50">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="text-2xl font-800 tracking-tight">
-              <span className="text-coral">x</span>
-              <span className="text-violet">a</span>
-              <span className="text-lime">r</span>
-              <span className="text-sky">x</span>
-              <span className="text-sunflower">a</span>
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-sm">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between text-sm">
+          <Link href="/" className="font-mono font-bold tracking-tight">
+            xarxa
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/board" className="text-muted hover:text-fg transition-colors">
+              Board
             </Link>
-            <div className="hidden sm:flex items-center gap-6">
-              <Link href="/board" className="text-sm font-600 text-gray-600 hover:text-coral transition-colors">
-                {t("nav.board")}
-              </Link>
-              {session && (
-                <>
-                  <Link href="/dashboard" className="text-sm font-600 text-gray-600 hover:text-violet transition-colors">
-                    {t("nav.dashboard")}
-                  </Link>
-                  <Link href="/chat" className="text-sm font-600 text-gray-600 hover:text-sky transition-colors">
-                    {t("nav.chat")}
-                  </Link>
-                </>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            {session ? (
+            {session && (
               <>
-                <Link href="/board/new">
-                  <Button size="sm">{t("nav.newPost")}</Button>
+                <Link href="/dashboard" className="text-muted hover:text-fg transition-colors">
+                  Dashboard
                 </Link>
-                <Link href={`/profile/${session.user.id}`}>
-                  <Avatar name={session.user.name || "U"} size="sm" />
+                <Link href="/chat" className="text-muted hover:text-fg transition-colors">
+                  Chat
                 </Link>
-                <Button variant="ghost" size="sm" onClick={() => signOut()}>
-                  {t("common.signOut")}
-                </Button>
+                <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
+                  Profile
+                </Link>
+                <button onClick={() => signOut()} className="text-muted hover:text-fg transition-colors">
+                  Exit
+                </button>
               </>
-            ) : (
+            )}
+            {!session && (
               <>
-                <Link href="/auth/signin">
-                  <Button variant="ghost" size="sm">{t("common.signIn")}</Button>
+                <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors">
+                  Sign in
                 </Link>
-                <Link href="/auth/register">
-                  <Button size="sm">{t("common.register")}</Button>
+                <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline transition-all">
+                  Join
                 </Link>
               </>
             )}

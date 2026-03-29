@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { PostCard } from "@/components/posts/PostCard";
 import { PostFilters } from "@/components/posts/PostFilters";
 import { Prisma } from "@prisma/client";
+import Link from "next/link";
 
 interface BoardPageProps {
   searchParams: Promise<{
@@ -41,19 +42,18 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-      <div className="flex items-baseline gap-3 mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900">Board</h1>
-        <span className="font-handwritten text-xl text-violet">{posts.length} posts</span>
+    <div className="mx-auto max-w-5xl px-6 lg:px-8 pt-24 pb-16">
+      <div className="flex items-baseline justify-between mb-12">
+        <h1 className="text-3xl font-light">Board</h1>
+        <Link href="/board/new" className="text-sm underline underline-offset-4 hover:no-underline">
+          New post
+        </Link>
       </div>
       <PostFilters />
       {posts.length === 0 ? (
-        <div className="text-center py-16">
-          <p className="font-handwritten text-2xl text-gray-400">Nothing here yet...</p>
-          <p className="text-gray-500 mt-2">Try adjusting your filters.</p>
-        </div>
+        <p className="text-muted text-sm py-20">No posts found.</p>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="border-t border-fg/10">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

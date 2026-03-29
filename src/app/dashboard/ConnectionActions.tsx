@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
 
 export function ConnectionActions({ connectionId }: { connectionId: string }) {
   const [loading, setLoading] = useState(false);
@@ -24,16 +23,24 @@ export function ConnectionActions({ connectionId }: { connectionId: string }) {
     setLoading(false);
   }
 
-  if (resolved) return <span className="text-sm text-gray-400">Done</span>;
+  if (resolved) return <span className="text-xs text-muted">Done</span>;
 
   return (
-    <div className="flex gap-2">
-      <Button size="sm" onClick={() => handleAction("ACCEPTED")} disabled={loading}>
+    <div className="flex gap-4 text-xs">
+      <button
+        onClick={() => handleAction("ACCEPTED")}
+        disabled={loading}
+        className="underline underline-offset-4 hover:no-underline disabled:opacity-40"
+      >
         Accept
-      </Button>
-      <Button size="sm" variant="outline" onClick={() => handleAction("REJECTED")} disabled={loading}>
-        Reject
-      </Button>
+      </button>
+      <button
+        onClick={() => handleAction("REJECTED")}
+        disabled={loading}
+        className="text-muted hover:text-fg transition-colors disabled:opacity-40"
+      >
+        Decline
+      </button>
     </div>
   );
 }

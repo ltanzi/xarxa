@@ -6,12 +6,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { useTranslation } from "@/i18n/hook";
 import { registerSchema } from "@/lib/validations";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { t } = useTranslation();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -73,23 +71,18 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4 py-10">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold text-gray-900">{t("auth.registerTitle")}</h1>
-          <p className="font-handwritten text-lg text-lime mt-1">let&apos;s get started!</p>
-        </div>
+    <div className="flex min-h-[80vh] items-center justify-center px-6 py-16">
+      <div className="w-full max-w-sm">
+        <h1 className="text-3xl font-light mb-12">Join</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4 bg-white/80 rounded-2xl border-2 border-gray-100 p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {serverError && (
-            <div className="rounded-xl bg-coral/10 border border-coral/20 p-3 text-sm text-coral font-medium">{serverError}</div>
+            <p className="text-xs text-accent">{serverError}</p>
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              {t("auth.accountType")}
-            </label>
-            <div className="flex gap-4">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">Type</p>
+            <div className="flex gap-6 text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -97,9 +90,9 @@ export default function RegisterPage() {
                   value="PRIVATE"
                   checked={form.type === "PRIVATE"}
                   onChange={(e) => updateField("type", e.target.value)}
-                  className="text-indigo-600 focus:ring-indigo-500"
+                  className="accent-fg"
                 />
-                <span className="text-sm">{t("auth.private")}</span>
+                Individual
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
@@ -108,16 +101,16 @@ export default function RegisterPage() {
                   value="COLLECTIVE"
                   checked={form.type === "COLLECTIVE"}
                   onChange={(e) => updateField("type", e.target.value)}
-                  className="text-indigo-600 focus:ring-indigo-500"
+                  className="accent-fg"
                 />
-                <span className="text-sm">{t("auth.collective")}</span>
+                Collective
               </label>
             </div>
           </div>
 
           <Input
             id="name"
-            label={t("auth.name")}
+            label="Name"
             value={form.name}
             onChange={(e) => updateField("name", e.target.value)}
             error={errors.name}
@@ -125,7 +118,7 @@ export default function RegisterPage() {
           />
           <Input
             id="email"
-            label={t("auth.email")}
+            label="Email"
             type="email"
             value={form.email}
             onChange={(e) => updateField("email", e.target.value)}
@@ -134,7 +127,7 @@ export default function RegisterPage() {
           />
           <Input
             id="password"
-            label={t("auth.password")}
+            label="Password"
             type="password"
             value={form.password}
             onChange={(e) => updateField("password", e.target.value)}
@@ -142,14 +135,14 @@ export default function RegisterPage() {
             required
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? t("common.loading") : t("common.register")}
+            {loading ? "..." : "Create account"}
           </Button>
         </form>
 
-        <p className="text-center text-sm text-gray-600">
-          {t("auth.alreadyHaveAccount")}{" "}
-          <Link href="/auth/signin" className="text-indigo-600 hover:underline">
-            {t("common.signIn")}
+        <p className="mt-8 text-xs text-muted">
+          Already have an account?{" "}
+          <Link href="/auth/signin" className="text-fg underline underline-offset-4 hover:no-underline">
+            Sign in
           </Link>
         </p>
       </div>
