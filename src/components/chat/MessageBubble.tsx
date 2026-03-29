@@ -14,10 +14,10 @@ export function MessageBubble({ content, senderName, senderPhoto, isOwn, timesta
       <Avatar name={senderName} src={senderPhoto} size="sm" />
       <div className={`max-w-[70%] ${isOwn ? "items-end" : "items-start"}`}>
         <div
-          className={`rounded-lg px-4 py-2 text-sm ${
+          className={`rounded-2xl px-4 py-2.5 text-sm ${
             isOwn
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-100 text-gray-900"
+              ? "bg-violet text-white rounded-br-sm"
+              : "bg-white border-2 border-gray-100 text-gray-800 rounded-bl-sm"
           }`}
         >
           {content}

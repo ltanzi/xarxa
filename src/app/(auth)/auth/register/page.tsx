@@ -73,15 +73,16 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4">
+    <div className="flex min-h-[80vh] items-center justify-center px-4 py-10">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">{t("auth.registerTitle")}</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">{t("auth.registerTitle")}</h1>
+          <p className="font-handwritten text-lg text-lime mt-1">let&apos;s get started!</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white/80 rounded-2xl border-2 border-gray-100 p-8">
           {serverError && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{serverError}</div>
+            <div className="rounded-xl bg-coral/10 border border-coral/20 p-3 text-sm text-coral font-medium">{serverError}</div>
           )}
 
           <div>

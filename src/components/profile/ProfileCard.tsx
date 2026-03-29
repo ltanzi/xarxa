@@ -16,40 +16,42 @@ interface ProfileCardProps {
 
 export function ProfileCard({ user }: ProfileCardProps) {
   return (
-    <div className="bg-white rounded-lg border shadow-sm p-8">
+    <div className="bg-white/80 rounded-2xl border-2 border-gray-100 shadow-sm p-8">
       <div className="flex items-start gap-6">
         <Avatar name={user.name} src={user.profilePhoto} size="lg" />
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
+          <h1 className="text-2xl font-extrabold text-gray-900">{user.name}</h1>
           <div className="flex items-center gap-2 mt-1">
-            <Badge>{user.type}</Badge>
-            {user.location && <span className="text-sm text-gray-500">{user.location}</span>}
+            <Badge color={user.type === "COLLECTIVE" ? "violet" : "sky"}>
+              {user.type}
+            </Badge>
+            {user.location && <span className="text-sm text-gray-500 font-handwritten text-base">{user.location}</span>}
           </div>
         </div>
       </div>
 
       {user.bio && (
         <div className="mt-6">
-          <h2 className="text-sm font-medium text-gray-500 mb-1">Bio</h2>
-          <p className="text-gray-700">{user.bio}</p>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">Bio</h2>
+          <p className="text-gray-600 leading-relaxed">{user.bio}</p>
         </div>
       )}
 
       {user.type === "PRIVATE" && user.skills && (
         <div className="mt-4">
-          <h2 className="text-sm font-medium text-gray-500 mb-1">Skills</h2>
-          <p className="text-gray-700">{user.skills}</p>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">Skills</h2>
+          <p className="text-gray-600">{user.skills}</p>
         </div>
       )}
 
       {user.type === "COLLECTIVE" && user.mission && (
         <div className="mt-4">
-          <h2 className="text-sm font-medium text-gray-500 mb-1">Mission</h2>
-          <p className="text-gray-700">{user.mission}</p>
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-1">Mission</h2>
+          <p className="text-gray-600">{user.mission}</p>
         </div>
       )}
 
-      <p className="mt-6 text-xs text-gray-400">
+      <p className="mt-6 text-xs text-gray-400 font-handwritten text-sm">
         Member since {new Date(user.createdAt).toLocaleDateString()}
       </p>
     </div>

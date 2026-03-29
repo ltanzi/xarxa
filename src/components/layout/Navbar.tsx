@@ -11,30 +11,34 @@ export function Navbar() {
   const { t } = useTranslation();
 
   return (
-    <nav className="border-b bg-white">
+    <nav className="border-b-2 border-dashed border-gray-200 bg-cream/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold text-indigo-600">
-              {t("common.appName")}
+            <Link href="/" className="text-2xl font-800 tracking-tight">
+              <span className="text-coral">x</span>
+              <span className="text-violet">a</span>
+              <span className="text-lime">r</span>
+              <span className="text-sky">x</span>
+              <span className="text-sunflower">a</span>
             </Link>
-            <div className="hidden sm:flex items-center gap-4">
-              <Link href="/board" className="text-sm text-gray-600 hover:text-gray-900">
+            <div className="hidden sm:flex items-center gap-6">
+              <Link href="/board" className="text-sm font-600 text-gray-600 hover:text-coral transition-colors">
                 {t("nav.board")}
               </Link>
               {session && (
                 <>
-                  <Link href="/dashboard" className="text-sm text-gray-600 hover:text-gray-900">
+                  <Link href="/dashboard" className="text-sm font-600 text-gray-600 hover:text-violet transition-colors">
                     {t("nav.dashboard")}
                   </Link>
-                  <Link href="/chat" className="text-sm text-gray-600 hover:text-gray-900">
+                  <Link href="/chat" className="text-sm font-600 text-gray-600 hover:text-sky transition-colors">
                     {t("nav.chat")}
                   </Link>
                 </>
               )}
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {session ? (
               <>
                 <Link href="/board/new">

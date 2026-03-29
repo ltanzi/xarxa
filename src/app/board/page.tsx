@@ -41,11 +41,17 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Board</h1>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <div className="flex items-baseline gap-3 mb-8">
+        <h1 className="text-3xl font-extrabold text-gray-900">Board</h1>
+        <span className="font-handwritten text-xl text-violet">{posts.length} posts</span>
+      </div>
       <PostFilters />
       {posts.length === 0 ? (
-        <p className="text-center text-gray-500 py-12">No posts found.</p>
+        <div className="text-center py-16">
+          <p className="font-handwritten text-2xl text-gray-400">Nothing here yet...</p>
+          <p className="text-gray-500 mt-2">Try adjusting your filters.</p>
+        </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {posts.map((post) => (

@@ -6,17 +6,17 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants = {
-  primary: "bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500",
-  secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500",
-  outline: "border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-indigo-500",
-  ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
-  danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
+  primary: "bg-coral text-white hover:bg-coral/90 shadow-sm hover:shadow-md hover:-translate-y-0.5",
+  secondary: "bg-violet/10 text-violet hover:bg-violet/20",
+  outline: "border-2 border-dashed border-gray-300 text-gray-700 hover:border-coral hover:text-coral",
+  ghost: "text-gray-600 hover:text-coral hover:bg-coral/5",
+  danger: "bg-coral text-white hover:bg-red-600",
 };
 
 const sizes = {
   sm: "px-3 py-1.5 text-sm",
-  md: "px-4 py-2 text-sm",
-  lg: "px-6 py-3 text-base",
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-7 py-3 text-base",
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -24,7 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`inline-flex items-center justify-center rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
+        className={`inline-flex items-center justify-center rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-coral/30 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${variants[variant]} ${sizes[size]} ${className}`}
         disabled={disabled}
         {...props}
       >

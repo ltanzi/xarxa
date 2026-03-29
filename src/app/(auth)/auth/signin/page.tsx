@@ -41,12 +41,13 @@ export default function SignInPage() {
     <div className="flex min-h-[80vh] items-center justify-center px-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-2xl font-bold">{t("auth.signInTitle")}</h1>
+          <h1 className="text-3xl font-extrabold text-gray-900">{t("auth.signInTitle")}</h1>
+          <p className="font-handwritten text-lg text-violet mt-1">welcome back!</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 bg-white/80 rounded-2xl border-2 border-gray-100 p-8">
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>
+            <div className="rounded-xl bg-coral/10 border border-coral/20 p-3 text-sm text-coral font-medium">{error}</div>
           )}
           <Input
             id="email"
@@ -71,10 +72,10 @@ export default function SignInPage() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
+            <div className="w-full border-t-2 border-dashed border-gray-200" />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="bg-gray-50 px-2 text-gray-500">{t("auth.orContinueWith")}</span>
+            <span className="bg-cream px-4 text-gray-400 font-handwritten text-base">{t("auth.orContinueWith")}</span>
           </div>
         </div>
 
