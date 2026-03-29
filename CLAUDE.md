@@ -42,6 +42,24 @@ npm run dev
 - `tsconfig.server.json` — For compiling server.ts
 - `prisma.config.ts` — Prisma 7 config (datasource URL, seed command)
 
+## Design Direction
+Current aesthetic: **editorial / conceptual art minimal**. User explicitly rejected startup-style playfulness.
+- Fonts: Space Grotesk (body) + Space Mono (labels/metadata)
+- Background: warm paper (#F5F3EF), text: near-black (#1A1A1A), muted: #8A8A8A
+- Accent: red (#E63B2E) used only for errors/destructive
+- No rounded corners, no colored badges, no shadows
+- Posts displayed as a flat list (like an exhibition index), not cards
+- Inputs: bottom-border only, no boxes
+- Buttons: square, black bg / white text for primary; underlines for secondary actions
+- Monospace uppercase labels for metadata (type, category, status)
+- References the user likes: rhizomerm.com (minimalism), rizomes.com (structure, design feel)
+- User wants: "as if designing an art/design website — cool in a conceptual art way"
+- Iterating on this — more changes expected
+
+## Known Issues
+- Middleware uses `getToken` with explicit `secret` (Prisma 7 / edge runtime incompatibility with full auth import)
+- `docker-compose.yml` has `version` key which is obsolete (warning only)
+
 ## GitHub
 - Repo: https://github.com/ltanzi/xarxa
 - All code is pushed to `main`
@@ -49,3 +67,4 @@ npm run dev
 ## Design Docs
 - Spec: `docs/superpowers/specs/2026-03-27-xarxa-design.md`
 - Plan: `docs/superpowers/plans/2026-03-27-xarxa.md`
+- Tech overview: `docs/tech-overview.md`
