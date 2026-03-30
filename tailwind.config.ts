@@ -9,15 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#F5F3EF",
+        bg: "#EDE8E0",
         fg: "#1A1A1A",
         muted: "#8A8A8A",
         accent: "#E63B2E",
-        soft: "#EAE7E1",
+        soft: "#E0DBD2",
       },
       fontFamily: {
-        sans: ["'Space Grotesk'", "sans-serif"],
-        mono: ["'Space Mono'", "monospace"],
+        mono: ["'IBM Plex Mono'", "monospace"],
       },
     },
   },
