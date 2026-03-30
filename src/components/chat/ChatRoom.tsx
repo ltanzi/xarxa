@@ -28,11 +28,16 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
   useEffect(() => {
     const socket = io({ path: "/api/socketio" });
     socketRef.current = socket;
+
     socket.emit("join-conversation", conversationId);
+
     socket.on("new-message", (message: Message) => {
       setMessages((prev) => [...prev, message]);
     });
-    return () => { socket.disconnect(); };
+
+    return () => {
+      socket.disconnect();
+    };
   }, [conversationId]);
 
   async function handleSend(e: React.FormEvent) {
@@ -40,6 +45,7 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
     if (!newMessage.trim() || !session?.user) return;
 
     setSending(true);
+
     const optimisticMessage: Message = {
       id: `temp-${Date.now()}`,
       content: newMessage,
@@ -47,6 +53,7 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
       senderId: session.user.id,
       sender: { id: session.user.id, name: session.user.name, profilePhoto: null },
     };
+
     setMessages((prev) => [...prev, optimisticMessage]);
     const messageContent = newMessage;
     setNewMessage("");
@@ -60,14 +67,19 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
     if (res.ok) {
       const saved = await res.json();
       setMessages((prev) => prev.map((m) => (m.id === optimisticMessage.id ? saved : m)));
-      socketRef.current?.emit("send-message", { conversationId, message: saved });
+
+      socketRef.current?.emit("send-message", {
+        conversationId,
+        message: saved,
+      });
     }
+
     setSending(false);
   }
 
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)]">
-      <div className="flex-1 overflow-y-auto px-6 py-8 space-y-6">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg) => (
           <MessageBubble
             key={msg.id}
@@ -81,18 +93,18 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSend} className="border-t border-fg/8 px-6 py-5 flex gap-4 items-center">
+      <form onSubmit={handleSend} className="border-t border-fg/10 p-4 flex gap-3">
         <input
           type="text"
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="Write a message..."
-          className="flex-1 bg-transparent border-b border-fg/10 px-0 py-2 text-[15px] focus:outline-none focus:border-fg transition-colors duration-300 placeholder:text-muted/40"
+          className="flex-1 bg-transparent border-b border-fg/15 px-0 py-2 text-sm focus:outline-none focus:border-fg transition-colors"
         />
         <button
           type="submit"
           disabled={sending || !newMessage.trim()}
-          className="font-label text-fg hover:text-accent transition-colors duration-300 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="text-sm underline underline-offset-4 hover:no-underline disabled:opacity-40 disabled:cursor-not-allowed"
         >
           Send
         </button>

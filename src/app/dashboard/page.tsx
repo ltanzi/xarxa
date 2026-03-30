@@ -29,72 +29,69 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="mx-auto max-w-3xl px-6 lg:px-10 pt-28 pb-20">
-      <h1 className="font-display text-5xl font-300 tracking-tight mb-20 animate-in">Dashboard</h1>
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
+      <h1 className="text-3xl font-light mb-16">Dashboard</h1>
 
-      <section className="mb-20 animate-in animate-in-1">
-        <p className="font-label text-muted mb-8">Incoming</p>
+      <section className="mb-16">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">Incoming</p>
         {incomingConnections.length === 0 ? (
           <p className="text-sm text-muted">No pending requests.</p>
         ) : (
-          <div>
+          <div className="divide-y divide-fg/10">
             {incomingConnections.map((conn) => (
-              <div key={conn.id} className="flex items-center justify-between py-5 border-t border-fg/8">
+              <div key={conn.id} className="flex items-center justify-between py-4">
                 <div>
-                  <p className="text-[15px]">{conn.requester.name}</p>
-                  <p className="font-label text-muted mt-1">{conn.post.title}</p>
+                  <p className="text-sm">{conn.requester.name}</p>
+                  <p className="text-xs text-muted">{conn.post.title}</p>
                 </div>
                 <ConnectionActions connectionId={conn.id} />
               </div>
             ))}
-            <div className="border-t border-fg/8" />
           </div>
         )}
       </section>
 
-      <section className="mb-20 animate-in animate-in-2">
-        <p className="font-label text-muted mb-8">Sent</p>
+      <section className="mb-16">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">Sent</p>
         {sentConnections.length === 0 ? (
           <p className="text-sm text-muted">No sent requests.</p>
         ) : (
-          <div>
+          <div className="divide-y divide-fg/10">
             {sentConnections.map((conn) => (
-              <div key={conn.id} className="flex items-center justify-between py-5 border-t border-fg/8">
+              <div key={conn.id} className="flex items-center justify-between py-4">
                 <div>
-                  <p className="text-[15px]">{conn.post.title}</p>
-                  <p className="font-label text-muted mt-1">{conn.post.author.name}</p>
+                  <p className="text-sm">{conn.post.title}</p>
+                  <p className="text-xs text-muted">{conn.post.author.name}</p>
                 </div>
-                <div className="flex items-center gap-6">
-                  <span className="font-label text-muted">{conn.status}</span>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{conn.status}</span>
                   {conn.status === "ACCEPTED" && conn.conversationId && (
-                    <Link href={`/chat/${conn.conversationId}`} className="font-label text-fg hover-line accent-line">
+                    <Link href={`/chat/${conn.conversationId}`} className="text-xs underline underline-offset-4 hover:no-underline">
                       Chat
                     </Link>
                   )}
                 </div>
               </div>
             ))}
-            <div className="border-t border-fg/8" />
           </div>
         )}
       </section>
 
-      <section className="animate-in animate-in-3">
-        <p className="font-label text-muted mb-8">My posts</p>
+      <section>
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">My posts</p>
         {myPosts.length === 0 ? (
           <p className="text-sm text-muted">No posts yet.</p>
         ) : (
-          <div>
+          <div className="divide-y divide-fg/10">
             {myPosts.map((post) => (
-              <Link key={post.id} href={`/board/${post.id}`} className="group block py-5 border-t border-fg/8">
-                <div className="flex items-baseline gap-6">
-                  <span className="font-label text-muted">{post.type}</span>
-                  <span className="font-display text-xl font-300 group-hover:text-accent transition-colors duration-300 flex-1">{post.title}</span>
-                  <span className="font-label text-muted">{post.connections.length}</span>
+              <Link key={post.id} href={`/board/${post.id}`} className="block py-4 hover:opacity-60 transition-opacity">
+                <div className="flex items-baseline gap-4">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{post.type}</span>
+                  <span className="text-sm">{post.title}</span>
+                  <span className="text-xs text-muted ml-auto">{post.connections.length}</span>
                 </div>
               </Link>
             ))}
-            <div className="border-t border-fg/8" />
           </div>
         )}
       </section>

@@ -23,21 +23,21 @@ export function ConnectionActions({ connectionId }: { connectionId: string }) {
     setLoading(false);
   }
 
-  if (resolved) return <span className="font-label text-muted">Done</span>;
+  if (resolved) return <span className="text-xs text-muted">Done</span>;
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-4 text-xs">
       <button
         onClick={() => handleAction("ACCEPTED")}
         disabled={loading}
-        className="font-label text-fg hover:text-accent transition-colors duration-300 disabled:opacity-30"
+        className="underline underline-offset-4 hover:no-underline disabled:opacity-40"
       >
         Accept
       </button>
       <button
         onClick={() => handleAction("REJECTED")}
         disabled={loading}
-        className="font-label text-muted hover:text-fg transition-colors duration-300 disabled:opacity-30"
+        className="text-muted hover:text-fg transition-colors disabled:opacity-40"
       >
         Decline
       </button>

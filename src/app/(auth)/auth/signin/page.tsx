@@ -36,13 +36,14 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="min-h-[85vh] flex items-center px-6">
-      <div className="mx-auto w-full max-w-sm">
-        <h1 className="font-display text-4xl font-300 mb-2 animate-in">Sign in</h1>
-        <p className="font-label text-muted mb-12 animate-in animate-in-1">Welcome back</p>
+    <div className="flex min-h-[80vh] items-center justify-center px-6">
+      <div className="w-full max-w-sm">
+        <h1 className="text-3xl font-light mb-12">Sign in</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-8 animate-in animate-in-2">
-          {error && <p className="font-label text-accent">{error}</p>}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <p className="text-xs text-accent">{error}</p>
+          )}
           <Input
             id="email"
             label="Email"
@@ -64,18 +65,18 @@ export default function SignInPage() {
           </Button>
         </form>
 
-        <div className="mt-10 pt-10 border-t border-fg/8 animate-in animate-in-3">
+        <div className="mt-8 pt-8 border-t border-fg/10">
           <button
             onClick={() => signIn("google", { callbackUrl: "/board" })}
-            className="w-full font-label text-muted hover:text-fg transition-colors duration-300 text-center"
+            className="w-full text-sm text-muted hover:text-fg transition-colors text-center"
           >
             Continue with Google
           </button>
         </div>
 
-        <p className="mt-10 font-label text-muted animate-in animate-in-4">
+        <p className="mt-8 text-xs text-muted">
           No account?{" "}
-          <Link href="/auth/register" className="text-fg hover-line">
+          <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline">
             Join
           </Link>
         </p>

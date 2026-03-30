@@ -7,38 +7,38 @@ export function Navbar() {
   const { data: session } = useSession();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 mix-blend-normal">
-      <div className="mx-auto max-w-[1400px] px-6 lg:px-10">
-        <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="font-display text-2xl font-500 italic tracking-tight hover-line accent-line">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-sm">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between text-sm">
+          <Link href="/" className="font-mono font-bold tracking-tight">
             xarxa
           </Link>
-          <div className="flex items-center gap-8 font-label text-muted">
-            <Link href="/board" className="hover:text-fg transition-colors duration-300">
+          <div className="flex items-center gap-6">
+            <Link href="/board" className="text-muted hover:text-fg transition-colors">
               Board
             </Link>
             {session && (
               <>
-                <Link href="/dashboard" className="hover:text-fg transition-colors duration-300">
+                <Link href="/dashboard" className="text-muted hover:text-fg transition-colors">
                   Dashboard
                 </Link>
-                <Link href="/chat" className="hover:text-fg transition-colors duration-300">
-                  Messages
+                <Link href="/chat" className="text-muted hover:text-fg transition-colors">
+                  Chat
                 </Link>
-                <Link href={`/profile/${session.user.id}`} className="hover:text-fg transition-colors duration-300">
+                <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
                   Profile
                 </Link>
-                <button onClick={() => signOut()} className="hover:text-accent transition-colors duration-300">
+                <button onClick={() => signOut()} className="text-muted hover:text-fg transition-colors">
                   Exit
                 </button>
               </>
             )}
             {!session && (
               <>
-                <Link href="/auth/signin" className="hover:text-fg transition-colors duration-300">
+                <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors">
                   Sign in
                 </Link>
-                <Link href="/auth/register" className="text-fg hover:text-accent transition-colors duration-300">
+                <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline transition-all">
                   Join
                 </Link>
               </>

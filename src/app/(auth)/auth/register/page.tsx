@@ -71,53 +71,77 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-[85vh] flex items-center px-6 py-20">
-      <div className="mx-auto w-full max-w-sm">
-        <h1 className="font-display text-4xl font-300 mb-2 animate-in">Join</h1>
-        <p className="font-label text-muted mb-12 animate-in animate-in-1">Create your account</p>
+    <div className="flex min-h-[80vh] items-center justify-center px-6 py-16">
+      <div className="w-full max-w-sm">
+        <h1 className="text-3xl font-light mb-12">Join</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-8 animate-in animate-in-2">
-          {serverError && <p className="font-label text-accent">{serverError}</p>}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {serverError && (
+            <p className="text-xs text-accent">{serverError}</p>
+          )}
 
           <div>
-            <p className="font-label text-muted mb-4">Type</p>
-            <div className="flex gap-8 text-sm">
-              <label className="flex items-center gap-2.5 cursor-pointer group">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">Type</p>
+            <div className="flex gap-6 text-sm">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name="type"
                   value="PRIVATE"
                   checked={form.type === "PRIVATE"}
                   onChange={(e) => updateField("type", e.target.value)}
-                  className="accent-[#C4461A]"
+                  className="accent-fg"
                 />
-                <span className="text-muted group-hover:text-fg transition-colors duration-200">Individual</span>
+                Individual
               </label>
-              <label className="flex items-center gap-2.5 cursor-pointer group">
+              <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
                   name="type"
                   value="COLLECTIVE"
                   checked={form.type === "COLLECTIVE"}
                   onChange={(e) => updateField("type", e.target.value)}
-                  className="accent-[#C4461A]"
+                  className="accent-fg"
                 />
-                <span className="text-muted group-hover:text-fg transition-colors duration-200">Collective</span>
+                Collective
               </label>
             </div>
           </div>
 
-          <Input id="name" label="Name" value={form.name} onChange={(e) => updateField("name", e.target.value)} error={errors.name} required />
-          <Input id="email" label="Email" type="email" value={form.email} onChange={(e) => updateField("email", e.target.value)} error={errors.email} required />
-          <Input id="password" label="Password" type="password" value={form.password} onChange={(e) => updateField("password", e.target.value)} error={errors.password} required />
+          <Input
+            id="name"
+            label="Name"
+            value={form.name}
+            onChange={(e) => updateField("name", e.target.value)}
+            error={errors.name}
+            required
+          />
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            value={form.email}
+            onChange={(e) => updateField("email", e.target.value)}
+            error={errors.email}
+            required
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            value={form.password}
+            onChange={(e) => updateField("password", e.target.value)}
+            error={errors.password}
+            required
+          />
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "..." : "Create account"}
           </Button>
         </form>
 
-        <p className="mt-10 font-label text-muted animate-in animate-in-3">
+        <p className="mt-8 text-xs text-muted">
           Already have an account?{" "}
-          <Link href="/auth/signin" className="text-fg hover-line">
+          <Link href="/auth/signin" className="text-fg underline underline-offset-4 hover:no-underline">
             Sign in
           </Link>
         </p>

@@ -9,17 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#F0EDE6",
-        fg: "#1C1C1C",
-        muted: "#9B9590",
-        accent: "#C4461A",
-        soft: "#E6E2DB",
-        paper: "#F7F5F0",
+        bg: "#F5F3EF",
+        fg: "#1A1A1A",
+        muted: "#8A8A8A",
+        accent: "#E63B2E",
+        soft: "#EAE7E1",
       },
       fontFamily: {
-        display: ["'Cormorant Garamond'", "Georgia", "serif"],
-        body: ["'Karla'", "sans-serif"],
-        label: ["'IBM Plex Mono'", "monospace"],
+        sans: ["'Space Grotesk'", "sans-serif"],
+        mono: ["'Space Mono'", "monospace"],
       },
     },
   },

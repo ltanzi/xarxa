@@ -6,18 +6,17 @@ interface MessageBubbleProps {
   timestamp: string;
 }
 
-export function MessageBubble({ content, senderName, isOwn, timestamp }: MessageBubbleProps) {
+export function MessageBubble({ content, isOwn, timestamp }: MessageBubbleProps) {
   return (
-    <div className={`flex flex-col ${isOwn ? "items-end" : "items-start"}`}>
-      <p className="font-label text-muted mb-1.5">{senderName}</p>
-      <p className={`text-[15px] leading-relaxed max-w-[75%] px-5 py-3 ${
-        isOwn ? "bg-fg text-bg" : "bg-paper text-fg border border-fg/8"
-      }`}>
-        {content}
-      </p>
-      <span className="font-label text-muted/60 mt-1.5">
-        {new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-      </span>
+    <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+      <div className={`max-w-[70%] ${isOwn ? "text-right" : ""}`}>
+        <p className={`text-sm leading-relaxed ${isOwn ? "bg-fg text-bg" : "bg-soft text-fg"} px-4 py-2.5 inline-block`}>
+          {content}
+        </p>
+        <p className="text-[10px] text-muted mt-1">
+          {new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </p>
+      </div>
     </div>
   );
 }
