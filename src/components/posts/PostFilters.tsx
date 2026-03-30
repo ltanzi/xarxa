@@ -8,7 +8,7 @@ const CATEGORIES = [
   { value: "EDUCATION", label: "Education" },
   { value: "HEALTH", label: "Health" },
   { value: "TECHNOLOGY", label: "Technology" },
-  { value: "MANUAL_WORK", label: "Manual Work" },
+  { value: "MANUAL_WORK", label: "Manual work" },
   { value: "TRANSLATION", label: "Translation" },
   { value: "OTHER", label: "Other" },
 ];
@@ -33,17 +33,20 @@ export function PostFilters() {
     router.push(`/board?${params.toString()}`);
   }
 
+  const activeType = searchParams.get("type") || "";
+  const activeCat = searchParams.get("category") || "";
+
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-4 mb-12 font-mono text-[11px] uppercase tracking-widest">
-      <div className="flex items-center gap-3">
-        <span className="text-muted">Type</span>
+    <div className="mb-16 space-y-6">
+      <div className="flex flex-wrap gap-x-1 items-center font-label">
+        <span className="text-muted mr-3">Type</span>
         {TYPES.map((t) => (
           <button
             key={t.value}
             onClick={() => updateFilter("type", t.value)}
-            className={`transition-colors ${
-              (searchParams.get("type") || "") === t.value
-                ? "text-fg"
+            className={`px-3 py-1.5 transition-colors duration-200 ${
+              activeType === t.value
+                ? "text-fg bg-soft"
                 : "text-muted hover:text-fg"
             }`}
           >
@@ -51,15 +54,15 @@ export function PostFilters() {
           </button>
         ))}
       </div>
-      <div className="flex items-center gap-3">
-        <span className="text-muted">Category</span>
+      <div className="flex flex-wrap gap-x-1 items-center font-label">
+        <span className="text-muted mr-3">Category</span>
         {CATEGORIES.map((c) => (
           <button
             key={c.value}
             onClick={() => updateFilter("category", c.value)}
-            className={`transition-colors ${
-              (searchParams.get("category") || "") === c.value
-                ? "text-fg"
+            className={`px-3 py-1.5 transition-colors duration-200 ${
+              activeCat === c.value
+                ? "text-fg bg-soft"
                 : "text-muted hover:text-fg"
             }`}
           >

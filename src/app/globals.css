@@ -1,28 +1,104 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Karla:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #F5F3EF;
-  --foreground: #1A1A1A;
+  --bg: #F0EDE6;
+  --fg: #1C1C1C;
+  --muted: #9B9590;
+  --accent: #C4461A;
+  --soft: #E6E2DB;
+  --paper: #F7F5F0;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: 'Space Grotesk', sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+  font-family: 'Karla', sans-serif;
   -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+/* Paper grain texture */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
 }
 
 ::selection {
-  background: #1A1A1A;
-  color: #F5F3EF;
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Serif display headings */
+.font-display {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+/* Mono for metadata */
+.font-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Stagger reveal animations */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.animate-in-1 { animation-delay: 0.05s; }
+.animate-in-2 { animation-delay: 0.1s; }
+.animate-in-3 { animation-delay: 0.15s; }
+.animate-in-4 { animation-delay: 0.2s; }
+.animate-in-5 { animation-delay: 0.25s; }
+
+/* Hover line reveal */
+.hover-line {
+  position: relative;
+  display: inline;
+}
+.hover-line::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--fg);
+  transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hover-line:hover::after {
+  width: 100%;
+}
+
+/* Accent line */
+.accent-line::after {
+  background: var(--accent);
 }
 
 a {
   text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
 
 @layer utilities {

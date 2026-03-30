@@ -17,7 +17,7 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
   }
 
   return (
-    <div className="divide-y divide-fg/10">
+    <div>
       {conversations.map((conv) => {
         const other = conv.participants.find((p) => p.id !== session?.user?.id);
         const last = conv.messages[0];
@@ -26,22 +26,25 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
           <Link
             key={conv.id}
             href={`/chat/${conv.id}`}
-            className="block py-5 hover:opacity-60 transition-opacity"
+            className="group block py-6 border-t border-fg/8"
           >
             <div className="flex items-baseline justify-between">
-              <span className="text-sm">{other?.name || "User"}</span>
+              <span className="font-display text-xl font-400 group-hover:text-accent transition-colors duration-300">
+                {other?.name || "User"}
+              </span>
               {last && (
-                <span className="text-xs text-muted">
+                <span className="font-label text-muted">
                   {new Date(last.createdAt).toLocaleDateString()}
                 </span>
               )}
             </div>
             {last && (
-              <p className="text-xs text-muted mt-1 truncate">{last.content}</p>
+              <p className="text-sm text-muted mt-2 truncate max-w-md">{last.content}</p>
             )}
           </Link>
         );
       })}
+      <div className="border-t border-fg/8" />
     </div>
   );
 }
