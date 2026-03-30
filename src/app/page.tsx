@@ -16,19 +16,30 @@ export default async function HomePage() {
       <section className="py-32 sm:py-44 px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight">
-            A space to exchange
-            <br />
-            <span className="italic">services</span>, freely.
+            A space for <span className="italic">mutual</span> help.
           </h1>
           <p className="mt-8 text-muted max-w-lg text-base leading-relaxed">
             Individuals and collectives offering and requesting volunteer help. No money involved.
           </p>
-          <div className="mt-10 flex gap-6 items-center text-sm">
-            <Link href="/board" className="underline underline-offset-4 hover:no-underline">
-              Browse
+          <div className="mt-10 flex items-center gap-4">
+            <Link
+              href="/board/new?type=REQUEST"
+              className="px-5 py-2.5 bg-fg text-bg text-sm font-mono uppercase tracking-wider hover:opacity-80 transition-opacity"
+            >
+              Ask help
             </Link>
-            <Link href="/auth/register" className="text-muted hover:text-fg transition-colors">
-              Join
+            <Link
+              href="/board/new?type=OFFER"
+              className="px-5 py-2.5 border border-fg/20 text-fg text-sm font-mono uppercase tracking-wider hover:border-fg/50 transition-colors"
+            >
+              Offer help
+            </Link>
+            <span className="mx-2 text-fg/15">|</span>
+            <Link
+              href="/board"
+              className="text-sm text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline"
+            >
+              Browse the board
             </Link>
           </div>
         </div>

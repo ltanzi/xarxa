@@ -49,7 +49,7 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
   );
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-4">
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-20 pb-4">
       <div className="bg-white rounded-lg border shadow-sm">
         <div className="border-b p-4 flex items-center gap-3">
           <Link href="/chat" className="text-gray-400 hover:text-gray-600">

@@ -30,21 +30,21 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   const isOwnProfile = session?.user?.id === user.id;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
       <ProfileCard user={JSON.parse(JSON.stringify(user))} />
 
       {isOwnProfile && (
-        <div className="mt-4">
-          <Link href="/profile/edit" className="text-sm text-indigo-600 hover:underline">
+        <div className="mt-6">
+          <Link href="/profile/edit" className="text-sm underline underline-offset-4 hover:no-underline">
             Edit Profile
           </Link>
         </div>
       )}
 
       {user.posts.length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Posts</h2>
-          <div className="grid gap-4">
+        <div className="mt-12">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">Posts</p>
+          <div className="border-t border-fg/10">
             {user.posts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}

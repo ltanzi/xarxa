@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
@@ -26,10 +26,12 @@ const TYPES = [
 
 export function PostForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useTranslation();
+  const initialType = searchParams.get("type") === "REQUEST" ? "REQUEST" : "OFFER";
   const [form, setForm] = useState({
     title: "",
-    type: "OFFER",
+    type: initialType,
     category: "OTHER",
     description: "",
     availability: "",

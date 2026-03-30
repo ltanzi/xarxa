@@ -34,7 +34,7 @@ export function PostFilters() {
   }
 
   return (
-    <div className="flex flex-wrap gap-x-8 gap-y-4 mb-12 font-mono text-[11px] uppercase tracking-widest">
+    <div className="flex flex-col gap-4 mb-12 font-mono text-[11px] uppercase tracking-widest">
       <div className="flex items-center gap-3">
         <span className="text-muted">Type</span>
         {TYPES.map((t) => (
