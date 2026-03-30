@@ -9,14 +9,15 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#EDE8E0",
-        fg: "#1A1A1A",
-        muted: "#8A8A8A",
+        bg: "#F2F0EB",
+        fg: "#111111",
+        muted: "#777777",
         accent: "#E63B2E",
-        soft: "#E0DBD2",
+        soft: "#E8E5DE",
       },
       fontFamily: {
         mono: ["'IBM Plex Mono'", "monospace"],
+        headline: ["'Anton'", "sans-serif"],
       },
     },
   },
