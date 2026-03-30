@@ -14,7 +14,7 @@ export function NetworkBackground() {
 
     const dpr = window.devicePixelRatio || 1;
     const w = window.innerWidth;
-    const h = window.innerHeight * 2; // cover scroll area
+    const h = window.innerHeight;
 
     canvas.width = w * dpr;
     canvas.height = h * dpr;
@@ -23,112 +23,111 @@ export function NetworkBackground() {
     ctx.scale(dpr, dpr);
 
     // Seeded random
-    let seed = 71;
+    let seed = 42;
     function seededRandom() {
       seed = (seed * 16807 + 0) % 2147483647;
       return (seed - 1) / 2147483646;
     }
 
-    // Generate smooth noise field using seeded random + interpolation
-    const resolution = 60;
-    const cols = Math.ceil(w / resolution) + 2;
-    const rows = Math.ceil(h / resolution) + 2;
-    const field: number[][] = [];
+    // Simple 2D noise approximation using seeded random grid
+    const noiseGrid: number[][] = [];
+    const gridSize = 24;
+    const cols = Math.ceil(w / gridSize) + 2;
+    const rows = Math.ceil(h / gridSize) + 2;
 
     for (let i = 0; i < cols; i++) {
-      field[i] = [];
+      noiseGrid[i] = [];
       for (let j = 0; j < rows; j++) {
-        field[i][j] = seededRandom();
+        noiseGrid[i][j] = seededRandom() * Math.PI * 2;
       }
     }
 
-    // Smooth interpolation
-    function smoothstep(t: number) {
-      return t * t * (3 - 2 * t);
+    function getAngle(x: number, y: number): number {
+      const col = Math.floor(x / gridSize);
+      const row = Math.floor(y / gridSize);
+      const fx = (x / gridSize) - col;
+      const fy = (y / gridSize) - row;
+
+      const c = Math.min(col, cols - 2);
+      const r = Math.min(row, rows - 2);
+
+      const a00 = noiseGrid[c]?.[r] ?? 0;
+      const a10 = noiseGrid[c + 1]?.[r] ?? 0;
+      const a01 = noiseGrid[c]?.[r + 1] ?? 0;
+      const a11 = noiseGrid[c + 1]?.[r + 1] ?? 0;
+
+      const top = a00 + (a10 - a00) * fx;
+      const bot = a01 + (a11 - a01) * fx;
+      return top + (bot - top) * fy;
     }
 
-    function sampleField(x: number, y: number): number {
-      const gx = x / resolution;
-      const gy = y / resolution;
-      const ix = Math.floor(gx);
-      const iy = Math.floor(gy);
-      const fx = smoothstep(gx - ix);
-      const fy = smoothstep(gy - iy);
+    // Scatter seed points
+    const numParticles = Math.floor((w * h) / 3500);
+    const particles: { x: number; y: number; life: number }[] = [];
 
-      const c = Math.min(ix, cols - 2);
-      const r = Math.min(iy, rows - 2);
-      if (c < 0 || r < 0) return 0;
-
-      const a = field[c][r] + (field[c + 1][r] - field[c][r]) * fx;
-      const b = field[c][r + 1] + (field[c + 1][r + 1] - field[c][r + 1]) * fx;
-      return a + (b - a) * fy;
+    for (let i = 0; i < numParticles; i++) {
+      particles.push({
+        x: seededRandom() * w,
+        y: seededRandom() * h,
+        life: 80 + Math.floor(seededRandom() * 160),
+      });
     }
 
-    // Draw contour lines using marching squares
-    const step = 4; // pixel resolution for sampling
-    const numLevels = 12;
-    const levels = Array.from({ length: numLevels }, (_, i) => (i + 1) / (numLevels + 1));
-
-    ctx.lineWidth = 0.8;
+    // Draw flow trails
     ctx.lineCap = "round";
-    ctx.lineJoin = "round";
+    ctx.lineWidth = 0.5;
 
-    for (const level of levels) {
-      ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+    for (const p of particles) {
       ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
 
-      for (let x = 0; x < w - step; x += step) {
-        for (let y = 0; y < h - step; y += step) {
-          const tl = sampleField(x, y);
-          const tr = sampleField(x + step, y);
-          const br = sampleField(x + step, y + step);
-          const bl = sampleField(x, y + step);
+      let px = p.x;
+      let py = p.y;
 
-          // Marching squares case
-          const c =
-            (tl >= level ? 8 : 0) |
-            (tr >= level ? 4 : 0) |
-            (br >= level ? 2 : 0) |
-            (bl >= level ? 1 : 0);
+      for (let step = 0; step < p.life; step++) {
+        const angle = getAngle(px, py);
+        const nx = px + Math.cos(angle) * 1.5;
+        const ny = py + Math.sin(angle) * 1.5;
 
-          if (c === 0 || c === 15) continue;
+        if (nx < -10 || nx > w + 10 || ny < -10 || ny > h + 10) break;
 
-          // Interpolation helpers
-          const lerp = (a: number, b: number) => (level - a) / (b - a);
-
-          const top = x + lerp(tl, tr) * step;
-          const right = y + lerp(tr, br) * step;
-          const bottom = x + lerp(bl, br) * step;
-          const left = y + lerp(tl, bl) * step;
-
-          const segments: [number, number, number, number][] = [];
-
-          switch (c) {
-            case 1: case 14: segments.push([x, left, bottom, y + step]); break;
-            case 2: case 13: segments.push([bottom, y + step, x + step, right]); break;
-            case 3: case 12: segments.push([x, left, x + step, right]); break;
-            case 4: case 11: segments.push([top, y, x + step, right]); break;
-            case 5: segments.push([x, left, top, y]); segments.push([bottom, y + step, x + step, right]); break;
-            case 6: case 9: segments.push([top, y, bottom, y + step]); break;
-            case 7: case 8: segments.push([x, left, top, y]); break;
-            case 10: segments.push([top, y, x + step, right]); segments.push([x, left, bottom, y + step]); break;
-          }
-
-          for (const [x1, y1, x2, y2] of segments) {
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-          }
-        }
+        ctx.lineTo(nx, ny);
+        px = nx;
+        py = ny;
       }
 
+      ctx.strokeStyle = "rgba(26, 26, 26, 0.025)";
       ctx.stroke();
     }
+
+    // Scatter subtle dots at particle origins
+    for (const p of particles) {
+      if (seededRandom() > 0.7) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(26, 26, 26, 0.04)";
+        ctx.fill();
+      }
+    }
+
+    const handleResize = () => {
+      // Re-render on significant resize
+      const newW = window.innerWidth;
+      const newH = window.innerHeight;
+      if (Math.abs(newW - w) > 100 || Math.abs(newH - h) > 100) {
+        window.location.reload();
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
+      style={{ opacity: 1 }}
     />
   );
 }
