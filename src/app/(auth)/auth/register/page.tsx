@@ -71,38 +71,77 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-6 py-12">
-      <div className="w-full max-w-xs">
-        <h1 className="font-headline text-3xl mb-8">Join</h1>
+    <div className="flex min-h-[80vh] items-center justify-center px-6 py-16">
+      <div className="w-full max-w-sm">
+        <h1 className="text-3xl font-light mb-12">Join</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {serverError && <p className="text-[10px] text-accent">{serverError}</p>}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {serverError && (
+            <p className="text-xs text-accent">{serverError}</p>
+          )}
 
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-muted mb-3">Type</p>
-            <div className="flex gap-5 text-[11px]">
+            <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">Type</p>
+            <div className="flex gap-6 text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="type" value="PRIVATE" checked={form.type === "PRIVATE"} onChange={(e) => updateField("type", e.target.value)} className="accent-fg" />
+                <input
+                  type="radio"
+                  name="type"
+                  value="PRIVATE"
+                  checked={form.type === "PRIVATE"}
+                  onChange={(e) => updateField("type", e.target.value)}
+                  className="accent-fg"
+                />
                 Individual
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="type" value="COLLECTIVE" checked={form.type === "COLLECTIVE"} onChange={(e) => updateField("type", e.target.value)} className="accent-fg" />
+                <input
+                  type="radio"
+                  name="type"
+                  value="COLLECTIVE"
+                  checked={form.type === "COLLECTIVE"}
+                  onChange={(e) => updateField("type", e.target.value)}
+                  className="accent-fg"
+                />
                 Collective
               </label>
             </div>
           </div>
 
-          <Input id="name" label="Name" value={form.name} onChange={(e) => updateField("name", e.target.value)} error={errors.name} required />
-          <Input id="email" label="Email" type="email" value={form.email} onChange={(e) => updateField("email", e.target.value)} error={errors.email} required />
-          <Input id="password" label="Password" type="password" value={form.password} onChange={(e) => updateField("password", e.target.value)} error={errors.password} required />
+          <Input
+            id="name"
+            label="Name"
+            value={form.name}
+            onChange={(e) => updateField("name", e.target.value)}
+            error={errors.name}
+            required
+          />
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            value={form.email}
+            onChange={(e) => updateField("email", e.target.value)}
+            error={errors.email}
+            required
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            value={form.password}
+            onChange={(e) => updateField("password", e.target.value)}
+            error={errors.password}
+            required
+          />
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "..." : "Create account"}
           </Button>
         </form>
 
-        <p className="mt-6 text-[10px] uppercase tracking-widest text-muted">
+        <p className="mt-8 text-xs text-muted">
           Already have an account?{" "}
-          <Link href="/auth/signin" className="text-fg underline underline-offset-3 hover:no-underline">
+          <Link href="/auth/signin" className="text-fg underline underline-offset-4 hover:no-underline">
             Sign in
           </Link>
         </p>

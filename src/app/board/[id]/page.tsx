@@ -30,53 +30,59 @@ export default async function PostPage({ params }: PostPageProps) {
     : null;
 
   return (
-    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-20 pb-12">
-      <Link href="/board" className="text-[10px] uppercase tracking-widest text-muted hover:text-fg transition-colors">
+    <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
+      <Link href="/board" className="text-xs text-muted hover:text-fg transition-colors font-mono uppercase tracking-wider">
         &larr; Board
       </Link>
 
-      <div className="mt-6">
-        <div className="flex gap-4 text-[10px] uppercase tracking-widest text-muted mb-4">
-          <span>{post.type}</span>
-          <span>{post.category.replace("_", " ")}</span>
-          {post.isRemote && <span>Remote</span>}
+      <div className="mt-8">
+        <div className="flex items-baseline gap-4 mb-6">
+          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+            {post.type}
+          </span>
+          <span className="font-mono text-[11px] text-muted">
+            {post.category.replace("_", " ")}
+          </span>
+          {post.isRemote && (
+            <span className="font-mono text-[11px] text-muted">Remote</span>
+          )}
         </div>
 
-        <h1 className="font-headline text-3xl sm:text-5xl">{post.title}</h1>
+        <h1 className="text-3xl sm:text-4xl font-light leading-tight">{post.title}</h1>
 
-        <div className="mt-6 max-w-xl">
-          <p className="text-muted leading-relaxed whitespace-pre-wrap">{post.description}</p>
-        </div>
+        <p className="mt-8 text-fg/80 leading-relaxed whitespace-pre-wrap">{post.description}</p>
 
         {(post.availability || post.location) && (
-          <div className="mt-6 flex gap-10 text-[10px] uppercase tracking-widest">
+          <div className="mt-8 flex gap-8 text-sm text-muted">
             {post.availability && (
               <div>
-                <span className="text-muted block mb-1">Availability</span>
-                <span className="text-fg normal-case tracking-normal text-[12px]">{post.availability}</span>
+                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">Availability</span>
+                <span className="text-fg">{post.availability}</span>
               </div>
             )}
             {post.location && (
               <div>
-                <span className="text-muted block mb-1">Location</span>
-                <span className="text-fg normal-case tracking-normal text-[12px]">{post.location}</span>
+                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">Location</span>
+                <span className="text-fg">{post.location}</span>
               </div>
             )}
           </div>
         )}
 
         {post.tags.length > 0 && (
-          <div className="mt-5 flex flex-wrap gap-3 text-[10px] uppercase tracking-widest text-muted">
+          <div className="mt-6 flex flex-wrap gap-3">
             {post.tags.map((tag) => (
-              <span key={tag}>{tag}</span>
+              <span key={tag} className="font-mono text-[11px] text-muted">
+                {tag}
+              </span>
             ))}
           </div>
         )}
 
-        <div className="mt-10 pt-6 border-t border-fg/10 flex items-center justify-between">
-          <Link href={`/profile/${post.author.id}`} className="hover:opacity-50 transition-opacity">
-            <p className="text-[12px]">{post.author.name}</p>
-            <p className="text-[10px] uppercase tracking-widest text-muted">{post.author.type}</p>
+        <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
+          <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
+            <p className="text-sm">{post.author.name}</p>
+            <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type}</p>
           </Link>
 
           {!isAuthor && session && (
@@ -86,7 +92,7 @@ export default async function PostPage({ params }: PostPageProps) {
             />
           )}
           {!session && (
-            <Link href="/auth/signin" className="text-[11px] text-muted underline underline-offset-4 hover:no-underline">
+            <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline">
               Sign in to connect
             </Link>
           )}

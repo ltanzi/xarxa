@@ -10,19 +10,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={id} className="block text-[10px] uppercase tracking-widest text-muted mb-2">
+          <label htmlFor={id} className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
             {label}
           </label>
         )}
         <input
           ref={ref}
           id={id}
-          className={`block w-full border-b bg-transparent px-0 py-2 text-[12px] focus:outline-none transition-colors placeholder:text-muted/40 ${
-            error ? "border-accent" : "border-fg/12 focus:border-fg"
+          className={`block w-full border-b bg-transparent px-0 py-2 text-sm focus:outline-none transition-colors ${
+            error ? "border-accent" : "border-fg/15 focus:border-fg"
           } ${className}`}
           {...props}
         />
-        {error && <p className="mt-1 text-[10px] text-accent">{error}</p>}
+        {error && <p className="mt-1.5 text-xs text-accent">{error}</p>}
       </div>
     );
   }

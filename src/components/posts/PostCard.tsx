@@ -5,22 +5,29 @@ export function PostCard({ post }: { post: PostWithAuthor }) {
   return (
     <Link
       href={`/board/${post.id}`}
-      className="group block py-3 border-b border-fg/8 hover:opacity-50 transition-opacity"
+      className="group block py-6 border-b border-fg/10 hover:opacity-60 transition-opacity"
     >
-      <div className="grid grid-cols-12 gap-3 items-baseline">
-        <span className="col-span-2 lg:col-span-1 text-[10px] uppercase tracking-wider text-muted">
+      <div className="flex items-baseline gap-4 mb-2">
+        <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
           {post.type}
         </span>
-        <div className="col-span-10 sm:col-span-6 lg:col-span-7">
-          <span className="font-headline text-lg">{post.title}</span>
-          <p className="text-[11px] text-muted mt-0.5 line-clamp-1">{post.description}</p>
-        </div>
-        <span className="hidden sm:block col-span-2 text-[10px] uppercase tracking-wider text-muted text-right">
+        <span className="font-mono text-[11px] text-muted">
           {post.category.replace("_", " ")}
         </span>
-        <span className="hidden lg:block col-span-2 text-[11px] text-muted text-right">
-          {post.author.name}
-        </span>
+        {post.isRemote && (
+          <span className="font-mono text-[11px] text-muted">Remote</span>
+        )}
+      </div>
+      <h3 className="text-lg font-light">{post.title}</h3>
+      <p className="mt-2 text-sm text-muted line-clamp-2 leading-relaxed max-w-2xl">{post.description}</p>
+      <div className="mt-3 flex items-center gap-3 text-xs text-muted">
+        <span>{post.author.name}</span>
+        {post.location && (
+          <>
+            <span>&middot;</span>
+            <span>{post.location}</span>
+          </>
+        )}
       </div>
     </Link>
   );

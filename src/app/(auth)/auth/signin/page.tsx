@@ -37,30 +37,46 @@ export default function SignInPage() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-6">
-      <div className="w-full max-w-xs">
-        <h1 className="font-headline text-3xl mb-8">Sign in</h1>
+      <div className="w-full max-w-sm">
+        <h1 className="text-3xl font-light mb-12">Sign in</h1>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {error && <p className="text-[10px] text-accent">{error}</p>}
-          <Input id="email" label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <Input id="password" label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {error && (
+            <p className="text-xs text-accent">{error}</p>
+          )}
+          <Input
+            id="email"
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            id="password"
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "..." : "Sign in"}
           </Button>
         </form>
 
-        <div className="mt-6 pt-6 border-t border-fg/8">
+        <div className="mt-8 pt-8 border-t border-fg/10">
           <button
             onClick={() => signIn("google", { callbackUrl: "/board" })}
-            className="w-full text-[10px] uppercase tracking-widest text-muted hover:text-fg transition-colors text-center"
+            className="w-full text-sm text-muted hover:text-fg transition-colors text-center"
           >
             Continue with Google
           </button>
         </div>
 
-        <p className="mt-6 text-[10px] uppercase tracking-widest text-muted">
+        <p className="mt-8 text-xs text-muted">
           No account?{" "}
-          <Link href="/auth/register" className="text-fg underline underline-offset-3 hover:no-underline">
+          <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline">
             Join
           </Link>
         </p>
