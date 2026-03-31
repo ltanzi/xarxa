@@ -16,7 +16,7 @@ const config: Config = {
         soft: "#E0DBD2",
       },
       fontFamily: {
-        mono: ["'IBM Plex Mono'", "monospace"],
+        mono: ["'Inconsolata'", "monospace"],
       },
     },
   },
