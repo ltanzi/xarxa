@@ -5,10 +5,10 @@ export function PostCard({ post }: { post: PostWithAuthor }) {
   return (
     <Link
       href={`/board/${post.id}`}
-      className="group block py-6 border-b border-soft hover:opacity-60 transition-opacity"
+      className="group block py-6 border-b border-fg/10 hover:opacity-60 transition-opacity"
     >
       <div className="flex items-baseline gap-4 mb-2">
-        <span className="font-mono text-[11px] uppercase tracking-wider text-glow">
+        <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
           {post.type}
         </span>
         <span className="font-mono text-[11px] text-muted">

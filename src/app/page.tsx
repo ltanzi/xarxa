@@ -16,7 +16,7 @@ export default async function HomePage() {
       <section className="py-32 sm:py-44 px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight">
-            A space for <span className="text-glow">mutual</span> help.
+            A space for <span className="italic">mutual</span> help.
           </h1>
           <p className="mt-8 text-muted max-w-lg text-base leading-relaxed">
             Individuals and collectives offering and requesting volunteer help. No money involved.
@@ -24,20 +24,20 @@ export default async function HomePage() {
           <div className="mt-10 flex items-center gap-4">
             <Link
               href="/board/new?type=REQUEST"
-              className="px-5 py-2.5 bg-glow text-bg text-sm font-mono uppercase tracking-wider hover:opacity-80 transition-opacity"
+              className="px-5 py-2.5 bg-fg text-bg text-sm font-mono uppercase tracking-wider hover:opacity-80 transition-opacity"
             >
               Ask help
             </Link>
             <Link
               href="/board/new?type=OFFER"
-              className="px-5 py-2.5 border border-soft text-fg text-sm font-mono uppercase tracking-wider hover:border-glow hover:text-glow transition-colors"
+              className="px-5 py-2.5 border border-fg/20 text-fg text-sm font-mono uppercase tracking-wider hover:border-fg/50 transition-colors"
             >
               Offer help
             </Link>
-            <span className="mx-2 text-soft">|</span>
+            <span className="mx-2 text-fg/15">|</span>
             <Link
               href="/board"
-              className="text-sm text-muted hover:text-glow transition-colors underline underline-offset-4 hover:no-underline"
+              className="text-sm text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline"
             >
               Browse the board
             </Link>
@@ -47,7 +47,7 @@ export default async function HomePage() {
 
       {/* Divider */}
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <div className="border-t border-soft" />
+        <div className="border-t border-fg/10" />
       </div>
 
       {/* Posts */}
@@ -57,14 +57,14 @@ export default async function HomePage() {
             <p className="font-mono text-xs uppercase tracking-widest text-muted mb-12">
               Recent posts
             </p>
-            <div className="grid gap-0 divide-y divide-soft">
+            <div className="grid gap-0 divide-y divide-fg/10">
               {featuredPosts.map((post) => (
                 <Link
                   key={post.id}
                   href={`/board/${post.id}`}
                   className="group py-6 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8 hover:opacity-60 transition-opacity"
                 >
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-glow shrink-0 sm:w-28">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted shrink-0 sm:w-28">
                     {post.type}
                   </span>
                   <span className="text-lg sm:text-xl font-light flex-1">
@@ -80,7 +80,7 @@ export default async function HomePage() {
               ))}
             </div>
             <div className="mt-12">
-              <Link href="/board" className="text-sm text-muted underline underline-offset-4 hover:no-underline hover:text-glow transition-colors">
+              <Link href="/board" className="text-sm underline underline-offset-4 hover:no-underline">
                 See all
               </Link>
             </div>

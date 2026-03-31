@@ -37,7 +37,7 @@ export default async function DashboardPage() {
         {incomingConnections.length === 0 ? (
           <p className="text-sm text-muted">No pending requests.</p>
         ) : (
-          <div className="divide-y divide-soft">
+          <div className="divide-y divide-fg/10">
             {incomingConnections.map((conn) => (
               <div key={conn.id} className="flex items-center justify-between py-4">
                 <div>
@@ -56,7 +56,7 @@ export default async function DashboardPage() {
         {sentConnections.length === 0 ? (
           <p className="text-sm text-muted">No sent requests.</p>
         ) : (
-          <div className="divide-y divide-soft">
+          <div className="divide-y divide-fg/10">
             {sentConnections.map((conn) => (
               <div key={conn.id} className="flex items-center justify-between py-4">
                 <div>
@@ -82,7 +82,7 @@ export default async function DashboardPage() {
         {myPosts.length === 0 ? (
           <p className="text-sm text-muted">No posts yet.</p>
         ) : (
-          <div className="divide-y divide-soft">
+          <div className="divide-y divide-fg/10">
             {myPosts.map((post) => (
               <Link key={post.id} href={`/board/${post.id}`} className="block py-4 hover:opacity-60 transition-opacity">
                 <div className="flex items-baseline gap-4">

@@ -65,7 +65,7 @@ export default function SignInPage() {
           </Button>
         </form>
 
-        <div className="mt-8 pt-8 border-t border-soft">
+        <div className="mt-8 pt-8 border-t border-fg/10">
           <button
             onClick={() => signIn("google", { callbackUrl: "/board" })}
             className="w-full text-sm text-muted hover:text-fg transition-colors text-center"

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 function NotifBadge({ count }: { count: number }) {
   if (count === 0) return null;
   return (
-    <span className="ml-1 text-[9px] bg-glow text-bg px-1 py-0.5 leading-none min-w-[14px] text-center inline-block">
+    <span className="ml-1 text-[9px] bg-fg text-bg px-1 py-0.5 leading-none min-w-[14px] text-center inline-block">
       {count}
     </span>
   );
@@ -34,10 +34,10 @@ export function Navbar() {
   }, [session]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/90 backdrop-blur-sm border-b border-soft">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between text-sm">
-          <Link href="/" className="font-mono font-bold tracking-tight text-glow">
+          <Link href="/" className="font-mono font-bold tracking-tight">
             xarxa
           </Link>
 
@@ -56,7 +56,7 @@ export function Navbar() {
             )}
 
             {session && (
-              <div className="flex items-center gap-6 border-l border-soft pl-8">
+              <div className="flex items-center gap-6 border-l border-fg/10 pl-8">
                 <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
                   Profile
                 </Link>
@@ -71,7 +71,7 @@ export function Navbar() {
                 <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors">
                   Sign in
                 </Link>
-                <Link href="/auth/register" className="text-glow hover:underline underline-offset-4 transition-all">
+                <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline transition-all">
                   Join
                 </Link>
               </div>

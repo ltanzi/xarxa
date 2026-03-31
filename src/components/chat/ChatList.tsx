@@ -17,7 +17,7 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
   }
 
   return (
-    <div className="divide-y divide-soft">
+    <div className="divide-y divide-fg/10">
       {conversations.map((conv) => {
         const other = conv.participants.find((p) => p.id !== session?.user?.id);
         const last = conv.messages[0];
