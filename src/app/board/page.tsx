@@ -44,7 +44,7 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
   return (
     <div className="mx-auto max-w-5xl px-6 lg:px-8 pt-24 pb-16">
       <div className="flex items-baseline justify-between mb-12">
-        <h1 className="text-3xl font-light">Board</h1>
+        <h1 className="font-display text-4xl">Board</h1>
         <Link href="/board/new" className="text-sm underline underline-offset-4 hover:no-underline">
           New post
         </Link>
