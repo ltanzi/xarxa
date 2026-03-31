@@ -45,15 +45,15 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
     <div className="mx-auto max-w-5xl px-6 lg:px-8 pt-24 pb-16">
       <div className="flex items-baseline justify-between mb-12">
         <h1 className="text-3xl font-light">Board</h1>
-        <Link href="/board/new" className="text-sm underline underline-offset-4 hover:no-underline">
-          New post
+        <Link href="/board/new" className="text-sm text-red underline underline-offset-4 hover:no-underline">
+          + New post
         </Link>
       </div>
       <PostFilters />
       {posts.length === 0 ? (
         <p className="text-muted text-sm py-20">No posts found.</p>
       ) : (
-        <div className="border-t border-fg/10">
+        <div className="border-rough">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

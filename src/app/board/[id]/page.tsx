@@ -31,13 +31,13 @@ export default async function PostPage({ params }: PostPageProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
-      <Link href="/board" className="text-xs text-muted hover:text-fg transition-colors font-mono uppercase tracking-wider">
+      <Link href="/board" className="text-xs text-muted hover:text-red transition-colors font-mono uppercase tracking-wider">
         &larr; Board
       </Link>
 
       <div className="mt-8">
         <div className="flex items-baseline gap-4 mb-6">
-          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+          <span className="font-mono text-[11px] uppercase tracking-wider text-red">
             {post.type}
           </span>
           <span className="font-mono text-[11px] text-muted">
@@ -79,7 +79,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         )}
 
-        <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
+        <div className="mt-12 pt-8 border-rough flex items-center justify-between">
           <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
             <p className="text-sm">{post.author.name}</p>
             <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type}</p>
@@ -92,7 +92,7 @@ export default async function PostPage({ params }: PostPageProps) {
             />
           )}
           {!session && (
-            <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline">
+            <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline hover:text-red transition-colors">
               Sign in to connect
             </Link>
           )}
