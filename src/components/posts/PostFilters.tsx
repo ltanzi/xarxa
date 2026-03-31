@@ -43,7 +43,7 @@ export function PostFilters() {
             onClick={() => updateFilter("type", t.value)}
             className={`transition-colors ${
               (searchParams.get("type") || "") === t.value
-                ? "text-fg"
+                ? "text-glow"
                 : "text-muted hover:text-fg"
             }`}
           >
@@ -59,7 +59,7 @@ export function PostFilters() {
             onClick={() => updateFilter("category", c.value)}
             className={`transition-colors ${
               (searchParams.get("category") || "") === c.value
-                ? "text-fg"
+                ? "text-glow"
                 : "text-muted hover:text-fg"
             }`}
           >

@@ -93,7 +93,7 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
         <div ref={messagesEndRef} />
       </div>
 
-      <form onSubmit={handleSend} className="border-t border-fg/10 p-4 flex gap-3">
+      <form onSubmit={handleSend} className="border-t border-soft p-4 flex gap-3">
         <input
           type="text"
           value={newMessage}

@@ -53,7 +53,7 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
       {posts.length === 0 ? (
         <p className="text-muted text-sm py-20">No posts found.</p>
       ) : (
-        <div className="border-t border-fg/10">
+        <div className="border-t border-soft">
           {posts.map((post) => (
             <PostCard key={post.id} post={post} />
           ))}

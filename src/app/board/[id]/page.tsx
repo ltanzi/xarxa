@@ -79,7 +79,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         )}
 
-        <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
+        <div className="mt-12 pt-8 border-t border-soft flex items-center justify-between">
           <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
             <p className="text-sm">{post.author.name}</p>
             <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type}</p>
