@@ -9,11 +9,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#F0ECE3",
+        bg: "#EDE8E0",
         fg: "#1A1A1A",
         muted: "#8A8A8A",
-        red: "#C83C2C",
-        soft: "#E5E0D6",
+        accent: "#E63B2E",
+        soft: "#E0DBD2",
       },
       fontFamily: {
         mono: ["'IBM Plex Mono'", "monospace"],
