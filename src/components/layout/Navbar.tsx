@@ -37,13 +37,13 @@ export function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between text-sm">
-          <Link href="/" className="font-display text-lg">
-            xarxa <span className="doodle-star" />
+          <Link href="/" className="font-mono font-bold tracking-tight">
+            xarxa
           </Link>
 
           <div className="flex items-center gap-8">
             {session && (
-              <div className="flex items-center gap-6 text-xs uppercase tracking-wider">
+              <div className="flex items-center gap-6">
                 <Link href="/dashboard" className="text-muted hover:text-fg transition-colors">
                   Dashboard
                   <NotifBadge count={pending} />
@@ -56,7 +56,7 @@ export function Navbar() {
             )}
 
             {session && (
-              <div className="flex items-center gap-6 border-l border-fg/10 pl-8 text-xs uppercase tracking-wider">
+              <div className="flex items-center gap-6 border-l border-fg/10 pl-8">
                 <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
                   Profile
                 </Link>
@@ -67,11 +67,11 @@ export function Navbar() {
             )}
 
             {!session && (
-              <div className="flex items-center gap-6 text-xs uppercase tracking-wider">
+              <div className="flex items-center gap-6">
                 <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors">
                   Sign in
                 </Link>
-                <Link href="/auth/register" className="font-display text-sm text-fg">
+                <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline transition-all">
                   Join
                 </Link>
               </div>

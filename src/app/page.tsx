@@ -1,16 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
-const spotClass: Record<string, string> = {
-  LEGAL: "spot-legal",
-  EDUCATION: "spot-education",
-  HEALTH: "spot-health",
-  TECHNOLOGY: "spot-technology",
-  MANUAL_WORK: "spot-manual_work",
-  TRANSLATION: "spot-translation",
-  OTHER: "spot-other",
-};
-
 export default async function HomePage() {
   const featuredPosts = await prisma.post.findMany({
     take: 8,
@@ -23,33 +13,33 @@ export default async function HomePage() {
   return (
     <div className="pt-14">
       {/* Hero */}
-      <section className="py-28 sm:py-40 px-6 lg:px-8">
+      <section className="py-32 sm:py-44 px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
-          <h1 className="font-display text-5xl sm:text-7xl lg:text-8xl leading-[0.9]">
-            A space for<br />mutual help <span className="doodle-star" />
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight">
+            A space for <span className="italic">mutual</span> help.
           </h1>
-          <p className="mt-8 text-muted max-w-md leading-relaxed">
+          <p className="mt-8 text-muted max-w-lg text-base leading-relaxed">
             Individuals and collectives offering and requesting volunteer help. No money involved.
           </p>
           <div className="mt-10 flex items-center gap-4">
             <Link
               href="/board/new?type=REQUEST"
-              className="font-display text-sm px-5 py-2.5 bg-fg text-bg hover:opacity-80 transition-opacity"
+              className="px-5 py-2.5 bg-fg text-bg text-sm font-mono uppercase tracking-wider hover:opacity-80 transition-opacity"
             >
               Ask help
             </Link>
             <Link
               href="/board/new?type=OFFER"
-              className="font-display text-sm px-5 py-2.5 border border-fg/20 text-fg hover:border-fg transition-colors"
+              className="px-5 py-2.5 border border-fg/20 text-fg text-sm font-mono uppercase tracking-wider hover:border-fg/50 transition-colors"
             >
               Offer help
             </Link>
-            <span className="mx-1 text-fg/15">|</span>
+            <span className="mx-2 text-fg/15">|</span>
             <Link
               href="/board"
               className="text-sm text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline"
             >
-              Browse the board <span className="doodle-arrow" />
+              Browse the board
             </Link>
           </div>
         </div>
@@ -62,25 +52,25 @@ export default async function HomePage() {
 
       {/* Posts */}
       {featuredPosts.length > 0 && (
-        <section className="py-16 px-6 lg:px-8">
+        <section className="py-20 px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <p className="text-xs uppercase tracking-widest text-muted mb-10">
-              <span className="doodle-star mr-2" /> Recent posts
+            <p className="font-mono text-xs uppercase tracking-widest text-muted mb-12">
+              Recent posts
             </p>
-            <div className="divide-y divide-fg/10">
+            <div className="grid gap-0 divide-y divide-fg/10">
               {featuredPosts.map((post) => (
                 <Link
                   key={post.id}
                   href={`/board/${post.id}`}
-                  className="group py-5 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-6 hover:opacity-60 transition-opacity"
+                  className="group py-6 flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-8 hover:opacity-60 transition-opacity"
                 >
-                  <span className={`text-[11px] uppercase tracking-wider shrink-0 sm:w-24 font-bold ${spotClass[post.category] || "text-muted"}`}>
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted shrink-0 sm:w-28">
                     {post.type}
                   </span>
-                  <span className="font-display text-xl sm:text-2xl flex-1 normal-case tracking-normal">
+                  <span className="text-lg sm:text-xl font-light flex-1">
                     {post.title}
                   </span>
-                  <span className={`text-[11px] uppercase tracking-wider shrink-0 ${spotClass[post.category] || "text-muted"}`}>
+                  <span className="font-mono text-[11px] text-muted shrink-0">
                     {post.category.replace("_", " ")}
                   </span>
                   <span className="text-xs text-muted shrink-0 hidden sm:block">
@@ -89,9 +79,9 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-            <div className="mt-10">
+            <div className="mt-12">
               <Link href="/board" className="text-sm underline underline-offset-4 hover:no-underline">
-                See all <span className="doodle-arrow" />
+                See all
               </Link>
             </div>
           </div>
