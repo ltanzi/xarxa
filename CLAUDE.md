@@ -41,34 +41,32 @@ npm run dev
 - `next.config.mjs` (NOT .ts — Next.js 14 doesn't support .ts)
 - `tsconfig.server.json` — For compiling server.ts
 - `prisma.config.ts` — Prisma 7 config (datasource URL, seed command)
+- `.env` — NEXTAUTH_URL must be `http://192.168.100.16:3000` (not localhost) for signOut redirect to work
 
-## Current Design State
-Current fonts: **IBM Plex Mono** (body, 13px) with paper-grain background (#EDE8E0). Minimal editorial style.
+## Current Design State (main branch)
+- **Font**: Inconsolata (mono, slightly playful/round) — 13px body, paper-grain background (#EDE8E0)
+- **Homepage**: Centered layout — hands.png illustration (mix-blend-multiply, 40% opacity) above centered title "A space for *mutual* help", centered subtitle, centered buttons (Ask help, Offer help | Browse the board)
+- **Image**: `hands.png` in repo root + `public/hands.png` — hand-drawn characters holding hands
+- **Navbar**: No Board link (accessible from homepage buttons instead). Grouped: [xarxa] ... [Dashboard Chat] | [Profile Exit]
+- **Notification badges** on Dashboard (pending connections) and Chat (unread messages), polling every 30s
+- **Posts**: Flat list style, mono labels for type/category
+- **Minimal editorial** aesthetic — no rounded corners, no colored badges, no shadows
 
-### Zine Reference Analysis (ref.jpeg — keep this file in repo root)
-User provided a printed fanzine as design reference. Key findings:
-- **Body font is SERIF** (like Times/Georgia), NOT mono — classic book/newspaper feel
-- **Headlines: bold condensed sans-serif** — heavy, stacked vertically, poster-like
-- **No gray/muted text** — all text is black, hierarchy comes from size alone
-- **Tight line-height** (~1.3-1.4) on body, dense paragraphs
-- **Background: plain warm off-white** — no digital grain texture needed
-- **Knocked-out box** (white rectangle behind a word) is a nice graphic device
-- **Metadata: tiny caps at the top** — functional, not decorative
-- **Two-column layout** in places, text wraps around illustrations
-
-### Next Steps for Design
-Apply the zine reference findings: switch body to a serif, keep condensed sans for headlines, remove grain texture, tighten line-height, make all text black (no muted gray for body).
+## Design Branch: `design-b-dark-mode`
+Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC), neon green accent (#4ADE80). Same layout/structure as main. Kept as alternative option.
 
 ### What Was Tried & Rejected
 - Colorful startup-style (coral, lime, doodles, handwritten fonts) — "looks like a startup"
 - Cormorant Garamond serif + paper grain + terracotta accent — rejected
-- Generative flow-field background (hair-like traces) — "looks dirty"
+- Generative flow-field background — "looks dirty/hair"
 - Topographic contour line background — rejected
-- Anton headlines + 12px mono + tighter spacing — rejected (too different from current base)
-- User prefers incremental changes from the current IBM Plex Mono base
+- Anton headlines + tighter spacing — rejected
+- Proposal A: spot red + rough hand-drawn borders — rejected
+- Proposal C: DM Sans bold titles + doodle decorations + category spot colors — rejected
+- User prefers incremental changes, not wholesale redesigns
 
 ## Known Issues
-- Middleware uses `getToken` with explicit `secret` (Prisma 7 / edge runtime incompatibility with full auth import)
+- Middleware uses `getToken` with explicit `secret` (edge runtime incompatibility)
 - `docker-compose.yml` has `version` key which is obsolete (warning only)
 
 ## GitHub
