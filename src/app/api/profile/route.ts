@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { profileSchema } from "@/lib/validations";
@@ -25,8 +26,10 @@ export async function PATCH(request: Request) {
       data: parsed.data,
     });
 
+    revalidatePath(`/profile/${session.user.id}`);
     return NextResponse.json(user);
-  } catch {
+  } catch (e) {
+    console.error("[profile PATCH error]", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

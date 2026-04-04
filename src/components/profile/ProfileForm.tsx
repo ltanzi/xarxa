@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/Input";
+import { LocationInput } from "@/components/ui/LocationInput";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { useTranslation } from "@/i18n/hook";
+import { LanguageTagInput } from "@/components/ui/LanguageTagInput";
 
-const LANGUAGES = [
+const PREF_LANGUAGES = [
   { value: "en", label: "English" },
   { value: "es", label: "Español" },
   { value: "ca", label: "Català" },
@@ -18,13 +20,15 @@ interface ProfileFormProps {
   user: {
     id: string;
     name: string;
+    surname?: string | null;
     type: string;
     location?: string | null;
     bio?: string | null;
-    skills?: string | null;
+    skills?: string[];
     mission?: string | null;
     profilePhoto?: string | null;
     preferredLanguage?: string | null;
+    languages?: string[];
   };
 }
 
@@ -33,18 +37,33 @@ export function ProfileForm({ user }: ProfileFormProps) {
   const { t } = useTranslation();
   const [form, setForm] = useState({
     name: user.name,
+    surname: user.surname || "",
     type: user.type as "PRIVATE" | "COLLECTIVE",
     location: user.location || "",
     bio: user.bio || "",
-    skills: user.skills || "",
     mission: user.mission || "",
     preferredLanguage: (user.preferredLanguage || "en") as "en" | "es" | "ca",
   });
+  const [skills, setSkills] = useState<string[]>(user.skills || []);
+  const [skillInput, setSkillInput] = useState("");
+  const [languages, setLanguages] = useState<string[]>(user.languages || []);
   const [photo, setPhoto] = useState(user.profilePhoto);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  function updateField(field: string, value: string) {
+  function handleSkillKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const val = skillInput.trim();
+      if (val && !skills.includes(val)) setSkills((prev) => [...prev, val]);
+      setSkillInput("");
+    }
+    if (e.key === "Backspace" && !skillInput && skills.length > 0) {
+      setSkills((prev) => prev.slice(0, -1));
+    }
+  }
+
+function updateField(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
   }
 
@@ -70,12 +89,11 @@ export function ProfileForm({ user }: ProfileFormProps) {
     const res = await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, skills, languages }),
     });
 
     if (res.ok) {
-      router.push(`/profile/${user.id}`);
-      router.refresh();
+      window.location.href = `/profile/${user.id}`;
     } else {
       const data = await res.json();
       setError(data.error || t("common.error"));
@@ -107,6 +125,16 @@ export function ProfileForm({ user }: ProfileFormProps) {
         required
       />
 
+      {form.type === "PRIVATE" && (
+        <Input
+          id="surname"
+          label={t("profile.surname")}
+          value={form.surname}
+          onChange={(e) => updateField("surname", e.target.value)}
+          required
+        />
+      )}
+
       <div>
         <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">{t("auth.type")}</p>
         <div className="flex gap-6 text-sm">
@@ -136,7 +164,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       <div>
         <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">{t("profile.preferredLanguage")}</p>
         <div className="flex gap-6 text-sm">
-          {LANGUAGES.map((lang) => (
+          {PREF_LANGUAGES.map((lang) => (
             <label key={lang.value} className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
@@ -152,11 +180,17 @@ export function ProfileForm({ user }: ProfileFormProps) {
         </div>
       </div>
 
-      <Input
-        id="location"
+      <LanguageTagInput
+        label={t("profile.languages")}
+        placeholder={t("profile.addLanguage")}
+        value={languages}
+        onChange={setLanguages}
+      />
+
+      <LocationInput
         label={t("profile.location")}
         value={form.location}
-        onChange={(e) => updateField("location", e.target.value)}
+        onChange={(val) => updateField("location", val)}
       />
 
       <Textarea
@@ -167,12 +201,25 @@ export function ProfileForm({ user }: ProfileFormProps) {
       />
 
       {form.type === "PRIVATE" && (
-        <Textarea
-          id="skills"
-          label={t("profile.skills")}
-          value={form.skills}
-          onChange={(e) => updateField("skills", e.target.value)}
-        />
+        <div>
+          <p className="text-xs font-mono uppercase tracking-wider text-muted mb-2">{t("profile.skills")}</p>
+          <div className="flex items-center gap-2 flex-wrap border-b border-fg/20 pb-2">
+            {skills.map((skill) => (
+              <span key={skill} className="inline-flex items-center gap-1.5 bg-fg text-bg text-xs font-mono px-3 py-1 rounded-full">
+                {skill}
+                <button type="button" onClick={() => setSkills((prev) => prev.filter((s) => s !== skill))} className="hover:opacity-60 transition-opacity">×</button>
+              </span>
+            ))}
+            <input
+              type="text"
+              value={skillInput}
+              onChange={(e) => setSkillInput(e.target.value)}
+              onKeyDown={handleSkillKeyDown}
+              placeholder={skills.length === 0 ? t("profile.addSkill") : ""}
+              className="flex-1 min-w-[120px] bg-transparent text-sm placeholder:text-fg/30 focus:outline-none py-1"
+            />
+          </div>
+        </div>
       )}
 
       {form.type === "COLLECTIVE" && (

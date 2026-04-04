@@ -19,7 +19,7 @@ export default async function HomePage() {
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight text-center">
             {t("landing.heroBefore")} <span className="italic">{t("landing.heroEmphasis")}</span>{t("landing.heroAfter") ? ` ${t("landing.heroAfter")}` : ""}
           </h1>
-          <p className="mt-8 text-muted text-base whitespace-nowrap text-center">
+          <p className="mt-8 text-muted text-base text-center sm:whitespace-nowrap">
             {t("landing.subtitle")}
           </p>
           <div className="mt-10 flex justify-center">

@@ -21,6 +21,7 @@ export function Navbar() {
   const [unread, setUnread] = useState(0);
   const [pending, setPending] = useState(0);
   const [accepted, setAccepted] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -35,18 +36,23 @@ export function Navbar() {
     }
     fetchCounts();
     const interval = setInterval(fetchCounts, 30000);
-    return () => clearInterval(interval);
+    window.addEventListener("notifications:refresh", fetchCounts);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("notifications:refresh", fetchCounts);
+    };
   }, [session]);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/80 backdrop-blur-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between text-sm">
-          <Link href="/" className="font-mono font-bold tracking-tight">
+          <Link href="/" className="font-mono font-bold tracking-tight" onClick={() => setMenuOpen(false)}>
             xarxa
           </Link>
 
-          <div className="flex items-center gap-8">
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-8">
             {session && (
               <div className="flex items-center gap-6">
                 <Link href="/dashboard" className="text-muted hover:text-fg transition-colors">
@@ -59,7 +65,6 @@ export function Navbar() {
                 </Link>
               </div>
             )}
-
             {session && (
               <div className="flex items-center gap-6 border-l border-fg/10 pl-8">
                 <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
@@ -70,7 +75,6 @@ export function Navbar() {
                 </button>
               </div>
             )}
-
             {!session && (
               <div className="flex items-center gap-6">
                 <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors">
@@ -81,13 +85,64 @@ export function Navbar() {
                 </Link>
               </div>
             )}
-
             <div className="border-l border-fg/10 pl-6">
               <LanguageSwitcher />
             </div>
           </div>
+
+          {/* Mobile: badges + hamburger */}
+          <div className="flex md:hidden items-center gap-4">
+            {session && (pending + accepted + unread > 0) && (
+              <span className="text-[9px] bg-fg text-bg px-1.5 py-0.5 leading-none">
+                {pending + accepted + unread}
+              </span>
+            )}
+            <button
+              onClick={() => setMenuOpen((o) => !o)}
+              className="font-mono text-xs uppercase tracking-widest text-muted hover:text-fg transition-colors"
+            >
+              {menuOpen ? t("nav.close") : t("nav.menu")}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile dropdown */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-fg/10 bg-bg/95 px-6 pb-6 pt-4 flex flex-col gap-5 text-sm">
+          {session && (
+            <>
+              <Link href="/dashboard" className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
+                {t("nav.dashboard")}
+                <NotifBadge count={pending + accepted} />
+              </Link>
+              <Link href="/chat" className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
+                {t("nav.chat")}
+                <NotifBadge count={unread} />
+              </Link>
+              <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
+                {t("nav.profile")}
+              </Link>
+              <button onClick={() => { signOut({ callbackUrl: "/" }); setMenuOpen(false); }} className="text-left text-muted hover:text-fg transition-colors">
+                {t("nav.exit")}
+              </button>
+            </>
+          )}
+          {!session && (
+            <>
+              <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
+                {t("nav.signIn")}
+              </Link>
+              <Link href="/auth/register" className="text-fg underline underline-offset-4" onClick={() => setMenuOpen(false)}>
+                {t("nav.join")}
+              </Link>
+            </>
+          )}
+          <div className="pt-2 border-t border-fg/10">
+            <LanguageSwitcher />
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

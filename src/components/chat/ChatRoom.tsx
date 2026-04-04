@@ -18,6 +18,10 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("notifications:refresh"));
+  }, []);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
 

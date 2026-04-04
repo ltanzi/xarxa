@@ -20,6 +20,7 @@ export default function RegisterPage() {
   const { t } = useTranslation();
   const [form, setForm] = useState({
     name: "",
+    surname: "",
     email: "",
     password: "",
     type: "PRIVATE" as "PRIVATE" | "COLLECTIVE",
@@ -144,6 +145,16 @@ export default function RegisterPage() {
             error={errors.name}
             required
           />
+          {form.type === "PRIVATE" && (
+            <Input
+              id="surname"
+              label={t("profile.surname")}
+              value={form.surname}
+              onChange={(e) => updateField("surname", e.target.value)}
+              error={errors.surname}
+              required
+            />
+          )}
           <Input
             id="email"
             label={t("auth.email")}

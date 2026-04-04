@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/Input";
+import { LocationInput } from "@/components/ui/LocationInput";
 import { Select } from "@/components/ui/Select";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
@@ -131,11 +132,10 @@ export function PostForm() {
       />
 
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          id="location"
+        <LocationInput
           label={t("posts.location")}
           value={form.location}
-          onChange={(e) => updateField("location", e.target.value)}
+          onChange={(val) => updateField("location", val)}
         />
         <div className="flex items-end pb-2">
           <label className="flex items-center gap-2 cursor-pointer">

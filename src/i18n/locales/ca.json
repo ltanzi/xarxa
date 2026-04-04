@@ -13,7 +13,9 @@
     "profile": "Perfil",
     "signIn": "Iniciar sessió",
     "join": "Unir-se",
-    "exit": "Sortir"
+    "exit": "Sortir",
+    "menu": "Menú",
+    "close": "Tancar"
   },
   "auth": {
     "email": "Correu electrònic",
@@ -91,6 +93,7 @@
   },
   "profile": {
     "editProfile": "Editar perfil",
+    "surname": "Cognom",
     "bio": "Biografia",
     "skills": "Habilitats",
     "mission": "Missió",
@@ -99,7 +102,10 @@
     "uploadPhoto": "Pujar foto",
     "memberSince": "Membre des de",
     "posts": "Publicacions",
-    "preferredLanguage": "Llengua preferida"
+    "preferredLanguage": "Llengua preferida",
+    "languages": "Llengües parlades",
+    "addLanguage": "Afegeix una llengua...",
+    "addSkill": "Afegeix una habilitat..."
   },
   "landing": {
     "heroBefore": "Un espai per a",

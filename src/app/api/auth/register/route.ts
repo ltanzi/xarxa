@@ -15,7 +15,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { email, password, name, type, preferredLanguage } = parsed.data;
+    const { email, password, name, surname, type, preferredLanguage } = parsed.data;
 
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -32,6 +32,7 @@ export async function POST(request: Request) {
         email,
         password: hashedPassword,
         name,
+        ...(surname && { surname }),
         type,
         ...(preferredLanguage && { preferredLanguage }),
       },

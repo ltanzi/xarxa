@@ -13,7 +13,9 @@
     "profile": "Profile",
     "signIn": "Sign in",
     "join": "Join",
-    "exit": "Exit"
+    "exit": "Exit",
+    "menu": "Menu",
+    "close": "Close"
   },
   "auth": {
     "email": "Email",
@@ -91,6 +93,7 @@
   },
   "profile": {
     "editProfile": "Edit profile",
+    "surname": "Surname",
     "bio": "Bio",
     "skills": "Skills",
     "mission": "Mission",
@@ -99,7 +102,10 @@
     "uploadPhoto": "Upload photo",
     "memberSince": "Member since",
     "posts": "Posts",
-    "preferredLanguage": "Preferred language"
+    "preferredLanguage": "Preferred language",
+    "languages": "Spoken languages",
+    "addLanguage": "Add a language...",
+    "addSkill": "Add a skill..."
   },
   "landing": {
     "heroBefore": "A space for",

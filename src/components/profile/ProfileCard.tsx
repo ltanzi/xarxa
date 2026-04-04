@@ -1,12 +1,16 @@
+import { Avatar } from "@/components/ui/Avatar";
+
 interface ProfileCardProps {
   user: {
     name: string;
+    surname?: string | null;
     type: string;
     location?: string | null;
     bio?: string | null;
-    skills?: string | null;
+    skills?: string[];
     mission?: string | null;
     profilePhoto?: string | null;
+    languages?: string[];
     createdAt: string;
   };
 }
@@ -14,22 +18,33 @@ interface ProfileCardProps {
 export function ProfileCard({ user }: ProfileCardProps) {
   return (
     <div>
-      <h1 className="text-3xl font-light">{user.name}</h1>
-      <div className="flex items-center gap-4 mt-2 text-xs text-muted font-mono uppercase tracking-wider">
-        <span>{user.type}</span>
-        {user.location && <span>{user.location}</span>}
+      <div className="flex items-center gap-5 mb-8">
+        <Avatar name={user.name} src={user.profilePhoto} size="lg" />
+        <div>
+          <h1 className="text-3xl font-light">
+            {user.name}{user.type === "PRIVATE" && user.surname ? ` ${user.surname}` : ""}
+          </h1>
+          <div className="flex items-center gap-4 mt-1 text-xs text-muted font-mono uppercase tracking-wider">
+            <span>{user.type}</span>
+            {user.location && <span>{user.location}</span>}
+          </div>
+        </div>
       </div>
 
       {user.bio && (
-        <div className="mt-8">
+        <div className="mt-4">
           <p className="text-fg/80 leading-relaxed">{user.bio}</p>
         </div>
       )}
 
-      {user.type === "PRIVATE" && user.skills && (
+      {user.type === "PRIVATE" && user.skills && user.skills.length > 0 && (
         <div className="mt-6">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">Skills</p>
-          <p className="text-sm text-fg/80">{user.skills}</p>
+          <div className="flex flex-wrap gap-2">
+            {user.skills.map((skill) => (
+              <span key={skill} className="text-xs font-mono border border-fg/20 px-2.5 py-0.5">{skill}</span>
+            ))}
+          </div>
         </div>
       )}
 
@@ -37,6 +52,17 @@ export function ProfileCard({ user }: ProfileCardProps) {
         <div className="mt-6">
           <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">Mission</p>
           <p className="text-sm text-fg/80">{user.mission}</p>
+        </div>
+      )}
+
+      {user.languages && user.languages.length > 0 && (
+        <div className="mt-6">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">Languages</p>
+          <div className="flex flex-wrap gap-2">
+            {user.languages.map((lang) => (
+              <span key={lang} className="text-xs font-mono border border-fg/20 px-2.5 py-0.5">{lang}</span>
+            ))}
+          </div>
         </div>
       )}
 
