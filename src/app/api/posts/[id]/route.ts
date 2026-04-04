@@ -57,7 +57,6 @@ export async function PATCH(
       return NextResponse.json(updated);
     }
 
-    // Full edit
     const parsed = postSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
@@ -102,9 +101,22 @@ export async function DELETE(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Delete connections first (cascade not set in schema)
-    await prisma.connection.deleteMany({ where: { postId: id } });
-    await prisma.post.delete({ where: { id } });
+    await prisma.$transaction(async (tx) => {
+      const connections = await tx.connection.findMany({
+        where: { postId: id },
+        select: { conversationId: true },
+      });
+      const convIds = connections.map((c) => c.conversationId).filter(Boolean) as string[];
+
+      await tx.connection.deleteMany({ where: { postId: id } });
+
+      if (convIds.length > 0) {
+        await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+        await tx.conversation.deleteMany({ where: { id: { in: convIds } } });
+      }
+
+      await tx.post.delete({ where: { id } });
+    });
 
     return NextResponse.json({ ok: true });
   } catch (e) {

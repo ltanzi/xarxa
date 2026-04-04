@@ -16,26 +16,41 @@ export function PostActions({ postId, closed }: PostActionsProps) {
   const [loading, setLoading] = useState(false);
   const [isClosed, setIsClosed] = useState(closed);
   const [confirming, setConfirming] = useState(false);
+  const [error, setError] = useState(false);
 
   async function handleDelete() {
     setLoading(true);
-    const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
-    if (res.ok) {
-      router.push("/dashboard");
+    setError(false);
+    try {
+      const res = await fetch(`/api/posts/${postId}`, { method: "DELETE" });
+      if (res.ok) {
+        router.push("/dashboard");
+        return;
+      }
+      setError(true);
+    } catch {
+      setError(true);
     }
     setLoading(false);
   }
 
   async function handleToggleClosed() {
     setLoading(true);
-    const res = await fetch(`/api/posts/${postId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ closed: !isClosed }),
-    });
-    if (res.ok) {
-      setIsClosed(!isClosed);
-      router.refresh();
+    setError(false);
+    try {
+      const res = await fetch(`/api/posts/${postId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ closed: !isClosed }),
+      });
+      if (res.ok) {
+        setIsClosed(!isClosed);
+        router.refresh();
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
     }
     setLoading(false);
   }
@@ -61,6 +76,10 @@ export function PostActions({ postId, closed }: PostActionsProps) {
           {t("posts.deletePost")}
         </button>
       </div>
+
+      {error && (
+        <span className="text-accent text-xs">{t("common.error")}</span>
+      )}
 
       {confirming && (
         <div className="border border-fg/15 px-4 py-3 flex items-center gap-4 text-xs">

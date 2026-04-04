@@ -1,13 +1,6 @@
 import { z } from "zod";
 
-export const registerSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  name: z.string().min(1, "Name is required"),
-  surname: z.string().optional(),
-  type: z.enum(["PRIVATE", "COLLECTIVE"]),
-  preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
-}).superRefine((data, ctx) => {
+function requireSurnameForPrivate(data: { type: string; surname?: string }, ctx: z.RefinementCtx) {
   if (data.type === "PRIVATE" && !data.surname?.trim()) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -15,7 +8,16 @@ export const registerSchema = z.object({
       path: ["surname"],
     });
   }
-});
+}
+
+export const registerSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  name: z.string().min(1, "Name is required"),
+  surname: z.string().optional(),
+  type: z.enum(["PRIVATE", "COLLECTIVE"]),
+  preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
+}).superRefine(requireSurnameForPrivate);
 
 export const signInSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -52,15 +54,7 @@ export const profileSchema = z.object({
   preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
   languages: z.array(z.string()).optional(),
   profilePhoto: z.string().nullable().optional(),
-}).superRefine((data, ctx) => {
-  if (data.type === "PRIVATE" && !data.surname?.trim()) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "Surname is required",
-      path: ["surname"],
-    });
-  }
-});
+}).superRefine(requireSurnameForPrivate);
 
 export const messageSchema = z.object({
   content: z.string().min(1, "Message cannot be empty"),

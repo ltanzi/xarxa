@@ -14,7 +14,10 @@ const handle = app.getRequestHandler();
 async function getUserIdFromCookie(cookieHeader: string | undefined): Promise<string | null> {
   if (!cookieHeader) return null;
   const secret = process.env.NEXTAUTH_SECRET;
-  if (!secret) return null;
+  if (!secret) {
+    console.error("[socket] NEXTAUTH_SECRET is not set — all socket connections will fail");
+    return null;
+  }
 
   const tokenCookie = cookieHeader
     .split(";")
@@ -27,7 +30,8 @@ async function getUserIdFromCookie(cookieHeader: string | undefined): Promise<st
   try {
     const decoded = await decode({ token, secret, salt: tokenCookie.startsWith("__Secure-") ? "__Secure-authjs.session-token" : "authjs.session-token" });
     return (decoded?.id as string) || null;
-  } catch {
+  } catch (err) {
+    console.error("[socket] JWT decode failed:", err);
     return null;
   }
 }
@@ -79,6 +83,9 @@ app.prepare().then(() => {
     });
 
     socket.on("send-message", async (data: { conversationId: string; message: unknown }) => {
+      // Only relay if sender actually joined this conversation room
+      if (!socket.rooms.has(`conversation:${data.conversationId}`)) return;
+
       socket.to(`conversation:${data.conversationId}`).emit("new-message", data.message);
 
       // Notify other participants to refresh their notification counts
@@ -95,8 +102,8 @@ app.prepare().then(() => {
             }
           }
         }
-      } catch {
-        // non-critical, don't break message flow
+      } catch (err) {
+        console.error("[socket] notification after send-message failed:", err);
       }
     });
   });

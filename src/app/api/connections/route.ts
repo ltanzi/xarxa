@@ -21,6 +21,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
+    if (post.closed) {
+      return NextResponse.json({ error: "Post is closed" }, { status: 400 });
+    }
+
     if (post.authorId === session.user.id) {
       return NextResponse.json({ error: "Cannot connect to your own post" }, { status: 400 });
     }
@@ -42,7 +46,8 @@ export async function POST(request: Request) {
     // Notify the post author about the new connection request
     notifyUser(post.authorId);
     return NextResponse.json(connection, { status: 201 });
-  } catch {
+  } catch (e) {
+    console.error("[connections POST error]", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -13,19 +13,20 @@ import { postSchema } from "@/lib/validations";
 const CATEGORY_KEYS = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
 
-interface PostFormProps {
-  postId?: string;
-  initialData?: {
-    title: string;
-    type: string;
-    category: string;
-    description: string;
-    availability?: string | null;
-    location?: string | null;
-    isRemote: boolean;
-    tags: string[];
-  };
+interface PostFormData {
+  title: string;
+  type: string;
+  category: string;
+  description: string;
+  availability?: string | null;
+  location?: string | null;
+  isRemote: boolean;
+  tags: string[];
 }
+
+type PostFormProps =
+  | { postId?: undefined; initialData?: undefined }
+  | { postId: string; initialData: PostFormData };
 
 export function PostForm({ postId, initialData }: PostFormProps) {
   const router = useRouter();

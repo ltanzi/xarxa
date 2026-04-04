@@ -35,11 +35,17 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Resize to max 512x512 and convert to WebP for smaller file size
-    const optimized = await sharp(buffer)
-      .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "cover" })
-      .webp({ quality: 80 })
-      .toBuffer();
+    // Crop to 512x512 and convert to WebP for consistent profile photos
+    let optimized: Buffer;
+    try {
+      optimized = await sharp(buffer)
+        .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "cover" })
+        .webp({ quality: 80 })
+        .toBuffer();
+    } catch (err) {
+      console.error("[upload] Image processing failed:", err);
+      return NextResponse.json({ error: "Could not process image. Please try a different file." }, { status: 400 });
+    }
 
     const filename = `${createId()}.webp`;
     const uploadDir = join(process.cwd(), "public", "uploads");

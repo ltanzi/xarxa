@@ -38,7 +38,6 @@ export function Navbar() {
   useEffect(() => {
     if (!session) return;
 
-    // Initial fetch
     fetchCounts();
 
     // Listen for local custom events (e.g. from ChatRoom on mount)

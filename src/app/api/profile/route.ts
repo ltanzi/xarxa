@@ -43,36 +43,56 @@ export async function DELETE() {
   const userId = session.user.id;
 
   try {
-    // Delete in order to respect foreign key constraints
-    // 1. Messages sent by user
-    await prisma.message.deleteMany({ where: { senderId: userId } });
+    await prisma.$transaction(async (tx) => {
+      // 1. Messages sent by user
+      await tx.message.deleteMany({ where: { senderId: userId } });
 
-    // 2. Connections where user is requester
-    await prisma.connection.deleteMany({ where: { requesterId: userId } });
-
-    // 3. Connections on user's posts (other people's requests to this user)
-    const postIds = (await prisma.post.findMany({ where: { authorId: userId }, select: { id: true } })).map((p) => p.id);
-    if (postIds.length > 0) {
-      await prisma.connection.deleteMany({ where: { postId: { in: postIds } } });
-    }
-
-    // 4. Posts by user
-    await prisma.post.deleteMany({ where: { authorId: userId } });
-
-    // 5. Remove user from conversations (many-to-many)
-    const conversations = await prisma.conversation.findMany({
-      where: { participants: { some: { id: userId } } },
-      select: { id: true },
-    });
-    for (const conv of conversations) {
-      await prisma.conversation.update({
-        where: { id: conv.id },
-        data: { participants: { disconnect: { id: userId } } },
+      // 2. Connections where user is requester (and their conversations/messages)
+      const requesterConns = await tx.connection.findMany({
+        where: { requesterId: userId },
+        select: { conversationId: true },
       });
-    }
+      const requesterConvIds = requesterConns.map((c) => c.conversationId).filter(Boolean) as string[];
 
-    // 6. Delete user
-    await prisma.user.delete({ where: { id: userId } });
+      await tx.connection.deleteMany({ where: { requesterId: userId } });
+
+      // 3. Connections on user's posts (and their conversations/messages)
+      const postIds = (await tx.post.findMany({ where: { authorId: userId }, select: { id: true } })).map((p) => p.id);
+      let postConvIds: string[] = [];
+      if (postIds.length > 0) {
+        const postConns = await tx.connection.findMany({
+          where: { postId: { in: postIds } },
+          select: { conversationId: true },
+        });
+        postConvIds = postConns.map((c) => c.conversationId).filter(Boolean) as string[];
+        await tx.connection.deleteMany({ where: { postId: { in: postIds } } });
+      }
+
+      // 4. Clean up orphaned conversations and their messages
+      const allConvIds = Array.from(new Set([...requesterConvIds, ...postConvIds]));
+      if (allConvIds.length > 0) {
+        await tx.message.deleteMany({ where: { conversationId: { in: allConvIds } } });
+        await tx.conversation.deleteMany({ where: { id: { in: allConvIds } } });
+      }
+
+      // 5. Posts by user
+      await tx.post.deleteMany({ where: { authorId: userId } });
+
+      // 6. Disconnect user from any remaining conversations (e.g. conversations not tied to connections)
+      const remaining = await tx.conversation.findMany({
+        where: { participants: { some: { id: userId } } },
+        select: { id: true },
+      });
+      for (const conv of remaining) {
+        await tx.conversation.update({
+          where: { id: conv.id },
+          data: { participants: { disconnect: { id: userId } } },
+        });
+      }
+
+      // 7. Delete user
+      await tx.user.delete({ where: { id: userId } });
+    });
 
     return NextResponse.json({ ok: true });
   } catch (e) {

@@ -78,7 +78,9 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 
 ## Notifications
 - `Connection.seenByRequester Boolean @default(false)` — set to true when requester visits dashboard or opens the chat
-- `/api/notifications` returns `{ unreadMessages, pendingConnections, acceptedRequests }` — navbar polls every 30s
+- `/api/notifications` returns `{ unreadMessages, pendingConnections, acceptedRequests }`
+- Real-time via Socket.io: Navbar connects to socket, joins `user:{id}` room, listens for `notifications:update` events (replaced 30s polling)
+- `notifyUser(userId)` in `src/lib/socket.ts` — API routes call this to push notifications via `globalThis.__io`
 - `/api/connections/seen` — POST to mark accepted connections seen (also done server-side on dashboard + chat page load)
 
 ## Search (PostFilters)
@@ -89,6 +91,64 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 
 ## Sign-in / Register
 - After sign-in or registration, redirects to `/` (home), not `/board`
+
+## Completed Improvements (Phases 1–3 + Account Deletion)
+
+### Phase 1 — Critical Fixes
+- Full i18n wiring: all hardcoded strings replaced with translation keys across EN/ES/CA
+- Chat reliability: Socket.io reconnection (infinite attempts, 1–10s backoff), message deduplication, failed-send recovery (removes optimistic message, restores input)
+- Socket.io authentication: JWT cookie decoding in server.ts middleware, conversation membership validation on `join-conversation`
+- Pagination on board: 20 posts/page with page controls
+- Loading states: skeleton loaders for board, chat, dashboard, profile
+- Error/not-found pages: `src/app/error.tsx`, `src/app/not-found.tsx`
+- Google OAuth redirect: new users redirected to `/profile/edit` via cookie + middleware
+
+### Phase 2 — UX Polish
+- Post management: edit, delete (with inline confirmation), close/reopen — via `PostActions` component on post detail page
+- Connection flow: author sees connections list on their post detail page
+- Chat date separators: "Today", "Yesterday", or formatted date between message groups
+- Profile improvements: surname field (required for PRIVATE users), city autocomplete (Photon/OpenStreetMap), language autocomplete (local ISO list), remove photo button
+- Board search: matches tags in addition to title/description
+- Mobile fixes: `100dvh`, tighter gaps on filters, flex-wrap on type filter row
+- Replaced all native `confirm()` dialogs with inline confirmation UI
+
+### Phase 3 — Performance
+- Real-time notifications via Socket.io: replaced 30s polling with user rooms (`user:{id}`), `notifyUser()` helper in `src/lib/socket.ts` for API routes
+- Database indexes on Post, Connection, Message tables for common queries
+- Font: switched from render-blocking `@import` to `next/font/google` (Inconsolata, self-hosted via CSS variable)
+- Image optimization: `sharp` resizes uploads to 512×512 WebP (quality 80)
+- Conversation list limited to 50
+
+### Account Deletion
+- `DeleteAccount` component (`src/components/profile/DeleteAccount.tsx`): inline confirmation, calls DELETE `/api/profile`
+- API route cascades deletion in a `$transaction`: messages → connections (+ their conversations) → posts → conversation disconnect → user delete
+- Signs out after successful deletion
+
+### Code Review Fixes
+- **Security**: `send-message` socket handler checks room membership before broadcasting; `POST /api/connections` rejects closed posts
+- **Data integrity**: Account deletion and post deletion wrapped in `prisma.$transaction()`; orphaned conversations/messages cleaned up
+- **Error handling**: `DeleteAccount` and `PostActions` show error feedback on failure with try-catch; JWT decode, socket notifications, connections route all log errors; `notifyUser()` logs one-time warning when Socket.io unavailable; `sharp` errors return user-friendly 400
+- **Types**: Shared `AuthorSummary`/`AuthorDetail`/`PostWithAuthor` in `src/types/index.ts`; `PostCard` uses shared type; profile page author select includes `surname`
+- **Code quality**: Extracted `requireSurnameForPrivate` in `validations.ts` (shared by register + profile schemas); `PostFormProps` uses discriminated union coupling `postId` + `initialData`; removed redundant comments
+
+## Roadmap
+
+### Phase 4 — Code Quality & Robustness
+- Environment variable validation at startup (Zod schema for env)
+- Clean up unused dependencies
+- Remaining type safety gaps (typed Socket.IO event maps, strict TypeScript)
+- Upload security hardening (path traversal protection)
+- Standardized API response envelope
+
+### Phase 5 — Before Real Users
+- Rate limiting on auth and API endpoints
+- CSRF protection
+- Content Security Policy headers
+- Move secrets out of docker-compose into proper env management
+- Email verification flow
+- Report/block functionality
+- SEO: meta tags, Open Graph, sitemap
+- Testing: unit tests for validation, integration tests for API routes, E2E for critical flows
 
 ## Known Issues
 - Middleware uses `getToken` with explicit `secret` (edge runtime incompatibility)

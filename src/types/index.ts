@@ -2,8 +2,16 @@ import { User, Post, Connection, Conversation, Message } from "@prisma/client";
 
 export type { User, Post, Connection, Conversation, Message };
 
+export type AuthorSummary = Pick<User, "id" | "name" | "surname" | "type" | "profilePhoto">;
+
+export type AuthorDetail = AuthorSummary & Pick<User, "location">;
+
 export type PostWithAuthor = Post & {
-  author: Pick<User, "id" | "name" | "type" | "profilePhoto">;
+  author: AuthorSummary;
+};
+
+export type PostWithAuthorDetail = Post & {
+  author: AuthorDetail;
 };
 
 export type ConnectionWithDetails = Connection & {

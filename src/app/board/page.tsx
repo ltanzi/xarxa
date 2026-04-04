@@ -58,7 +58,6 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
-  // Build pagination URL helper
   function pageUrl(p: number) {
     const sp = new URLSearchParams();
     if (params.type) sp.set("type", params.type);

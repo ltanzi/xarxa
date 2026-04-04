@@ -8,12 +8,20 @@ export function DeleteAccount() {
   const { t } = useTranslation();
   const [confirming, setConfirming] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   async function handleDelete() {
     setLoading(true);
-    const res = await fetch("/api/profile", { method: "DELETE" });
-    if (res.ok) {
-      signOut({ callbackUrl: "/" });
+    setError(false);
+    try {
+      const res = await fetch("/api/profile", { method: "DELETE" });
+      if (res.ok) {
+        signOut({ callbackUrl: "/" });
+        return;
+      }
+      setError(true);
+    } catch {
+      setError(true);
     }
     setLoading(false);
   }
@@ -29,7 +37,10 @@ export function DeleteAccount() {
         </button>
       ) : (
         <div className="border border-fg/15 px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-3 text-xs">
-          <span className="text-muted flex-1">{t("profile.confirmDeleteAccount")}</span>
+          <span className="text-muted flex-1">
+            {t("profile.confirmDeleteAccount")}
+            {error && <span className="block text-accent mt-1">{t("common.error")}</span>}
+          </span>
           <div className="flex gap-4">
             <button
               onClick={handleDelete}

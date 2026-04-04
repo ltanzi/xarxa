@@ -21,7 +21,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       posts: {
         orderBy: { createdAt: "desc" },
         include: {
-          author: { select: { id: true, name: true, type: true, profilePhoto: true } },
+          author: { select: { id: true, name: true, surname: true, type: true, profilePhoto: true } },
         },
       },
     },

@@ -1,9 +1,5 @@
 import Link from "next/link";
-import { Post, User } from "@prisma/client";
-
-type PostWithAuthor = Post & {
-  author: Pick<User, "id" | "name" | "type" | "profilePhoto"> & { surname?: string | null };
-};
+import { PostWithAuthor } from "@/types";
 import { getTranslations } from "@/i18n/server";
 
 export async function PostCard({ post }: { post: PostWithAuthor }) {
