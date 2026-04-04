@@ -4,6 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { createId } from "@paralleldrive/cuid2";
+import sharp from "sharp";
+
+const MAX_SIZE = 5 * 1024 * 1024;
+const MAX_DIMENSION = 512;
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -19,24 +24,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const maxSize = 5 * 1024 * 1024;
-    if (file.size > maxSize) {
+    if (file.size > MAX_SIZE) {
       return NextResponse.json({ error: "File too large (max 5MB)" }, { status: 400 });
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!allowedTypes.includes(file.type)) {
+    if (!ALLOWED_TYPES.includes(file.type)) {
       return NextResponse.json({ error: "Invalid file type. Use JPEG, PNG, or WebP" }, { status: 400 });
     }
 
-    const ext = file.name.split(".").pop() || "jpg";
-    const filename = `${createId()}.${ext}`;
-    const uploadDir = join(process.cwd(), "public", "uploads");
-    await mkdir(uploadDir, { recursive: true });
-
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(join(uploadDir, filename), buffer);
+
+    // Resize to max 512x512 and convert to WebP for smaller file size
+    const optimized = await sharp(buffer)
+      .resize(MAX_DIMENSION, MAX_DIMENSION, { fit: "cover" })
+      .webp({ quality: 80 })
+      .toBuffer();
+
+    const filename = `${createId()}.webp`;
+    const uploadDir = join(process.cwd(), "public", "uploads");
+    await mkdir(uploadDir, { recursive: true });
+    await writeFile(join(uploadDir, filename), optimized);
 
     const profilePhoto = `/uploads/${filename}`;
     await prisma.user.update({

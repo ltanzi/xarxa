@@ -3,12 +3,17 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { postSchema } from "@/lib/validations";
 
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type");
   const category = searchParams.get("category");
   const location = searchParams.get("location");
   const search = searchParams.get("search");
+  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(searchParams.get("limit") || String(DEFAULT_PAGE_SIZE), 10)));
 
   const where: Record<string, unknown> = {};
 
@@ -28,15 +33,20 @@ export async function GET(request: NextRequest) {
     ];
   }
 
-  const posts = await prisma.post.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-    include: {
-      author: { select: { id: true, name: true, type: true, profilePhoto: true } },
-    },
-  });
+  const [posts, total] = await Promise.all([
+    prisma.post.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      skip: (page - 1) * limit,
+      include: {
+        author: { select: { id: true, name: true, surname: true, type: true, profilePhoto: true } },
+      },
+    }),
+    prisma.post.count({ where }),
+  ]);
 
-  return NextResponse.json(posts);
+  return NextResponse.json({ posts, total, page, totalPages: Math.ceil(total / limit) });
 }
 
 export async function POST(request: Request) {
@@ -64,7 +74,7 @@ export async function POST(request: Request) {
         authorId: session.user.id,
       },
       include: {
-        author: { select: { id: true, name: true, type: true, profilePhoto: true } },
+        author: { select: { id: true, name: true, surname: true, type: true, profilePhoto: true } },
       },
     });
 

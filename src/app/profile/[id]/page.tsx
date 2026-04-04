@@ -33,7 +33,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
-      <ProfileCard user={JSON.parse(JSON.stringify(user))} />
+      <ProfileCard user={user} />
 
       {isOwnProfile && (
         <div className="mt-6">

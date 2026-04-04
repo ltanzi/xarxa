@@ -65,12 +65,19 @@ model Post {
   location     String?
   isRemote     Boolean  @default(false)
   tags         String[]
+  closed       Boolean  @default(false)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   authorId    String
   author      User         @relation(fields: [authorId], references: [id])
   connections Connection[]
+
+  @@index([createdAt])
+  @@index([authorId])
+  @@index([type])
+  @@index([category])
+  @@index([closed, createdAt])
 }
 
 model Connection {
@@ -89,6 +96,8 @@ model Connection {
   conversation   Conversation? @relation(fields: [conversationId], references: [id])
 
   @@unique([postId, requesterId])
+  @@index([requesterId, status])
+  @@index([status])
 }
 
 model Conversation {
@@ -111,4 +120,7 @@ model Message {
 
   senderId String
   sender   User   @relation(fields: [senderId], references: [id])
+
+  @@index([conversationId, createdAt])
+  @@index([senderId, read])
 }

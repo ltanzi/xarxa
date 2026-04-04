@@ -115,7 +115,7 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
       </div>
 
       {/* Type filter */}
-      <div className="flex items-baseline gap-6 font-mono text-xs uppercase tracking-widest">
+      <div className="flex items-baseline gap-3 sm:gap-6 font-mono text-xs uppercase tracking-widest flex-wrap">
         <span className="text-fg shrink-0 font-medium">{t("posts.type")}</span>
         {types.map((type) => (
           <button
@@ -133,7 +133,7 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
       </div>
 
       {/* Category filter */}
-      <div className="flex items-baseline gap-6 font-mono text-xs uppercase tracking-widest flex-wrap">
+      <div className="flex items-baseline gap-3 sm:gap-6 font-mono text-xs uppercase tracking-widest flex-wrap">
         <span className="text-fg shrink-0 font-medium">{t("posts.category")}</span>
         {categories.map((cat) => (
           <button

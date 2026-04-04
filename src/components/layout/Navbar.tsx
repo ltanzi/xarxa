@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "@/i18n/hook";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { io, Socket } from "socket.io-client";
 
 function NotifBadge({ count }: { count: number }) {
   if (count === 0) return null;
@@ -22,26 +23,44 @@ export function Navbar() {
   const [pending, setPending] = useState(0);
   const [accepted, setAccepted] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
+
+  const fetchCounts = useCallback(async () => {
+    const res = await fetch("/api/notifications");
+    if (res.ok) {
+      const data = await res.json();
+      setUnread(data.unreadMessages);
+      setPending(data.pendingConnections);
+      setAccepted(data.acceptedRequests);
+    }
+  }, []);
 
   useEffect(() => {
     if (!session) return;
-    async function fetchCounts() {
-      const res = await fetch("/api/notifications");
-      if (res.ok) {
-        const data = await res.json();
-        setUnread(data.unreadMessages);
-        setPending(data.pendingConnections);
-        setAccepted(data.acceptedRequests);
-      }
-    }
+
+    // Initial fetch
     fetchCounts();
-    const interval = setInterval(fetchCounts, 30000);
+
+    // Listen for local custom events (e.g. from ChatRoom on mount)
     window.addEventListener("notifications:refresh", fetchCounts);
+
+    // Connect to Socket.io for real-time notification updates
+    const socket = io({
+      path: "/api/socketio",
+      reconnection: true,
+      reconnectionDelay: 2000,
+      reconnectionDelayMax: 15000,
+    });
+    socketRef.current = socket;
+
+    socket.on("notifications:update", fetchCounts);
+
     return () => {
-      clearInterval(interval);
       window.removeEventListener("notifications:refresh", fetchCounts);
+      socket.disconnect();
+      socketRef.current = null;
     };
-  }, [session]);
+  }, [session, fetchCounts]);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur-sm">

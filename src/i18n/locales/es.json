@@ -59,7 +59,15 @@
     "search": "Buscar",
     "searchPlaceholder": "Buscar publicaciones...",
     "failedToCreate": "Error al crear la publicación",
-    "signInToConnect": "Inicia sesión para conectar"
+    "signInToConnect": "Inicia sesión para conectar",
+    "editPost": "Editar",
+    "deletePost": "Eliminar",
+    "confirmDelete": "¿Estás seguro? Se eliminarán también todas las conexiones.",
+    "closed": "Cerrado",
+    "closePost": "Cerrar publicación",
+    "reopenPost": "Reabrir",
+    "updatePost": "Actualizar publicación",
+    "failedToUpdate": "Error al actualizar la publicación"
   },
   "categories": {
     "LEGAL": "Legal",
@@ -82,14 +90,18 @@
     "rejected": "Rechazado",
     "noPosts": "Aún no hay publicaciones.",
     "noIncoming": "No hay solicitudes pendientes.",
-    "noSent": "No hay solicitudes enviadas."
+    "noSent": "No hay solicitudes enviadas.",
+    "connections": "Conexiones"
   },
   "chat": {
     "title": "Mensajes",
     "typeMessage": "Escribe un mensaje...",
     "send": "Enviar",
     "noConversations": "Sin conversaciones aún.",
-    "you": "Tú"
+    "you": "Tú",
+    "back": "Volver",
+    "today": "Hoy",
+    "yesterday": "Ayer"
   },
   "profile": {
     "editProfile": "Editar perfil",
@@ -105,7 +117,10 @@
     "preferredLanguage": "Idioma preferido",
     "languages": "Idiomas hablados",
     "addLanguage": "Añadir un idioma...",
-    "addSkill": "Añadir una habilidad..."
+    "addSkill": "Añadir una habilidad...",
+    "removePhoto": "Eliminar foto",
+    "deleteAccount": "Eliminar cuenta",
+    "confirmDeleteAccount": "Esto eliminará permanentemente tu cuenta y todos tus datos. No se puede deshacer."
   },
   "landing": {
     "heroBefore": "Un espacio de",

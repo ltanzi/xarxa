@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
+import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -54,6 +55,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
           });
           user.id = created.id;
+          // Set a cookie so middleware can redirect to profile setup
+          const cookieStore = await cookies();
+          cookieStore.set("new_oauth_user", "1", { path: "/", maxAge: 120 });
         } else {
           user.id = existingUser.id;
         }

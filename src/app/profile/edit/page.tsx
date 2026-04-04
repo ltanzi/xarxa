@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { ProfileForm } from "@/components/profile/ProfileForm";
+import { DeleteAccount } from "@/components/profile/DeleteAccount";
 import { getTranslations } from "@/i18n/server";
 
 export default async function EditProfilePage() {
@@ -20,6 +21,7 @@ export default async function EditProfilePage() {
     <div className="mx-auto max-w-2xl px-6 lg:px-8 pt-24 pb-16">
       <h1 className="text-3xl font-light mb-12">{t("profile.editProfile")}</h1>
       <ProfileForm user={JSON.parse(JSON.stringify(user))} />
+      <DeleteAccount />
     </div>
   );
 }

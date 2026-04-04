@@ -59,7 +59,15 @@
     "search": "Cercar",
     "searchPlaceholder": "Cerca publicacions...",
     "failedToCreate": "Error en crear la publicació",
-    "signInToConnect": "Inicia sessió per connectar"
+    "signInToConnect": "Inicia sessió per connectar",
+    "editPost": "Editar",
+    "deletePost": "Eliminar",
+    "confirmDelete": "N'estàs segur? S'eliminaran també totes les connexions.",
+    "closed": "Tancat",
+    "closePost": "Tancar publicació",
+    "reopenPost": "Reobrir",
+    "updatePost": "Actualitzar publicació",
+    "failedToUpdate": "Error en actualitzar la publicació"
   },
   "categories": {
     "LEGAL": "Legal",
@@ -82,14 +90,18 @@
     "rejected": "Rebutjat",
     "noPosts": "Encara no hi ha publicacions.",
     "noIncoming": "No hi ha sol·licituds pendents.",
-    "noSent": "No hi ha sol·licituds enviades."
+    "noSent": "No hi ha sol·licituds enviades.",
+    "connections": "Connexions"
   },
   "chat": {
     "title": "Missatges",
     "typeMessage": "Escriu un missatge...",
     "send": "Enviar",
     "noConversations": "Sense converses encara.",
-    "you": "Tu"
+    "you": "Tu",
+    "back": "Tornar",
+    "today": "Avui",
+    "yesterday": "Ahir"
   },
   "profile": {
     "editProfile": "Editar perfil",
@@ -105,7 +117,10 @@
     "preferredLanguage": "Llengua preferida",
     "languages": "Llengües parlades",
     "addLanguage": "Afegeix una llengua...",
-    "addSkill": "Afegeix una habilitat..."
+    "addSkill": "Afegeix una habilitat...",
+    "removePhoto": "Eliminar foto",
+    "deleteAccount": "Eliminar compte",
+    "confirmDeleteAccount": "Això eliminarà permanentment el teu compte i totes les teves dades. No es pot desfer."
   },
   "landing": {
     "heroBefore": "Un espai per a",

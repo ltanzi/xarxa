@@ -21,6 +21,7 @@ export async function GET() {
       },
     },
     orderBy: { createdAt: "desc" },
+    take: 50,
   });
 
   return NextResponse.json(conversations);

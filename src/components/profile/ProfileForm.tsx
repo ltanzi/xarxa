@@ -109,11 +109,27 @@ function updateField(field: string, value: string) {
 
       <div className="flex items-center gap-4">
         <Avatar name={form.name} src={photo} size="lg" />
-        <div>
+        <div className="flex flex-col gap-1">
           <label className="cursor-pointer text-sm text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline">
             {t("profile.uploadPhoto")}
             <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
           </label>
+          {photo && (
+            <button
+              type="button"
+              onClick={async () => {
+                await fetch("/api/profile", {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ ...form, skills, languages, profilePhoto: null }),
+                });
+                setPhoto(null);
+              }}
+              className="text-sm text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline text-left"
+            >
+              {t("profile.removePhoto")}
+            </button>
+          )}
         </div>
       </div>
 

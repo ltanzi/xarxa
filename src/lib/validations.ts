@@ -51,6 +51,7 @@ export const profileSchema = z.object({
   mission: z.string().optional(),
   preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
   languages: z.array(z.string()).optional(),
+  profilePhoto: z.string().nullable().optional(),
 }).superRefine((data, ctx) => {
   if (data.type === "PRIVATE" && !data.surname?.trim()) {
     ctx.addIssue({

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { notifyUser } from "@/lib/socket";
 
 export async function PATCH(
   request: Request,
@@ -54,6 +55,7 @@ export async function PATCH(
         data: { status: "ACCEPTED", conversationId: conversation.id },
       });
 
+      notifyUser(connection.requesterId);
       return NextResponse.json(updated);
     }
 

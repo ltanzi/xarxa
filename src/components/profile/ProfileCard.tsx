@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/Avatar";
+import { getTranslations } from "@/i18n/server";
 
 interface ProfileCardProps {
   user: {
@@ -15,7 +16,9 @@ interface ProfileCardProps {
   };
 }
 
-export function ProfileCard({ user }: ProfileCardProps) {
+export async function ProfileCard({ user }: ProfileCardProps) {
+  const { t } = await getTranslations();
+
   return (
     <div>
       <div className="flex items-center gap-5 mb-8">
@@ -39,7 +42,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
 
       {user.type === "PRIVATE" && user.skills && user.skills.length > 0 && (
         <div className="mt-6">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">Skills</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">{t("profile.skills")}</p>
           <div className="flex flex-wrap gap-2">
             {user.skills.map((skill) => (
               <span key={skill} className="text-xs font-mono border border-fg/20 px-2.5 py-0.5">{skill}</span>
@@ -50,14 +53,14 @@ export function ProfileCard({ user }: ProfileCardProps) {
 
       {user.type === "COLLECTIVE" && user.mission && (
         <div className="mt-6">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">Mission</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">{t("profile.mission")}</p>
           <p className="text-sm text-fg/80">{user.mission}</p>
         </div>
       )}
 
       {user.languages && user.languages.length > 0 && (
         <div className="mt-6">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">Languages</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">{t("profile.languages")}</p>
           <div className="flex flex-wrap gap-2">
             {user.languages.map((lang) => (
               <span key={lang} className="text-xs font-mono border border-fg/20 px-2.5 py-0.5">{lang}</span>
@@ -67,7 +70,7 @@ export function ProfileCard({ user }: ProfileCardProps) {
       )}
 
       <p className="mt-8 text-[11px] text-muted font-mono">
-        Since {new Date(user.createdAt).toLocaleDateString()}
+        {t("profile.memberSince")} {new Date(user.createdAt).toLocaleDateString()}
       </p>
     </div>
   );

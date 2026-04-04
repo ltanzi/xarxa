@@ -14,7 +14,7 @@ export default async function DashboardPage() {
   const myPosts = await prisma.post.findMany({
     where: { authorId: session.user.id },
     orderBy: { createdAt: "desc" },
-    include: { connections: { include: { requester: { select: { id: true, name: true, profilePhoto: true } } } } },
+    include: { connections: { include: { requester: { select: { id: true, name: true, surname: true, profilePhoto: true } } } } },
   });
 
   const sentConnections = await prisma.connection.findMany({

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { InterestButton } from "./InterestButton";
+import { PostActions } from "./PostActions";
 import { getTranslations } from "@/i18n/server";
 
 interface PostPageProps {
@@ -17,9 +18,10 @@ export default async function PostPage({ params }: PostPageProps) {
   const post = await prisma.post.findUnique({
     where: { id },
     include: {
-      author: { select: { id: true, name: true, type: true, profilePhoto: true, location: true } },
+      author: { select: { id: true, name: true, surname: true, type: true, profilePhoto: true, location: true } },
       connections: {
-        select: { id: true, requesterId: true, status: true },
+        select: { id: true, requesterId: true, status: true, requester: { select: { id: true, name: true, surname: true } } },
+        orderBy: { createdAt: "desc" },
       },
     },
   });
@@ -30,6 +32,10 @@ export default async function PostPage({ params }: PostPageProps) {
   const existingConnection = session?.user?.id
     ? post.connections.find((c) => c.requesterId === session.user.id)
     : null;
+
+  const authorDisplayName = post.author.type === "PRIVATE" && post.author.surname
+    ? `${post.author.name} ${post.author.surname}`
+    : post.author.name;
 
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
@@ -47,6 +53,9 @@ export default async function PostPage({ params }: PostPageProps) {
           </span>
           {post.isRemote && (
             <span className="font-mono text-[11px] text-muted">{t("posts.remote")}</span>
+          )}
+          {post.closed && (
+            <span className="font-mono text-[11px] uppercase tracking-wider text-accent">{t("posts.closed")}</span>
           )}
         </div>
 
@@ -83,23 +92,52 @@ export default async function PostPage({ params }: PostPageProps) {
 
         <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
           <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
-            <p className="text-sm">{post.author.name}</p>
+            <p className="text-sm">{authorDisplayName}</p>
             <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type}</p>
           </Link>
 
-          {!isAuthor && session && (
-            <InterestButton
-              postId={post.id}
-              existingStatus={existingConnection?.status || null}
-            />
-          )}
-          {!session && (
-            <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline">
-              {t("posts.signInToConnect")}
-            </Link>
+          {isAuthor ? (
+            <PostActions postId={post.id} closed={post.closed} />
+          ) : (
+            <>
+              {!post.closed && session && (
+                <InterestButton
+                  postId={post.id}
+                  existingStatus={existingConnection?.status || null}
+                />
+              )}
+              {post.closed && session && !isAuthor && (
+                <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{t("posts.closed")}</span>
+              )}
+              {!session && (
+                <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline">
+                  {t("posts.signInToConnect")}
+                </Link>
+              )}
+            </>
           )}
         </div>
       </div>
+
+      {isAuthor && post.connections.length > 0 && (
+        <div className="mt-12 pt-8 border-t border-fg/10">
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-4">
+            {t("dashboard.connections")} ({post.connections.length})
+          </p>
+          <div className="divide-y divide-fg/10">
+            {post.connections.map((conn) => (
+              <div key={conn.id} className="flex items-center justify-between py-3">
+                <Link href={`/profile/${conn.requester.id}`} className="text-sm hover:opacity-60 transition-opacity">
+                  {conn.requester.name}{conn.requester.surname ? ` ${conn.requester.surname}` : ""}
+                </Link>
+                <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                  {t(`dashboard.${conn.status.toLowerCase()}`)}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

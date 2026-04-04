@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { ChatRoom } from "@/components/chat/ChatRoom";
 import { Avatar } from "@/components/ui/Avatar";
 import Link from "next/link";
+import { getTranslations } from "@/i18n/server";
 
 interface ChatRoomPageProps {
   params: Promise<{ conversationId: string }>;
@@ -49,16 +50,18 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
     data: { seenByRequester: true },
   });
 
+  const { t } = await getTranslations();
+
   const otherParticipant = conversation.participants.find(
     (p) => p.id !== session.user.id
   );
 
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-20 pb-4">
-      <div className="bg-white rounded-lg border shadow-sm">
-        <div className="border-b p-4 flex items-center gap-3">
-          <Link href="/chat" className="text-gray-400 hover:text-gray-600">
-            &larr; Back
+      <div>
+        <div className="border-b border-fg/10 p-4 flex items-center gap-3">
+          <Link href="/chat" className="text-muted hover:text-fg transition-colors">
+            &larr; {t("chat.back")}
           </Link>
           {otherParticipant && (
             <Link href={`/profile/${otherParticipant.id}`} className="flex items-center gap-2 hover:opacity-80">

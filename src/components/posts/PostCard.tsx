@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { PostWithAuthor } from "@/types";
+import { Post, User } from "@prisma/client";
+
+type PostWithAuthor = Post & {
+  author: Pick<User, "id" | "name" | "type" | "profilePhoto"> & { surname?: string | null };
+};
 import { getTranslations } from "@/i18n/server";
 
 export async function PostCard({ post }: { post: PostWithAuthor }) {
@@ -20,11 +24,14 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
         {post.isRemote && (
           <span className="font-mono text-[11px] text-muted">{t("posts.remote")}</span>
         )}
+        {post.closed && (
+          <span className="font-mono text-[11px] uppercase tracking-wider text-accent">{t("posts.closed")}</span>
+        )}
       </div>
-      <h3 className="text-lg font-light">{post.title}</h3>
+      <h3 className={`text-lg font-light ${post.closed ? "text-muted" : ""}`}>{post.title}</h3>
       <p className="mt-2 text-sm text-muted line-clamp-2 leading-relaxed max-w-2xl">{post.description}</p>
       <div className="mt-3 flex items-center gap-3 text-xs text-muted">
-        <span>{post.author.name}</span>
+        <span>{post.author.name}{post.author.type === "PRIVATE" && post.author.surname ? ` ${post.author.surname}` : ""}</span>
         {post.location && (
           <>
             <span>&middot;</span>

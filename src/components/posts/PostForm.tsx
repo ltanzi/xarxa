@@ -13,10 +13,25 @@ import { postSchema } from "@/lib/validations";
 const CATEGORY_KEYS = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
 
-export function PostForm() {
+interface PostFormProps {
+  postId?: string;
+  initialData?: {
+    title: string;
+    type: string;
+    category: string;
+    description: string;
+    availability?: string | null;
+    location?: string | null;
+    isRemote: boolean;
+    tags: string[];
+  };
+}
+
+export function PostForm({ postId, initialData }: PostFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
+  const isEditing = !!postId;
 
   const categories = CATEGORY_KEYS.map((value) => ({ value, label: t(`categories.${value}`) }));
   const types = TYPE_KEYS.map((value) => ({
@@ -24,16 +39,16 @@ export function PostForm() {
     label: value === "OFFER" ? t("posts.offer") : t("posts.request"),
   }));
 
-  const initialType = searchParams.get("type") === "REQUEST" ? "REQUEST" : "OFFER";
+  const initialType = initialData?.type || (searchParams.get("type") === "REQUEST" ? "REQUEST" : "OFFER");
   const [form, setForm] = useState({
-    title: "",
+    title: initialData?.title || "",
     type: initialType,
-    category: "OTHER",
-    description: "",
-    availability: "",
-    location: "",
-    isRemote: false,
-    tags: "",
+    category: initialData?.category || "OTHER",
+    description: initialData?.description || "",
+    availability: initialData?.availability || "",
+    location: initialData?.location || "",
+    isRemote: initialData?.isRemote || false,
+    tags: initialData?.tags?.join(", ") || "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState("");
@@ -65,21 +80,25 @@ export function PostForm() {
 
     setLoading(true);
 
-    const res = await fetch("/api/posts", {
-      method: "POST",
+    const url = isEditing ? `/api/posts/${postId}` : "/api/posts";
+    const method = isEditing ? "PATCH" : "POST";
+
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     if (!res.ok) {
       const data = await res.json();
-      setServerError(data.error || t("posts.failedToCreate"));
+      setServerError(data.error || t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
       setLoading(false);
       return;
     }
 
     const post = await res.json();
-    router.push(`/board/${post.id}`);
+    router.push(`/board/${post.id || postId}`);
+    router.refresh();
   }
 
   return (
@@ -143,7 +162,7 @@ export function PostForm() {
               type="checkbox"
               checked={form.isRemote}
               onChange={(e) => updateField("isRemote", e.target.checked)}
-              className="rounded text-indigo-600 focus:ring-indigo-500"
+              className="accent-fg"
             />
             <span className="text-sm">{t("posts.remote")}</span>
           </label>
@@ -159,7 +178,7 @@ export function PostForm() {
       />
 
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? t("common.loading") : t("posts.createPost")}
+        {loading ? t("common.loading") : t(isEditing ? "posts.updatePost" : "posts.createPost")}
       </Button>
     </form>
   );

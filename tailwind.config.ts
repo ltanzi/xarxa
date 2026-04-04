@@ -16,7 +16,7 @@ const config: Config = {
         soft: "#E0DBD2",
       },
       fontFamily: {
-        mono: ["'Inconsolata'", "monospace"],
+        mono: ["var(--font-inconsolata)", "monospace"],
       },
     },
   },

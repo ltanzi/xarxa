@@ -59,7 +59,15 @@
     "search": "Search",
     "searchPlaceholder": "Search posts...",
     "failedToCreate": "Failed to create post",
-    "signInToConnect": "Sign in to connect"
+    "signInToConnect": "Sign in to connect",
+    "editPost": "Edit",
+    "deletePost": "Delete",
+    "confirmDelete": "Are you sure? This will also remove all connections.",
+    "closed": "Closed",
+    "closePost": "Close post",
+    "reopenPost": "Reopen",
+    "updatePost": "Update post",
+    "failedToUpdate": "Failed to update post"
   },
   "categories": {
     "LEGAL": "Legal",
@@ -82,14 +90,18 @@
     "rejected": "Rejected",
     "noPosts": "No posts yet.",
     "noIncoming": "No pending requests.",
-    "noSent": "No sent requests."
+    "noSent": "No sent requests.",
+    "connections": "Connections"
   },
   "chat": {
     "title": "Messages",
     "typeMessage": "Type a message...",
     "send": "Send",
     "noConversations": "No conversations yet.",
-    "you": "You"
+    "you": "You",
+    "back": "Back",
+    "today": "Today",
+    "yesterday": "Yesterday"
   },
   "profile": {
     "editProfile": "Edit profile",
@@ -105,7 +117,10 @@
     "preferredLanguage": "Preferred language",
     "languages": "Spoken languages",
     "addLanguage": "Add a language...",
-    "addSkill": "Add a skill..."
+    "addSkill": "Add a skill...",
+    "removePhoto": "Remove photo",
+    "deleteAccount": "Delete account",
+    "confirmDeleteAccount": "This will permanently delete your account and all your data. This cannot be undone."
   },
   "landing": {
     "heroBefore": "A space for",

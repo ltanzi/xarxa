@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { notifyUser } from "@/lib/socket";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -38,6 +39,8 @@ export async function POST(request: Request) {
       },
     });
 
+    // Notify the post author about the new connection request
+    notifyUser(post.authorId);
     return NextResponse.json(connection, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
