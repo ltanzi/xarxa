@@ -8,6 +8,12 @@ import { Button } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { useTranslation } from "@/i18n/hook";
 
+const LANGUAGES = [
+  { value: "en", label: "English" },
+  { value: "es", label: "Español" },
+  { value: "ca", label: "Català" },
+];
+
 interface ProfileFormProps {
   user: {
     id: string;
@@ -18,6 +24,7 @@ interface ProfileFormProps {
     skills?: string | null;
     mission?: string | null;
     profilePhoto?: string | null;
+    preferredLanguage?: string | null;
   };
 }
 
@@ -31,6 +38,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
     bio: user.bio || "",
     skills: user.skills || "",
     mission: user.mission || "",
+    preferredLanguage: (user.preferredLanguage || "en") as "en" | "es" | "ca",
   });
   const [photo, setPhoto] = useState(user.profilePhoto);
   const [loading, setLoading] = useState(false);
@@ -70,7 +78,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       router.refresh();
     } else {
       const data = await res.json();
-      setError(data.error || "Failed to update profile");
+      setError(data.error || t("common.error"));
     }
     setLoading(false);
   }
@@ -84,7 +92,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
       <div className="flex items-center gap-4">
         <Avatar name={form.name} src={photo} size="lg" />
         <div>
-          <label className="cursor-pointer text-sm text-indigo-600 hover:underline">
+          <label className="cursor-pointer text-sm text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline">
             {t("profile.uploadPhoto")}
             <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
           </label>
@@ -100,19 +108,17 @@ export function ProfileForm({ user }: ProfileFormProps) {
       />
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          {t("auth.accountType")}
-        </label>
-        <div className="flex gap-4">
+        <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">{t("auth.type")}</p>
+        <div className="flex gap-6 text-sm">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="radio"
               value="PRIVATE"
               checked={form.type === "PRIVATE"}
               onChange={(e) => updateField("type", e.target.value)}
-              className="text-indigo-600"
+              className="accent-fg"
             />
-            <span className="text-sm">{t("auth.private")}</span>
+            {t("auth.individual")}
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -120,10 +126,29 @@ export function ProfileForm({ user }: ProfileFormProps) {
               value="COLLECTIVE"
               checked={form.type === "COLLECTIVE"}
               onChange={(e) => updateField("type", e.target.value)}
-              className="text-indigo-600"
+              className="accent-fg"
             />
-            <span className="text-sm">{t("auth.collective")}</span>
+            {t("auth.collective")}
           </label>
+        </div>
+      </div>
+
+      <div>
+        <p className="text-xs font-mono uppercase tracking-wider text-muted mb-3">{t("profile.preferredLanguage")}</p>
+        <div className="flex gap-6 text-sm">
+          {LANGUAGES.map((lang) => (
+            <label key={lang.value} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="radio"
+                name="preferredLanguage"
+                value={lang.value}
+                checked={form.preferredLanguage === lang.value}
+                onChange={(e) => updateField("preferredLanguage", e.target.value)}
+                className="accent-fg"
+              />
+              {lang.label}
+            </label>
+          ))}
         </div>
       </div>
 

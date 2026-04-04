@@ -8,7 +8,7 @@ export async function GET() {
     return NextResponse.json({ unreadMessages: 0, pendingConnections: 0 });
   }
 
-  const [unreadMessages, pendingConnections] = await Promise.all([
+  const [unreadMessages, pendingConnections, acceptedRequests] = await Promise.all([
     prisma.message.count({
       where: {
         conversation: { participants: { some: { id: session.user.id } } },
@@ -22,7 +22,14 @@ export async function GET() {
         status: "PENDING",
       },
     }),
+    prisma.connection.count({
+      where: {
+        requesterId: session.user.id,
+        status: "ACCEPTED",
+        seenByRequester: false,
+      },
+    }),
   ]);
 
-  return NextResponse.json({ unreadMessages, pendingConnections });
+  return NextResponse.json({ unreadMessages, pendingConnections, acceptedRequests });
 }

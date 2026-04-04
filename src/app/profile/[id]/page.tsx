@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { ProfileCard } from "@/components/profile/ProfileCard";
 import { PostCard } from "@/components/posts/PostCard";
 import Link from "next/link";
+import { getTranslations } from "@/i18n/server";
 
 interface ProfilePageProps {
   params: Promise<{ id: string }>;
@@ -12,6 +13,7 @@ interface ProfilePageProps {
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { id } = await params;
   const session = await auth();
+  const { t } = await getTranslations();
 
   const user = await prisma.user.findUnique({
     where: { id },
@@ -36,14 +38,14 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
       {isOwnProfile && (
         <div className="mt-6">
           <Link href="/profile/edit" className="text-sm underline underline-offset-4 hover:no-underline">
-            Edit Profile
+            {t("profile.editProfile")}
           </Link>
         </div>
       )}
 
       {user.posts.length > 0 && (
         <div className="mt-12">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">Posts</p>
+          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">{t("profile.posts")}</p>
           <div className="border-t border-fg/10">
             {user.posts.map((post) => (
               <PostCard key={post.id} post={post} />

@@ -9,25 +9,20 @@ import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n/hook";
 import { postSchema } from "@/lib/validations";
 
-const CATEGORIES = [
-  { value: "LEGAL", label: "Legal" },
-  { value: "EDUCATION", label: "Education" },
-  { value: "HEALTH", label: "Health" },
-  { value: "TECHNOLOGY", label: "Technology" },
-  { value: "MANUAL_WORK", label: "Manual Work" },
-  { value: "TRANSLATION", label: "Translation" },
-  { value: "OTHER", label: "Other" },
-];
-
-const TYPES = [
-  { value: "OFFER", label: "Offer" },
-  { value: "REQUEST", label: "Request" },
-];
+const CATEGORY_KEYS = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
+const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
 
 export function PostForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { t } = useTranslation();
+
+  const categories = CATEGORY_KEYS.map((value) => ({ value, label: t(`categories.${value}`) }));
+  const types = TYPE_KEYS.map((value) => ({
+    value,
+    label: value === "OFFER" ? t("posts.offer") : t("posts.request"),
+  }));
+
   const initialType = searchParams.get("type") === "REQUEST" ? "REQUEST" : "OFFER";
   const [form, setForm] = useState({
     title: "",
@@ -54,7 +49,7 @@ export function PostForm() {
 
     const payload = {
       ...form,
-      tags: form.tags ? form.tags.split(",").map((t) => t.trim()).filter(Boolean) : [],
+      tags: form.tags ? form.tags.split(",").map((tag) => tag.trim()).filter(Boolean) : [],
     };
 
     const parsed = postSchema.safeParse(payload);
@@ -77,7 +72,7 @@ export function PostForm() {
 
     if (!res.ok) {
       const data = await res.json();
-      setServerError(data.error || "Failed to create post");
+      setServerError(data.error || t("posts.failedToCreate"));
       setLoading(false);
       return;
     }
@@ -105,14 +100,14 @@ export function PostForm() {
         <Select
           id="type"
           label={t("posts.type")}
-          options={TYPES}
+          options={types}
           value={form.type}
           onChange={(e) => updateField("type", e.target.value)}
         />
         <Select
           id="category"
           label={t("posts.category")}
-          options={CATEGORIES}
+          options={categories}
           value={form.category}
           onChange={(e) => updateField("category", e.target.value)}
         />
@@ -132,7 +127,7 @@ export function PostForm() {
         label={t("posts.availability")}
         value={form.availability}
         onChange={(e) => updateField("availability", e.target.value)}
-        placeholder="e.g. Weekends, mornings..."
+        placeholder={t("posts.availabilityPlaceholder")}
       />
 
       <div className="grid grid-cols-2 gap-4">

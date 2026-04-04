@@ -44,6 +44,11 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
     data: { read: true },
   });
 
+  await prisma.connection.updateMany({
+    where: { conversationId, requesterId: session.user.id, seenByRequester: false },
+    data: { seenByRequester: true },
+  });
+
   const otherParticipant = conversation.participants.find(
     (p) => p.id !== session.user.id
   );

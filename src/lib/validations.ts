@@ -5,6 +5,7 @@ export const registerSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
   name: z.string().min(1, "Name is required"),
   type: z.enum(["PRIVATE", "COLLECTIVE"]),
+  preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
 });
 
 export const signInSchema = z.object({
@@ -38,6 +39,7 @@ export const profileSchema = z.object({
   bio: z.string().optional(),
   skills: z.string().optional(),
   mission: z.string().optional(),
+  preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
 });
 
 export const messageSchema = z.object({

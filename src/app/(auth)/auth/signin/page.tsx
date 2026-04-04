@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { useTranslation } from "@/i18n/hook";
 
 export default function SignInPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,9 +30,9 @@ export default function SignInPage() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Invalid email or password");
+      setError(t("auth.invalidCredentials"));
     } else {
-      router.push("/board");
+      router.push("/");
       router.refresh();
     }
   }
@@ -38,7 +40,7 @@ export default function SignInPage() {
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-6">
       <div className="w-full max-w-sm">
-        <h1 className="text-3xl font-light mb-12">Sign in</h1>
+        <h1 className="text-3xl font-light mb-12">{t("auth.signInTitle")}</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
@@ -46,7 +48,7 @@ export default function SignInPage() {
           )}
           <Input
             id="email"
-            label="Email"
+            label={t("auth.email")}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -54,30 +56,30 @@ export default function SignInPage() {
           />
           <Input
             id="password"
-            label="Password"
+            label={t("auth.password")}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "..." : "Sign in"}
+            {loading ? "..." : t("auth.signInTitle")}
           </Button>
         </form>
 
         <div className="mt-8 pt-8 border-t border-fg/10">
           <button
-            onClick={() => signIn("google", { callbackUrl: "/board" })}
+            onClick={() => signIn("google", { callbackUrl: "/" })}
             className="w-full text-sm text-muted hover:text-fg transition-colors text-center"
           >
-            Continue with Google
+            {t("auth.continueWithGoogle")}
           </button>
         </div>
 
         <p className="mt-8 text-xs text-muted">
-          No account?{" "}
+          {t("auth.noAccount")}{" "}
           <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline">
-            Join
+            {t("nav.join")}
           </Link>
         </p>
       </div>

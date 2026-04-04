@@ -42,8 +42,9 @@ model User {
   bio          String?
   skills       String?
   mission      String?
-  profilePhoto String?
-  createdAt    DateTime  @default(now())
+  profilePhoto      String?
+  preferredLanguage String?
+  createdAt         DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
 
   posts         Post[]
@@ -71,9 +72,10 @@ model Post {
 }
 
 model Connection {
-  id        String           @id @default(cuid())
-  status    ConnectionStatus @default(PENDING)
-  createdAt DateTime         @default(now())
+  id              String           @id @default(cuid())
+  status          ConnectionStatus @default(PENDING)
+  createdAt       DateTime         @default(now())
+  seenByRequester Boolean          @default(false)
 
   postId    String
   post      Post    @relation(fields: [postId], references: [id])

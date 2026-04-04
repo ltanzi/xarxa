@@ -1,0 +1,118 @@
+{
+  "common": {
+    "appName": "xarxa",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "done": "Listo"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "chat": "Chat",
+    "profile": "Perfil",
+    "signIn": "Iniciar sesión",
+    "join": "Unirse",
+    "exit": "Salir"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "signInTitle": "Iniciar sesión",
+    "registerTitle": "Unirse",
+    "type": "Tipo de cuenta",
+    "individual": "Individuo",
+    "collective": "Colectivo",
+    "alreadyHaveAccount": "¿Ya tienes cuenta?",
+    "noAccount": "¿Sin cuenta?",
+    "continueWithGoogle": "Continuar con Google",
+    "createAccount": "Crear cuenta",
+    "invalidCredentials": "Correo o contraseña incorrectos",
+    "registrationFailed": "Error al registrarse",
+    "signInAfterRegisterFailed": "Cuenta creada pero el inicio de sesión falló. Por favor inicia sesión manualmente."
+  },
+  "posts": {
+    "offer": "Oferta",
+    "request": "Solicitud",
+    "offers": "Ofertas",
+    "requests": "Solicitudes",
+    "all": "Todo",
+    "createPost": "Crear publicación",
+    "newPost": "Nueva publicación",
+    "title": "Título",
+    "type": "Tipo",
+    "category": "Categoría",
+    "description": "Descripción",
+    "availability": "Disponibilidad",
+    "availabilityPlaceholder": "Ej. Fines de semana, mañanas...",
+    "location": "Ubicación",
+    "remote": "Remoto",
+    "tags": "Etiquetas",
+    "tagsHelp": "Separadas por comas",
+    "interested": "Me interesa",
+    "interestSent": "Interés enviado",
+    "connected": "Conectado",
+    "noResults": "No se encontraron publicaciones.",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar publicaciones...",
+    "failedToCreate": "Error al crear la publicación",
+    "signInToConnect": "Inicia sesión para conectar"
+  },
+  "categories": {
+    "LEGAL": "Legal",
+    "EDUCATION": "Educación",
+    "HEALTH": "Salud",
+    "TECHNOLOGY": "Tecnología",
+    "MANUAL_WORK": "Trabajo manual",
+    "TRANSLATION": "Traducción",
+    "OTHER": "Otro"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "myPosts": "Mis publicaciones",
+    "incoming": "Recibidas",
+    "sent": "Enviadas",
+    "accept": "Aceptar",
+    "decline": "Rechazar",
+    "pending": "Pendiente",
+    "accepted": "Aceptado",
+    "rejected": "Rechazado",
+    "noPosts": "Aún no hay publicaciones.",
+    "noIncoming": "No hay solicitudes pendientes.",
+    "noSent": "No hay solicitudes enviadas."
+  },
+  "chat": {
+    "title": "Mensajes",
+    "typeMessage": "Escribe un mensaje...",
+    "send": "Enviar",
+    "noConversations": "Sin conversaciones aún.",
+    "you": "Tú"
+  },
+  "profile": {
+    "editProfile": "Editar perfil",
+    "bio": "Biografía",
+    "skills": "Habilidades",
+    "mission": "Misión",
+    "location": "Ubicación",
+    "photo": "Foto de perfil",
+    "uploadPhoto": "Subir foto",
+    "memberSince": "Miembro desde",
+    "posts": "Publicaciones",
+    "preferredLanguage": "Idioma preferido"
+  },
+  "landing": {
+    "heroBefore": "Un espacio de",
+    "heroEmphasis": "ayuda",
+    "heroAfter": "colectiva",
+    "subtitle": "Individuos y organizaciones ofreciendo y solicitando ayuda voluntaria. Sin dinero.",
+    "browseBoard": "Ver el tablón",
+    "askHelp": "Pedir ayuda",
+    "offerHelp": "Ofrecer ayuda",
+    "recentPosts": "Publicaciones recientes",
+    "seeAll": "Ver todo"
+  },
+  "board": {
+    "title": "Tablón"
+  }
+}

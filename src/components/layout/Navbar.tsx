@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/i18n/hook";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 function NotifBadge({ count }: { count: number }) {
   if (count === 0) return null;
@@ -15,8 +17,10 @@ function NotifBadge({ count }: { count: number }) {
 
 export function Navbar() {
   const { data: session } = useSession();
+  const { t } = useTranslation();
   const [unread, setUnread] = useState(0);
   const [pending, setPending] = useState(0);
+  const [accepted, setAccepted] = useState(0);
 
   useEffect(() => {
     if (!session) return;
@@ -26,6 +30,7 @@ export function Navbar() {
         const data = await res.json();
         setUnread(data.unreadMessages);
         setPending(data.pendingConnections);
+        setAccepted(data.acceptedRequests);
       }
     }
     fetchCounts();
@@ -45,11 +50,11 @@ export function Navbar() {
             {session && (
               <div className="flex items-center gap-6">
                 <Link href="/dashboard" className="text-muted hover:text-fg transition-colors">
-                  Dashboard
-                  <NotifBadge count={pending} />
+                  {t("nav.dashboard")}
+                  <NotifBadge count={pending + accepted} />
                 </Link>
                 <Link href="/chat" className="text-muted hover:text-fg transition-colors">
-                  Chat
+                  {t("nav.chat")}
                   <NotifBadge count={unread} />
                 </Link>
               </div>
@@ -58,10 +63,10 @@ export function Navbar() {
             {session && (
               <div className="flex items-center gap-6 border-l border-fg/10 pl-8">
                 <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
-                  Profile
+                  {t("nav.profile")}
                 </Link>
                 <button onClick={() => signOut({ callbackUrl: "/" })} className="text-muted hover:text-fg transition-colors">
-                  Exit
+                  {t("nav.exit")}
                 </button>
               </div>
             )}
@@ -69,13 +74,17 @@ export function Navbar() {
             {!session && (
               <div className="flex items-center gap-6">
                 <Link href="/auth/signin" className="text-muted hover:text-fg transition-colors">
-                  Sign in
+                  {t("nav.signIn")}
                 </Link>
                 <Link href="/auth/register" className="text-fg underline underline-offset-4 hover:no-underline transition-all">
-                  Join
+                  {t("nav.join")}
                 </Link>
               </div>
             )}
+
+            <div className="border-l border-fg/10 pl-6">
+              <LanguageSwitcher />
+            </div>
           </div>
         </div>
       </div>

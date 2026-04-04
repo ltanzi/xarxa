@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { PostWithAuthor } from "@/types";
+import { getTranslations } from "@/i18n/server";
 
-export function PostCard({ post }: { post: PostWithAuthor }) {
+export async function PostCard({ post }: { post: PostWithAuthor }) {
+  const { t } = await getTranslations();
+
   return (
     <Link
       href={`/board/${post.id}`}
@@ -9,13 +12,13 @@ export function PostCard({ post }: { post: PostWithAuthor }) {
     >
       <div className="flex items-baseline gap-4 mb-2">
         <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-          {post.type}
+          {t(`posts.${post.type.toLowerCase()}`)}
         </span>
         <span className="font-mono text-[11px] text-muted">
-          {post.category.replace("_", " ")}
+          {t(`categories.${post.category}`)}
         </span>
         {post.isRemote && (
-          <span className="font-mono text-[11px] text-muted">Remote</span>
+          <span className="font-mono text-[11px] text-muted">{t("posts.remote")}</span>
         )}
       </div>
       <h3 className="text-lg font-light">{post.title}</h3>

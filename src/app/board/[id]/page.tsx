@@ -3,6 +3,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { InterestButton } from "./InterestButton";
+import { getTranslations } from "@/i18n/server";
 
 interface PostPageProps {
   params: Promise<{ id: string }>;
@@ -11,6 +12,7 @@ interface PostPageProps {
 export default async function PostPage({ params }: PostPageProps) {
   const { id } = await params;
   const session = await auth();
+  const { t } = await getTranslations();
 
   const post = await prisma.post.findUnique({
     where: { id },
@@ -32,19 +34,19 @@ export default async function PostPage({ params }: PostPageProps) {
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
       <Link href="/board" className="text-xs text-muted hover:text-fg transition-colors font-mono uppercase tracking-wider">
-        &larr; Board
+        &larr; {t("board.title")}
       </Link>
 
       <div className="mt-8">
         <div className="flex items-baseline gap-4 mb-6">
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-            {post.type}
+            {t(`posts.${post.type.toLowerCase()}`)}
           </span>
           <span className="font-mono text-[11px] text-muted">
-            {post.category.replace("_", " ")}
+            {t(`categories.${post.category}`)}
           </span>
           {post.isRemote && (
-            <span className="font-mono text-[11px] text-muted">Remote</span>
+            <span className="font-mono text-[11px] text-muted">{t("posts.remote")}</span>
           )}
         </div>
 
@@ -56,13 +58,13 @@ export default async function PostPage({ params }: PostPageProps) {
           <div className="mt-8 flex gap-8 text-sm text-muted">
             {post.availability && (
               <div>
-                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">Availability</span>
+                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">{t("posts.availability")}</span>
                 <span className="text-fg">{post.availability}</span>
               </div>
             )}
             {post.location && (
               <div>
-                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">Location</span>
+                <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">{t("posts.location")}</span>
                 <span className="text-fg">{post.location}</span>
               </div>
             )}
@@ -93,7 +95,7 @@ export default async function PostPage({ params }: PostPageProps) {
           )}
           {!session && (
             <Link href="/auth/signin" className="text-sm text-muted underline underline-offset-4 hover:no-underline">
-              Sign in to connect
+              {t("posts.signInToConnect")}
             </Link>
           )}
         </div>

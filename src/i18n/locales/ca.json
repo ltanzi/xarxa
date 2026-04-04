@@ -1,0 +1,118 @@
+{
+  "common": {
+    "appName": "xarxa",
+    "save": "Desar",
+    "cancel": "Cancel·lar",
+    "loading": "Carregant...",
+    "error": "Alguna cosa ha anat malament",
+    "done": "Fet"
+  },
+  "nav": {
+    "dashboard": "Tauler",
+    "chat": "Xat",
+    "profile": "Perfil",
+    "signIn": "Iniciar sessió",
+    "join": "Unir-se",
+    "exit": "Sortir"
+  },
+  "auth": {
+    "email": "Correu electrònic",
+    "password": "Contrasenya",
+    "name": "Nom",
+    "signInTitle": "Iniciar sessió",
+    "registerTitle": "Unir-se",
+    "type": "Tipus de compte",
+    "individual": "Individual",
+    "collective": "Col·lectiu",
+    "alreadyHaveAccount": "Ja tens compte?",
+    "noAccount": "Sense compte?",
+    "continueWithGoogle": "Continua amb Google",
+    "createAccount": "Crear compte",
+    "invalidCredentials": "Correu o contrasenya incorrectes",
+    "registrationFailed": "Error en el registre",
+    "signInAfterRegisterFailed": "Compte creat però l'inici de sessió ha fallat. Si us plau inicia sessió manualment."
+  },
+  "posts": {
+    "offer": "Oferta",
+    "request": "Sol·licitud",
+    "offers": "Ofertes",
+    "requests": "Sol·licituds",
+    "all": "Tot",
+    "createPost": "Crear publicació",
+    "newPost": "Nova publicació",
+    "title": "Títol",
+    "type": "Tipus",
+    "category": "Categoria",
+    "description": "Descripció",
+    "availability": "Disponibilitat",
+    "availabilityPlaceholder": "Ex. Caps de setmana, matins...",
+    "location": "Ubicació",
+    "remote": "Remot",
+    "tags": "Etiquetes",
+    "tagsHelp": "Separades per comes",
+    "interested": "M'interessa",
+    "interestSent": "Interès enviat",
+    "connected": "Connectat",
+    "noResults": "No s'han trobat publicacions.",
+    "search": "Cercar",
+    "searchPlaceholder": "Cerca publicacions...",
+    "failedToCreate": "Error en crear la publicació",
+    "signInToConnect": "Inicia sessió per connectar"
+  },
+  "categories": {
+    "LEGAL": "Legal",
+    "EDUCATION": "Educació",
+    "HEALTH": "Salut",
+    "TECHNOLOGY": "Tecnologia",
+    "MANUAL_WORK": "Treball manual",
+    "TRANSLATION": "Traducció",
+    "OTHER": "Altre"
+  },
+  "dashboard": {
+    "title": "Tauler",
+    "myPosts": "Les meves publicacions",
+    "incoming": "Rebudes",
+    "sent": "Enviades",
+    "accept": "Acceptar",
+    "decline": "Rebutjar",
+    "pending": "Pendent",
+    "accepted": "Acceptat",
+    "rejected": "Rebutjat",
+    "noPosts": "Encara no hi ha publicacions.",
+    "noIncoming": "No hi ha sol·licituds pendents.",
+    "noSent": "No hi ha sol·licituds enviades."
+  },
+  "chat": {
+    "title": "Missatges",
+    "typeMessage": "Escriu un missatge...",
+    "send": "Enviar",
+    "noConversations": "Sense converses encara.",
+    "you": "Tu"
+  },
+  "profile": {
+    "editProfile": "Editar perfil",
+    "bio": "Biografia",
+    "skills": "Habilitats",
+    "mission": "Missió",
+    "location": "Ubicació",
+    "photo": "Foto de perfil",
+    "uploadPhoto": "Pujar foto",
+    "memberSince": "Membre des de",
+    "posts": "Publicacions",
+    "preferredLanguage": "Llengua preferida"
+  },
+  "landing": {
+    "heroBefore": "Un espai per a",
+    "heroEmphasis": "l'ajuda",
+    "heroAfter": "col·lectiva",
+    "subtitle": "Individus i organitzacions oferint i sol·licitant ajuda voluntària. Sense diners.",
+    "browseBoard": "Veure el tauler",
+    "askHelp": "Demanar ajuda",
+    "offerHelp": "Oferir ajuda",
+    "recentPosts": "Publicacions recents",
+    "seeAll": "Veure tot"
+  },
+  "board": {
+    "title": "Tauler"
+  }
+}

@@ -3,10 +3,16 @@
 import { SessionProvider } from "next-auth/react";
 import { I18nProvider } from "@/i18n/provider";
 
-export function Providers({ children }: { children: React.ReactNode }) {
+export function Providers({
+  children,
+  initialLocale = "en",
+}: {
+  children: React.ReactNode;
+  initialLocale?: string;
+}) {
   return (
     <SessionProvider>
-      <I18nProvider>{children}</I18nProvider>
+      <I18nProvider initialLocale={initialLocale}>{children}</I18nProvider>
     </SessionProvider>
   );
 }
