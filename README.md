@@ -4,13 +4,16 @@ A volunteer service exchange platform where individuals and collectives can offe
 
 ## Features
 
-- **User registration** — sign up as a private individual or collective (NGO, association, etc.)
-- **Service posts** — create offers or requests across categories (Legal, Education, Health, Technology, Manual Work, Translation)
-- **Public board** — browse, search, and filter posts by type, category, and location
+- **User registration** — sign up as a private individual or collective (NGO, association, etc.), with Google OAuth support
+- **Service posts** — create, edit, close, reopen, and delete offers or requests across categories (Legal, Education, Health, Technology, Manual Work, Translation)
+- **Public board** — browse with pagination, search by title/description/tags, filter by type and category
 - **Matching** — express interest in a post; when accepted, a private chat opens automatically
-- **Real-time chat** — one-to-one messaging with Socket.io
-- **Profiles** — customizable profiles with photo upload, skills/mission, and location
-- **i18n-ready** — English default, with translation structure for adding languages
+- **Real-time chat** — one-to-one messaging with Socket.io, message deduplication, reconnection, date separators
+- **Real-time notifications** — Socket.io push notifications (no polling), badge counts on Dashboard and Chat
+- **Profiles** — photo upload (auto-resized to 512x512 WebP), skills, spoken languages, city autocomplete (OpenStreetMap), surname for individuals
+- **Chat management** — delete conversations with inline confirmation
+- **Account deletion** — full cascading deletion of all user data
+- **i18n** — full support for English, Spanish, and Catalan with cookie-based locale switching
 
 ## Tech Stack
 
@@ -20,7 +23,7 @@ A volunteer service exchange platform where individuals and collectives can offe
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Database | PostgreSQL |
-| ORM | Prisma |
+| ORM | Prisma 7 (with `@prisma/adapter-pg`) |
 | Auth | NextAuth.js v5 (credentials + Google OAuth) |
 | Real-time | Socket.io |
 | Validation | Zod |
@@ -38,7 +41,7 @@ A volunteer service exchange platform where individuals and collectives can offe
 
 1. **Clone the repository**
    ```bash
-   git clone <repo-url>
+   git clone https://github.com/ltanzi/xarxa.git
    cd xarxa
    ```
 
@@ -77,10 +80,26 @@ A volunteer service exchange platform where individuals and collectives can offe
 
 ### Demo Accounts
 
-| Email | Password | Type |
-|-------|----------|------|
-| maria@example.com | password123 | Private individual |
-| info@associaciolliure.org | password123 | Collective |
+All passwords: `password123`
+
+| Email | Name | Type | Location |
+|-------|------|------|----------|
+| maria@example.com | Maria Garcia | Private | Barcelona |
+| info@associaciolliure.org | Associació Lliure | Collective | Girona |
+| pau@example.com | Pau Riera | Private | Tarragona |
+| laia@example.com | Laia Font | Private | Barcelona |
+| hola@colectiuverd.cat | Col·lectiu Verd | Collective | Vic |
+
+### Deploy script
+
+For quick updates (pull + install + start):
+
+```bash
+./deploy.sh          # pull latest and start
+./deploy.sh --fresh  # reset database and reseed
+```
+
+See [docs/deploy-macbook.md](docs/deploy-macbook.md) for full deployment guide.
 
 ## Environment Variables
 
