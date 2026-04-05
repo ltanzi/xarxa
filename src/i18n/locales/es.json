@@ -101,7 +101,9 @@
     "you": "Tú",
     "back": "Volver",
     "today": "Hoy",
-    "yesterday": "Ayer"
+    "yesterday": "Ayer",
+    "confirmDelete": "¿Eliminar esta conversación y todos sus mensajes?",
+    "deleteChat": "Eliminar"
   },
   "profile": {
     "editProfile": "Editar perfil",

@@ -101,7 +101,9 @@
     "you": "Tu",
     "back": "Tornar",
     "today": "Avui",
-    "yesterday": "Ahir"
+    "yesterday": "Ahir",
+    "confirmDelete": "Eliminar aquesta conversa i tots els seus missatges?",
+    "deleteChat": "Eliminar"
   },
   "profile": {
     "editProfile": "Editar perfil",
