@@ -51,33 +51,39 @@ export default function RegisterPage() {
 
     setLoading(true);
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
 
-    if (!res.ok) {
-      const data = await res.json();
-      const errorKey = data.error === "EMAIL_EXISTS" ? "auth.emailExists" : "auth.registrationFailed";
-      setServerError(t(errorKey));
+      if (!res.ok) {
+        const data = await res.json();
+        const errorKey = data.error === "EMAIL_EXISTS" ? "auth.emailExists" : "auth.registrationFailed";
+        setServerError(t(errorKey));
+        setLoading(false);
+        return;
+      }
+
+      const result = await signIn("credentials", {
+        email: form.email,
+        password: form.password,
+        redirect: false,
+      });
+
       setLoading(false);
-      return;
-    }
 
-    const result = await signIn("credentials", {
-      email: form.email,
-      password: form.password,
-      redirect: false,
-    });
-
-    setLoading(false);
-
-    if (result?.error) {
-      setServerError(t("auth.signInAfterRegisterFailed"));
-    } else {
-      router.push("/");
-      router.refresh();
+      if (result?.error) {
+        setServerError(t("auth.signInAfterRegisterFailed"));
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch (e) {
+      console.error("[register]", e);
+      setServerError(t("auth.registrationFailed"));
+      setLoading(false);
     }
   }
 

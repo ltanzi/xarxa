@@ -40,7 +40,7 @@ export const postSchema = z.object({
   availability: z.string().max(200).optional(),
   location: z.string().max(200).optional(),
   isRemote: z.boolean().optional(),
-  tags: z.array(z.string().max(50)).optional(),
+  tags: z.array(z.string().max(50)).max(20).optional(),
 });
 
 export const profileSchema = z.object({
@@ -49,10 +49,10 @@ export const profileSchema = z.object({
   type: z.enum(["PRIVATE", "COLLECTIVE"]),
   location: z.string().max(200).optional(),
   bio: z.string().max(1000).optional(),
-  skills: z.array(z.string().max(50)).optional(),
+  skills: z.array(z.string().max(50)).max(20).optional(),
   mission: z.string().max(1000).optional(),
   preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
-  languages: z.array(z.string().max(50)).optional(),
+  languages: z.array(z.string().max(50)).max(20).optional(),
   profilePhoto: z.string().nullable().optional(),
 }).superRefine(requireSurnameForPrivate);
 

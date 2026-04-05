@@ -27,5 +27,5 @@ export type ConversationWithDetails = Conversation & {
 };
 
 export type MessageWithSender = Message & {
-  sender: Pick<User, "id" | "name" | "profilePhoto">;
+  sender: ParticipantSummary;
 };

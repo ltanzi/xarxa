@@ -43,9 +43,11 @@ export function InterestButton({ postId, existingStatus }: InterestButtonProps) 
         setStatus("PENDING");
         router.refresh();
       } else {
+        console.error("[InterestButton]", res.status, await res.text().catch(() => ""));
         setError(true);
       }
-    } catch {
+    } catch (e) {
+      console.error("[InterestButton]", e);
       setError(true);
     }
     setLoading(false);

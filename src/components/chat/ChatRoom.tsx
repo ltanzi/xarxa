@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -28,17 +28,13 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant }: 
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(false);
 
-  const todayStr = useMemo(() => new Date().toDateString(), []);
-  const yesterdayStr = useMemo(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 1);
-    return d.toDateString();
-  }, []);
-
   function getDateLabel(dateStr: string): string {
-    const ds = new Date(dateStr).toDateString();
-    if (ds === todayStr) return t("chat.today");
-    if (ds === yesterdayStr) return t("chat.yesterday");
+    const date = new Date(dateStr);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (date.toDateString() === today.toDateString()) return t("chat.today");
+    if (date.toDateString() === yesterday.toDateString()) return t("chat.yesterday");
     return formatDate(dateStr);
   }
 

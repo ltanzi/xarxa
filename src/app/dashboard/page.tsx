@@ -33,11 +33,15 @@ export default async function DashboardPage() {
       .map((c) => c.id)
   );
 
-  // Mark newly accepted connections as seen
-  await prisma.connection.updateMany({
-    where: { requesterId: session.user.id, status: "ACCEPTED", seenByRequester: false },
-    data: { seenByRequester: true },
-  });
+  // Mark newly accepted connections as seen (non-critical — don't crash page if this fails)
+  try {
+    await prisma.connection.updateMany({
+      where: { requesterId: session.user.id, status: "ACCEPTED", seenByRequester: false },
+      data: { seenByRequester: true },
+    });
+  } catch (e) {
+    console.error("[dashboard] mark-as-seen failed:", e);
+  }
 
   const incomingConnections = myPosts.flatMap((post) =>
     post.connections
