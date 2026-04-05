@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { MessageBubble } from "./MessageBubble";
+import { Avatar } from "@/components/ui/Avatar";
 import { io, Socket } from "socket.io-client";
 import { useTranslation } from "@/i18n/hook";
 
@@ -22,12 +25,19 @@ function getDateLabel(dateStr: string, t: (key: string) => string): string {
 
   if (date.toDateString() === today.toDateString()) return t("chat.today");
   if (date.toDateString() === yesterday.toDateString()) return t("chat.yesterday");
-  return date.toLocaleDateString();
+  return date.toLocaleDateString("en-GB");
 }
 
-export function ChatRoom({ conversationId, initialMessages }: { conversationId: string; initialMessages: Message[] }) {
+interface Participant {
+  id: string;
+  name: string;
+  profilePhoto: string | null;
+}
+
+export function ChatRoom({ conversationId, initialMessages, otherParticipant, backLabel }: { conversationId: string; initialMessages: Message[]; otherParticipant: Participant | null; backLabel: string }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
+  const router = useRouter();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
@@ -127,6 +137,20 @@ export function ChatRoom({ conversationId, initialMessages }: { conversationId: 
 
   return (
     <div className="flex flex-col h-[calc(100dvh-10rem)]">
+      <div className="border-b border-fg/10 p-4 flex items-center gap-3">
+        <button
+          onClick={() => { router.push("/chat"); router.refresh(); }}
+          className="text-muted hover:text-fg transition-colors"
+        >
+          &larr; {backLabel}
+        </button>
+        {otherParticipant && (
+          <Link href={`/profile/${otherParticipant.id}`} className="flex items-center gap-2 hover:opacity-80">
+            <Avatar name={otherParticipant.name} src={otherParticipant.profilePhoto} size="sm" />
+            <span className="font-medium text-sm">{otherParticipant.name}</span>
+          </Link>
+        )}
+      </div>
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg) => {
           const dateLabel = getDateLabel(msg.createdAt, t);

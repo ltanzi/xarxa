@@ -40,7 +40,7 @@ export default async function DashboardPage() {
 
   const incomingConnections = myPosts.flatMap((post) =>
     post.connections
-      .filter((c) => c.status === "PENDING")
+      .filter((c) => c.status === "PENDING" || c.status === "ACCEPTED")
       .map((c) => ({ ...c, post }))
   );
 
@@ -60,7 +60,20 @@ export default async function DashboardPage() {
                   <p className="text-sm">{conn.requester.name}</p>
                   <p className="text-xs text-muted">{conn.post.title}</p>
                 </div>
-                <ConnectionActions connectionId={conn.id} />
+                {conn.status === "PENDING" ? (
+                  <ConnectionActions connectionId={conn.id} />
+                ) : (
+                  <div className="flex items-center gap-4">
+                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                      {t(`dashboard.${conn.status.toLowerCase()}`)}
+                    </span>
+                    {conn.conversationId && (
+                      <Link href={`/chat/${conn.conversationId}`} className="text-xs underline underline-offset-4 hover:no-underline">
+                        {t("nav.chat")}
+                      </Link>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>

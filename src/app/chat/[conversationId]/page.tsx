@@ -2,8 +2,6 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { ChatRoom } from "@/components/chat/ChatRoom";
-import { Avatar } from "@/components/ui/Avatar";
-import Link from "next/link";
 import { getTranslations } from "@/i18n/server";
 
 interface ChatRoomPageProps {
@@ -59,20 +57,11 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-20 pb-4">
       <div>
-        <div className="border-b border-fg/10 p-4 flex items-center gap-3">
-          <Link href="/chat" className="text-muted hover:text-fg transition-colors">
-            &larr; {t("chat.back")}
-          </Link>
-          {otherParticipant && (
-            <Link href={`/profile/${otherParticipant.id}`} className="flex items-center gap-2 hover:opacity-80">
-              <Avatar name={otherParticipant.name} src={otherParticipant.profilePhoto} size="sm" />
-              <span className="font-medium text-sm">{otherParticipant.name}</span>
-            </Link>
-          )}
-        </div>
         <ChatRoom
           conversationId={conversationId}
           initialMessages={JSON.parse(JSON.stringify(messages))}
+          otherParticipant={otherParticipant ? JSON.parse(JSON.stringify(otherParticipant)) : null}
+          backLabel={t("chat.back")}
         />
       </div>
     </div>

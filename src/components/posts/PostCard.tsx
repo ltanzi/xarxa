@@ -34,6 +34,8 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
             <span>{post.location}</span>
           </>
         )}
+        <span>&middot;</span>
+        <span>{new Date(post.createdAt).toLocaleDateString("en-GB")}</span>
       </div>
     </Link>
   );

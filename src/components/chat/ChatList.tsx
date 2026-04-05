@@ -71,7 +71,7 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
                   </div>
                   {last && (
                     <span className="text-xs text-muted">
-                      {new Date(last.createdAt).toLocaleDateString()}
+                      {new Date(last.createdAt).toLocaleDateString("en-GB")}
                     </span>
                   )}
                 </div>

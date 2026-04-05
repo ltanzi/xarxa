@@ -86,6 +86,9 @@ async function main() {
     },
   });
 
+  // Helper to create dates relative to now
+  const daysAgo = (d: number) => new Date(Date.now() - d * 86400000);
+
   // Maria's posts
   await prisma.post.create({
     data: {
@@ -97,6 +100,7 @@ async function main() {
       isRemote: true,
       tags: ["translation", "catalan", "documents", "bureaucracy"],
       authorId: maria.id,
+      createdAt: daysAgo(18),
     },
   });
 
@@ -111,6 +115,7 @@ async function main() {
       isRemote: true,
       tags: ["legal", "immigration", "contracts"],
       authorId: maria.id,
+      createdAt: daysAgo(12),
     },
   });
 
@@ -125,6 +130,7 @@ async function main() {
       location: "Tarragona",
       tags: ["bicycle", "repair", "mechanics"],
       authorId: pau.id,
+      createdAt: daysAgo(25),
     },
   });
 
@@ -138,6 +144,7 @@ async function main() {
       location: "Tarragona",
       tags: ["astronomy", "stargazing", "existentialism"],
       authorId: pau.id,
+      createdAt: daysAgo(3),
     },
   });
 
@@ -152,6 +159,7 @@ async function main() {
       location: "Barcelona",
       tags: ["baking", "sourdough", "bread"],
       authorId: laia.id,
+      createdAt: daysAgo(7),
     },
   });
 
@@ -165,6 +173,7 @@ async function main() {
       isRemote: true,
       tags: ["mushrooms", "foraging", "mycology", "nature"],
       authorId: laia.id,
+      createdAt: daysAgo(1),
     },
   });
 
@@ -178,6 +187,7 @@ async function main() {
       location: "Barcelona",
       tags: ["knitting", "crafts", "community"],
       authorId: laia.id,
+      createdAt: daysAgo(30),
     },
   });
 
@@ -192,6 +202,7 @@ async function main() {
       location: "Girona",
       tags: ["technology", "elderly", "workshops", "volunteering"],
       authorId: associacio.id,
+      createdAt: daysAgo(10),
     },
   });
 
@@ -204,6 +215,7 @@ async function main() {
       isRemote: true,
       tags: ["web development", "nonprofit", "website"],
       authorId: associacio.id,
+      createdAt: daysAgo(21),
     },
   });
 
@@ -218,6 +230,7 @@ async function main() {
       location: "Vic",
       tags: ["gardening", "plants", "urban garden"],
       authorId: colectiu.id,
+      createdAt: daysAgo(5),
     },
   });
 
@@ -231,6 +244,7 @@ async function main() {
       location: "Vic",
       tags: ["gardening", "community", "volunteering", "manual work"],
       authorId: colectiu.id,
+      createdAt: daysAgo(14),
     },
   });
 
@@ -244,6 +258,7 @@ async function main() {
       location: "Vic",
       tags: ["composting", "workshop", "sustainability"],
       authorId: colectiu.id,
+      createdAt: daysAgo(8),
     },
   });
 
