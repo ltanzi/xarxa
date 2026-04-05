@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -8,6 +8,8 @@ import { MessageBubble } from "./MessageBubble";
 import { Avatar } from "@/components/ui/Avatar";
 import { io, Socket } from "socket.io-client";
 import { useTranslation } from "@/i18n/hook";
+import { formatDate } from "@/lib/date";
+import { ParticipantSummary } from "@/types";
 
 interface Message {
   id: string;
@@ -17,24 +19,7 @@ interface Message {
   sender: { id: string; name: string; profilePhoto: string | null };
 }
 
-function getDateLabel(dateStr: string, t: (key: string) => string): string {
-  const date = new Date(dateStr);
-  const today = new Date();
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  if (date.toDateString() === today.toDateString()) return t("chat.today");
-  if (date.toDateString() === yesterday.toDateString()) return t("chat.yesterday");
-  return date.toLocaleDateString("en-GB");
-}
-
-interface Participant {
-  id: string;
-  name: string;
-  profilePhoto: string | null;
-}
-
-export function ChatRoom({ conversationId, initialMessages, otherParticipant, backLabel }: { conversationId: string; initialMessages: Message[]; otherParticipant: Participant | null; backLabel: string }) {
+export function ChatRoom({ conversationId, initialMessages, otherParticipant }: { conversationId: string; initialMessages: Message[]; otherParticipant: ParticipantSummary | null }) {
   const { data: session } = useSession();
   const { t } = useTranslation();
   const router = useRouter();
@@ -42,6 +27,20 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant, ba
   const [newMessage, setNewMessage] = useState("");
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState(false);
+
+  const todayStr = useMemo(() => new Date().toDateString(), []);
+  const yesterdayStr = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 1);
+    return d.toDateString();
+  }, []);
+
+  function getDateLabel(dateStr: string): string {
+    const ds = new Date(dateStr).toDateString();
+    if (ds === todayStr) return t("chat.today");
+    if (ds === yesterdayStr) return t("chat.yesterday");
+    return formatDate(dateStr);
+  }
 
   useEffect(() => {
     window.dispatchEvent(new CustomEvent("notifications:refresh"));
@@ -142,7 +141,7 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant, ba
           onClick={() => { router.push("/chat"); router.refresh(); }}
           className="text-muted hover:text-fg transition-colors"
         >
-          &larr; {backLabel}
+          &larr; {t("chat.back")}
         </button>
         {otherParticipant && (
           <Link href={`/profile/${otherParticipant.id}`} className="flex items-center gap-2 hover:opacity-80">
@@ -153,7 +152,7 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant, ba
       </div>
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {messages.map((msg) => {
-          const dateLabel = getDateLabel(msg.createdAt, t);
+          const dateLabel = getDateLabel(msg.createdAt);
           const showDateSeparator = dateLabel !== lastDateLabel;
           lastDateLabel = dateLabel;
 
@@ -168,8 +167,6 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant, ba
               )}
               <MessageBubble
                 content={msg.content}
-                senderName={msg.sender.name}
-                senderPhoto={msg.sender.profilePhoto}
                 isOwn={msg.senderId === session?.user?.id}
                 timestamp={msg.createdAt}
               />

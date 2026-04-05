@@ -1,7 +1,7 @@
+import { formatTime } from "@/lib/date";
+
 interface MessageBubbleProps {
   content: string;
-  senderName: string;
-  senderPhoto?: string | null;
   isOwn: boolean;
   timestamp: string;
 }
@@ -14,7 +14,7 @@ export function MessageBubble({ content, isOwn, timestamp }: MessageBubbleProps)
           {content}
         </p>
         <p className="text-[10px] text-muted mt-1">
-          {new Date(timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false })}
+          {formatTime(timestamp)}
         </p>
       </div>
     </div>

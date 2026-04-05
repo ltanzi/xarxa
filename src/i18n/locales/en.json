@@ -32,6 +32,7 @@
     "createAccount": "Create account",
     "invalidCredentials": "Incorrect email or password",
     "registrationFailed": "Registration failed",
+    "emailExists": "This email is already registered",
     "signInAfterRegisterFailed": "Account created but sign in failed. Please sign in manually."
   },
   "posts": {
@@ -49,6 +50,8 @@
     "availability": "Availability",
     "availabilityPlaceholder": "E.g. Weekends, mornings...",
     "location": "Location",
+    "locationOptional": "Location (optional)",
+    "availabilityOptional": "Availability (optional)",
     "remote": "Remote",
     "tags": "Tags",
     "tagsHelp": "Comma separated",
@@ -89,8 +92,10 @@
     "accepted": "Accepted",
     "rejected": "Rejected",
     "noPosts": "No posts yet.",
-    "noIncoming": "No pending requests.",
+    "noPostsCta": "Create your first post",
+    "noIncoming": "When someone shows interest in your posts, it will appear here.",
     "noSent": "No sent requests.",
+    "noSentCta": "Browse the board",
     "connections": "Connections"
   },
   "chat": {
@@ -98,6 +103,7 @@
     "typeMessage": "Type a message...",
     "send": "Send",
     "noConversations": "No conversations yet.",
+    "noConversationsCta": "Browse the board to find someone",
     "you": "You",
     "back": "Back",
     "today": "Today",

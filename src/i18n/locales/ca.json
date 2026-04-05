@@ -32,6 +32,7 @@
     "createAccount": "Crear compte",
     "invalidCredentials": "Correu o contrasenya incorrectes",
     "registrationFailed": "Error en el registre",
+    "emailExists": "Aquest correu ja està registrat",
     "signInAfterRegisterFailed": "Compte creat però l'inici de sessió ha fallat. Si us plau inicia sessió manualment."
   },
   "posts": {
@@ -49,6 +50,8 @@
     "availability": "Disponibilitat",
     "availabilityPlaceholder": "Ex. Caps de setmana, matins...",
     "location": "Ubicació",
+    "locationOptional": "Ubicació (opcional)",
+    "availabilityOptional": "Disponibilitat (opcional)",
     "remote": "Remot",
     "tags": "Etiquetes",
     "tagsHelp": "Separades per comes",
@@ -89,8 +92,10 @@
     "accepted": "Acceptat",
     "rejected": "Rebutjat",
     "noPosts": "Encara no hi ha publicacions.",
-    "noIncoming": "No hi ha sol·licituds pendents.",
+    "noPostsCta": "Crea la teva primera publicació",
+    "noIncoming": "Quan algú mostri interès en les teves publicacions, apareixerà aquí.",
     "noSent": "No hi ha sol·licituds enviades.",
+    "noSentCta": "Explora el tauler",
     "connections": "Connexions"
   },
   "chat": {
@@ -98,6 +103,7 @@
     "typeMessage": "Escriu un missatge...",
     "send": "Enviar",
     "noConversations": "Sense converses encara.",
+    "noConversationsCta": "Explora el tauler per trobar algú",
     "you": "Tu",
     "back": "Tornar",
     "today": "Avui",

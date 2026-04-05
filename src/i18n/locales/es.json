@@ -32,6 +32,7 @@
     "createAccount": "Crear cuenta",
     "invalidCredentials": "Correo o contraseña incorrectos",
     "registrationFailed": "Error al registrarse",
+    "emailExists": "Este correo ya está registrado",
     "signInAfterRegisterFailed": "Cuenta creada pero el inicio de sesión falló. Por favor inicia sesión manualmente."
   },
   "posts": {
@@ -49,6 +50,8 @@
     "availability": "Disponibilidad",
     "availabilityPlaceholder": "Ej. Fines de semana, mañanas...",
     "location": "Ubicación",
+    "locationOptional": "Ubicación (opcional)",
+    "availabilityOptional": "Disponibilidad (opcional)",
     "remote": "Remoto",
     "tags": "Etiquetas",
     "tagsHelp": "Separadas por comas",
@@ -89,8 +92,10 @@
     "accepted": "Aceptado",
     "rejected": "Rechazado",
     "noPosts": "Aún no hay publicaciones.",
-    "noIncoming": "No hay solicitudes pendientes.",
+    "noPostsCta": "Crea tu primera publicación",
+    "noIncoming": "Cuando alguien muestre interés en tus publicaciones, aparecerá aquí.",
     "noSent": "No hay solicitudes enviadas.",
+    "noSentCta": "Explora el tablón",
     "connections": "Conexiones"
   },
   "chat": {
@@ -98,6 +103,7 @@
     "typeMessage": "Escribe un mensaje...",
     "send": "Enviar",
     "noConversations": "Sin conversaciones aún.",
+    "noConversationsCta": "Explora el tablón para encontrar a alguien",
     "you": "Tú",
     "back": "Volver",
     "today": "Hoy",

@@ -11,19 +11,20 @@ export default async function DashboardPage() {
 
   const { t } = await getTranslations();
 
-  const myPosts = await prisma.post.findMany({
-    where: { authorId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    include: { connections: { include: { requester: { select: { id: true, name: true, surname: true, profilePhoto: true } } } } },
-  });
-
-  const sentConnections = await prisma.connection.findMany({
-    where: { requesterId: session.user.id },
-    orderBy: { createdAt: "desc" },
-    include: {
-      post: { include: { author: { select: { id: true, name: true, profilePhoto: true } } } },
-    },
-  });
+  const [myPosts, sentConnections] = await Promise.all([
+    prisma.post.findMany({
+      where: { authorId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: { connections: { include: { requester: { select: { id: true, name: true, surname: true, profilePhoto: true } } } } },
+    }),
+    prisma.connection.findMany({
+      where: { requesterId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      include: {
+        post: { include: { author: { select: { id: true, name: true, profilePhoto: true } } } },
+      },
+    }),
+  ]);
 
   // Collect IDs of newly accepted connections before marking them seen
   const newlyAccepted = new Set(
@@ -83,7 +84,10 @@ export default async function DashboardPage() {
       <section className="mb-16">
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">{t("dashboard.sent")}</p>
         {sentConnections.length === 0 ? (
-          <p className="text-sm text-muted">{t("dashboard.noSent")}</p>
+          <div>
+            <p className="text-sm text-muted">{t("dashboard.noSent")}</p>
+            <Link href="/board" className="text-xs underline underline-offset-4 hover:no-underline mt-2 inline-block">{t("dashboard.noSentCta")}</Link>
+          </div>
         ) : (
           <div className="divide-y divide-fg/10">
             {sentConnections.map((conn) => (
@@ -111,7 +115,10 @@ export default async function DashboardPage() {
       <section>
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">{t("dashboard.myPosts")}</p>
         {myPosts.length === 0 ? (
-          <p className="text-sm text-muted">{t("dashboard.noPosts")}</p>
+          <div>
+            <p className="text-sm text-muted">{t("dashboard.noPosts")}</p>
+            <Link href="/board/new" className="text-xs underline underline-offset-4 hover:no-underline mt-2 inline-block">{t("dashboard.noPostsCta")}</Link>
+          </div>
         ) : (
           <div className="divide-y divide-fg/10">
             {myPosts.map((post) => (

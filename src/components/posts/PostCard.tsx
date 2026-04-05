@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PostWithAuthor } from "@/types";
+import { formatDate } from "@/lib/date";
 import { getTranslations } from "@/i18n/server";
 
 export async function PostCard({ post }: { post: PostWithAuthor }) {
@@ -35,7 +36,7 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
           </>
         )}
         <span>&middot;</span>
-        <span>{new Date(post.createdAt).toLocaleDateString("en-GB")}</span>
+        <span>{formatDate(post.createdAt)}</span>
       </div>
     </Link>
   );

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/i18n/hook";
+import { formatDate } from "@/lib/date";
 
 interface ConversationSummary {
   id: string;
@@ -40,7 +41,12 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
   }
 
   if (conversations.length === 0) {
-    return <p className="text-sm text-muted">{t("chat.noConversations")}</p>;
+    return (
+      <div>
+        <p className="text-sm text-muted">{t("chat.noConversations")}</p>
+        <Link href="/board" className="text-xs underline underline-offset-4 hover:no-underline mt-2 inline-block">{t("chat.noConversationsCta")}</Link>
+      </div>
+    );
   }
 
   return (
@@ -71,7 +77,7 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
                   </div>
                   {last && (
                     <span className="text-xs text-muted">
-                      {new Date(last.createdAt).toLocaleDateString("en-GB")}
+                      {formatDate(last.createdAt)}
                     </span>
                   )}
                 </div>

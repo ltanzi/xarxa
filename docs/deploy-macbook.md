@@ -35,9 +35,15 @@ If `.env.example` doesn't exist, create `.env` manually:
 
 ```
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/xarxa
-NEXTAUTH_SECRET=change-me-to-any-random-string
+NEXTAUTH_SECRET=<generate with: openssl rand -base64 32>
 NEXTAUTH_URL=http://localhost:3000
 ```
+
+Generate a proper secret:
+```bash
+openssl rand -base64 32
+```
+Copy the output and paste it as the `NEXTAUTH_SECRET` value.
 
 For `NEXTAUTH_SECRET`, any random string works. You can generate one with:
 ```bash

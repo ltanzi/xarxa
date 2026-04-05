@@ -4,6 +4,8 @@ export type { User, Post, Connection, Conversation, Message };
 
 export type AuthorSummary = Pick<User, "id" | "name" | "surname" | "type" | "profilePhoto">;
 
+export type ParticipantSummary = Pick<User, "id" | "name" | "profilePhoto">;
+
 export type AuthorDetail = AuthorSummary & Pick<User, "location">;
 
 export type PostWithAuthor = Post & {
@@ -20,7 +22,7 @@ export type ConnectionWithDetails = Connection & {
 };
 
 export type ConversationWithDetails = Conversation & {
-  participants: Pick<User, "id" | "name" | "profilePhoto">[];
+  participants: ParticipantSummary[];
   messages: Message[];
 };
 

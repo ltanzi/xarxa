@@ -2,7 +2,6 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { ChatRoom } from "@/components/chat/ChatRoom";
-import { getTranslations } from "@/i18n/server";
 
 interface ChatRoomPageProps {
   params: Promise<{ conversationId: string }>;
@@ -48,8 +47,6 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
     data: { seenByRequester: true },
   });
 
-  const { t } = await getTranslations();
-
   const otherParticipant = conversation.participants.find(
     (p) => p.id !== session.user.id
   );
@@ -61,7 +58,6 @@ export default async function ChatRoomPage({ params }: ChatRoomPageProps) {
           conversationId={conversationId}
           initialMessages={JSON.parse(JSON.stringify(messages))}
           otherParticipant={otherParticipant ? JSON.parse(JSON.stringify(otherParticipant)) : null}
-          backLabel={t("chat.back")}
         />
       </div>
     </div>

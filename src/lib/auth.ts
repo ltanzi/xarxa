@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
+// import Google from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
-import { cookies } from "next/headers";
+// import { cookies } from "next/headers";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -35,33 +35,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    }),
+    // Google({
+    //   clientId: process.env.GOOGLE_CLIENT_ID,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    // }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email! },
-        });
-        if (!existingUser) {
-          const created = await prisma.user.create({
-            data: {
-              email: user.email!,
-              name: user.name || "User",
-              type: "PRIVATE",
-            },
-          });
-          user.id = created.id;
-          // Set a cookie so middleware can redirect to profile setup
-          const cookieStore = await cookies();
-          cookieStore.set("new_oauth_user", "1", { path: "/", maxAge: 120 });
-        } else {
-          user.id = existingUser.id;
-        }
-      }
+    async signIn({ user /*, account */ }) {
+      // if (account?.provider === "google") {
+      //   const existingUser = await prisma.user.findUnique({
+      //     where: { email: user.email! },
+      //   });
+      //   if (!existingUser) {
+      //     const created = await prisma.user.create({
+      //       data: {
+      //         email: user.email!,
+      //         name: user.name || "User",
+      //         type: "PRIVATE",
+      //       },
+      //     });
+      //     user.id = created.id;
+      //     const cookieStore = await cookies();
+      //     cookieStore.set("new_oauth_user", "1", { path: "/", maxAge: 120 });
+      //   } else {
+      //     user.id = existingUser.id;
+      //   }
+      // }
       return true;
     },
     async jwt({ token, user }) {

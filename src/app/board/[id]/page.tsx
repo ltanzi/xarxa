@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { formatDate } from "@/lib/date";
 import { InterestButton } from "./InterestButton";
 import { PostActions } from "./PostActions";
 import { getTranslations } from "@/i18n/server";
@@ -20,7 +21,7 @@ export default async function PostPage({ params }: PostPageProps) {
     include: {
       author: { select: { id: true, name: true, surname: true, type: true, profilePhoto: true, location: true } },
       connections: {
-        select: { id: true, requesterId: true, status: true, requester: { select: { id: true, name: true, surname: true } } },
+        select: { id: true, requesterId: true, status: true, conversationId: true, requester: { select: { id: true, name: true, surname: true } } },
         orderBy: { createdAt: "desc" },
       },
     },
@@ -93,7 +94,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
           <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
             <p className="text-sm">{authorDisplayName}</p>
-            <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type}</p>
+            <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type} &middot; {formatDate(post.createdAt)}</p>
           </Link>
 
           {isAuthor ? (
@@ -130,9 +131,16 @@ export default async function PostPage({ params }: PostPageProps) {
                 <Link href={`/profile/${conn.requester.id}`} className="text-sm hover:opacity-60 transition-opacity">
                   {conn.requester.name}{conn.requester.surname ? ` ${conn.requester.surname}` : ""}
                 </Link>
-                <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-                  {t(`dashboard.${conn.status.toLowerCase()}`)}
-                </span>
+                <div className="flex items-center gap-4">
+                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                    {t(`dashboard.${conn.status.toLowerCase()}`)}
+                  </span>
+                  {conn.status === "ACCEPTED" && conn.conversationId && (
+                    <Link href={`/chat/${conn.conversationId}`} className="text-xs underline underline-offset-4 hover:no-underline">
+                      {t("nav.chat")}
+                    </Link>
+                  )}
+                </div>
               </div>
             ))}
           </div>

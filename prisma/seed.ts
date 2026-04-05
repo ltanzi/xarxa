@@ -86,7 +86,6 @@ async function main() {
     },
   });
 
-  // Helper to create dates relative to now
   const daysAgo = (d: number) => new Date(Date.now() - d * 86400000);
 
   // Maria's posts

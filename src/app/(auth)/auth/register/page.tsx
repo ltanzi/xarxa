@@ -59,7 +59,8 @@ export default function RegisterPage() {
 
     if (!res.ok) {
       const data = await res.json();
-      setServerError(data.error || t("auth.registrationFailed"));
+      const errorKey = data.error === "EMAIL_EXISTS" ? "auth.emailExists" : "auth.registrationFailed";
+      setServerError(t(errorKey));
       setLoading(false);
       return;
     }

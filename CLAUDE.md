@@ -111,6 +111,11 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - Board search: matches tags in addition to title/description
 - Mobile fixes: `100dvh`, tighter gaps on filters, flex-wrap on type filter row
 - Replaced all native `confirm()` dialogs with inline confirmation UI
+- Dashboard: accepted connections stay visible in Incoming section with chat link (not just pending)
+- Chat back button uses `router.push` + `router.refresh()` to bust Next.js 14 client-side Router Cache (unread dot clears immediately)
+- 24h time format and DD/MM/YYYY date format across chat and board
+- Post cards show creation date
+- Seed posts have varied `createdAt` dates spread across last month
 
 ### Phase 3 — Performance
 - Real-time notifications via Socket.io: replaced 30s polling with user rooms (`user:{id}`), `notifyUser()` helper in `src/lib/socket.ts` for API routes

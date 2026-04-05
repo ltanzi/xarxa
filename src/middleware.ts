@@ -5,13 +5,13 @@ import { getToken } from "next-auth/jwt";
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // New OAuth user redirect — send to profile setup
-  const isNewOAuth = request.cookies.get("new_oauth_user")?.value === "1";
-  if (isNewOAuth && pathname !== "/profile/edit") {
-    const response = NextResponse.redirect(new URL("/profile/edit", request.url));
-    response.cookies.delete("new_oauth_user");
-    return response;
-  }
+  // Google OAuth redirect — commented out while Google login is disabled
+  // const isNewOAuth = request.cookies.get("new_oauth_user")?.value === "1";
+  // if (isNewOAuth && pathname !== "/profile/edit") {
+  //   const response = NextResponse.redirect(new URL("/profile/edit", request.url));
+  //   response.cookies.delete("new_oauth_user");
+  //   return response;
+  // }
 
   const token = await getToken({
     req: request,

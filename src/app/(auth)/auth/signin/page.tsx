@@ -69,6 +69,7 @@ export default function SignInPage() {
               onClick={() => setShowPassword((v) => !v)}
               className="absolute right-0 bottom-2 text-muted hover:text-fg transition-colors"
               tabIndex={-1}
+              aria-label="Toggle password visibility"
             >
               {showPassword ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -89,6 +90,7 @@ export default function SignInPage() {
           </Button>
         </form>
 
+        {/* Google OAuth — commented out for now
         <div className="mt-8 pt-8 border-t border-fg/10">
           <button
             onClick={() => signIn("google", { callbackUrl: "/" })}
@@ -97,6 +99,7 @@ export default function SignInPage() {
             {t("auth.continueWithGoogle")}
           </button>
         </div>
+        */}
 
         <p className="mt-8 text-xs text-muted">
           {t("auth.noAccount")}{" "}

@@ -145,7 +145,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
 
       <Input
         id="availability"
-        label={t("posts.availability")}
+        label={t("posts.availabilityOptional")}
         value={form.availability}
         onChange={(e) => updateField("availability", e.target.value)}
         placeholder={t("posts.availabilityPlaceholder")}
@@ -153,7 +153,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <LocationInput
-          label={t("posts.location")}
+          label={t("posts.locationOptional")}
           value={form.location}
           onChange={(val) => updateField("location", val)}
         />

@@ -34,14 +34,14 @@ export function ConnectionActions({ connectionId }: { connectionId: string }) {
         disabled={loading}
         className="underline underline-offset-4 hover:no-underline disabled:opacity-40"
       >
-        {t("dashboard.accept")}
+        {loading ? "..." : t("dashboard.accept")}
       </button>
       <button
         onClick={() => handleAction("REJECTED")}
         disabled={loading}
         className="text-muted hover:text-fg transition-colors disabled:opacity-40"
       >
-        {t("dashboard.decline")}
+        {loading ? "..." : t("dashboard.decline")}
       </button>
     </div>
   );

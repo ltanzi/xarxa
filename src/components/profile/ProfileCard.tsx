@@ -1,4 +1,5 @@
 import { Avatar } from "@/components/ui/Avatar";
+import { formatDate } from "@/lib/date";
 import { getTranslations } from "@/i18n/server";
 
 interface ProfileCardProps {
@@ -70,7 +71,7 @@ export async function ProfileCard({ user }: ProfileCardProps) {
       )}
 
       <p className="mt-8 text-[11px] text-muted font-mono">
-        {t("profile.memberSince")} {new Date(user.createdAt).toLocaleDateString()}
+        {t("profile.memberSince")} {formatDate(user.createdAt)}
       </p>
     </div>
   );
