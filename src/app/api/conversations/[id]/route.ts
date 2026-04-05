@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { notifyUser } from "@/lib/socket";
 
 export async function DELETE(
   _request: Request,
@@ -19,6 +20,7 @@ export async function DELETE(
         id,
         participants: { some: { id: session.user.id } },
       },
+      select: { id: true, participants: { select: { id: true } } },
     });
 
     if (!conversation) {
@@ -26,15 +28,31 @@ export async function DELETE(
     }
 
     await prisma.$transaction(async (tx) => {
-      // Disconnect the connection that references this conversation
       await tx.connection.updateMany({
         where: { conversationId: id },
         data: { conversationId: null },
       });
 
       await tx.message.deleteMany({ where: { conversationId: id } });
+
+      await tx.conversation.update({
+        where: { id },
+        data: {
+          participants: {
+            disconnect: conversation.participants.map((p) => ({ id: p.id })),
+          },
+        },
+      });
+
       await tx.conversation.delete({ where: { id } });
     });
+
+    // Notify the other participant
+    for (const p of conversation.participants) {
+      if (p.id !== session.user.id) {
+        notifyUser(p.id);
+      }
+    }
 
     return NextResponse.json({ ok: true });
   } catch (e) {
