@@ -65,7 +65,8 @@ export async function PATCH(
     });
 
     return NextResponse.json(updated);
-  } catch {
+  } catch (e) {
+    console.error("[connections PATCH error]", e);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

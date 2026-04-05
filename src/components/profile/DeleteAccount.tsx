@@ -20,7 +20,8 @@ export function DeleteAccount() {
         return;
       }
       setError(true);
-    } catch {
+    } catch (err) {
+      console.error("[DeleteAccount] delete failed:", err);
       setError(true);
     }
     setLoading(false);

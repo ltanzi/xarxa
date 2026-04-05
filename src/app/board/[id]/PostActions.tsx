@@ -28,7 +28,8 @@ export function PostActions({ postId, closed }: PostActionsProps) {
         return;
       }
       setError(true);
-    } catch {
+    } catch (err) {
+      console.error("[PostActions] delete failed:", err);
       setError(true);
     }
     setLoading(false);
@@ -49,7 +50,8 @@ export function PostActions({ postId, closed }: PostActionsProps) {
       } else {
         setError(true);
       }
-    } catch {
+    } catch (err) {
+      console.error("[PostActions] toggle failed:", err);
       setError(true);
     }
     setLoading(false);
