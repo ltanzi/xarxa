@@ -6,6 +6,7 @@ import { useTranslation } from "@/i18n/hook";
 
 const CATEGORY_KEYS = ["", "LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["", "OFFER", "REQUEST"] as const;
+const URGENCY_KEYS = ["", "LOW", "NORMAL", "URGENT"] as const;
 
 export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
   const router = useRouter();
@@ -29,6 +30,11 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
   const categories = CATEGORY_KEYS.map((value) => ({
     value,
     label: value === "" ? t("posts.all") : t(`categories.${value}`),
+  }));
+
+  const urgencies = URGENCY_KEYS.map((value) => ({
+    value,
+    label: value === "" ? t("posts.all") : t(`urgency.${value}`),
   }));
 
   function pushSearch(newTags: string[], currentInput: string) {
@@ -146,6 +152,24 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
             }`}
           >
             {cat.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Urgency filter */}
+      <div className="flex items-baseline gap-3 sm:gap-6 font-mono text-xs uppercase tracking-widest flex-wrap">
+        <span className="text-fg shrink-0 font-medium">{t("posts.urgency")}</span>
+        {urgencies.map((urg) => (
+          <button
+            key={urg.value}
+            onClick={() => updateFilter("urgency", urg.value)}
+            className={`transition-colors ${
+              (searchParams.get("urgency") || "") === urg.value
+                ? "text-fg underline underline-offset-4"
+                : "text-fg/50 hover:text-fg"
+            }`}
+          >
+            {urg.label}
           </button>
         ))}
       </div>

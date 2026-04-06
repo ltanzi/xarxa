@@ -28,6 +28,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
           title: post.title,
           type: post.type,
           category: post.category,
+          urgency: post.urgency,
           description: post.description,
           availability: post.availability,
           location: post.location,

@@ -18,6 +18,11 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
         <span className="font-mono text-[11px] text-muted">
           {t(`categories.${post.category}`)}
         </span>
+        {post.urgency !== "NORMAL" && (
+          <span className={`font-mono text-[11px] uppercase tracking-wider ${post.urgency === "URGENT" ? "text-accent" : "text-muted"}`}>
+            {t(`urgency.${post.urgency}`)}
+          </span>
+        )}
         {post.isRemote && (
           <span className="font-mono text-[11px] text-muted">{t("posts.remote")}</span>
         )}

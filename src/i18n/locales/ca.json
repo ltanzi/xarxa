@@ -52,6 +52,7 @@
     "location": "Ubicació",
     "locationOptional": "Ubicació (opcional)",
     "availabilityOptional": "Disponibilitat (opcional)",
+    "urgency": "Urgència",
     "remote": "Remot",
     "tags": "Etiquetes",
     "tagsHelp": "Separades per comes",
@@ -80,6 +81,11 @@
     "MANUAL_WORK": "Treball manual",
     "TRANSLATION": "Traducció",
     "OTHER": "Altre"
+  },
+  "urgency": {
+    "LOW": "Sense pressa",
+    "NORMAL": "Normal",
+    "URGENT": "Urgent"
   },
   "dashboard": {
     "title": "Tauler",

@@ -52,6 +52,7 @@
     "location": "Ubicación",
     "locationOptional": "Ubicación (opcional)",
     "availabilityOptional": "Disponibilidad (opcional)",
+    "urgency": "Urgencia",
     "remote": "Remoto",
     "tags": "Etiquetas",
     "tagsHelp": "Separadas por comas",
@@ -80,6 +81,11 @@
     "MANUAL_WORK": "Trabajo manual",
     "TRANSLATION": "Traducción",
     "OTHER": "Otro"
+  },
+  "urgency": {
+    "LOW": "Sin prisa",
+    "NORMAL": "Normal",
+    "URGENT": "Urgente"
   },
   "dashboard": {
     "title": "Panel",

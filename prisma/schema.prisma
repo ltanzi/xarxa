@@ -26,6 +26,12 @@ enum Category {
   OTHER
 }
 
+enum Urgency {
+  LOW
+  NORMAL
+  URGENT
+}
+
 enum ConnectionStatus {
   PENDING
   ACCEPTED
@@ -61,6 +67,7 @@ model Post {
   type         PostType
   category     Category
   description  String
+  urgency      Urgency  @default(NORMAL)
   availability String?
   location     String?
   isRemote     Boolean  @default(false)

@@ -100,6 +100,7 @@ async function main() {
       tags: ["translation", "catalan", "documents", "bureaucracy"],
       authorId: maria.id,
       createdAt: daysAgo(18),
+      urgency: "LOW",
     },
   });
 
@@ -144,6 +145,7 @@ async function main() {
       tags: ["astronomy", "stargazing", "existentialism"],
       authorId: pau.id,
       createdAt: daysAgo(3),
+      urgency: "LOW",
     },
   });
 
@@ -173,6 +175,7 @@ async function main() {
       tags: ["mushrooms", "foraging", "mycology", "nature"],
       authorId: laia.id,
       createdAt: daysAgo(1),
+      urgency: "URGENT",
     },
   });
 
@@ -202,6 +205,7 @@ async function main() {
       tags: ["technology", "elderly", "workshops", "volunteering"],
       authorId: associacio.id,
       createdAt: daysAgo(10),
+      urgency: "URGENT",
     },
   });
 
@@ -215,6 +219,7 @@ async function main() {
       tags: ["web development", "nonprofit", "website"],
       authorId: associacio.id,
       createdAt: daysAgo(21),
+      urgency: "LOW",
     },
   });
 
@@ -244,6 +249,7 @@ async function main() {
       tags: ["gardening", "community", "volunteering", "manual work"],
       authorId: colectiu.id,
       createdAt: daysAgo(14),
+      urgency: "URGENT",
     },
   });
 

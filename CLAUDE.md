@@ -60,7 +60,8 @@ Note: `docker compose up -d` (without specifying service) tries to build the app
 - **Navbar**: No Board link. Grouped: [xarxa] ... [Dashboard Chat] | [Profile Exit] | [en/es/ca]
 - **Notification badges** on Dashboard (pending + accepted-unseen connections) and Chat (unread messages), polling every 30s
 - **Chat list**: Three visual states — unread (dot + bold name + bright preview), needs reply (normal), waiting/sent last (muted + "You:" prefix)
-- **Posts**: Flat list style, mono labels for type/category
+- **Posts**: Flat list style, mono labels for type/category/urgency
+- **Select component**: Custom dropdown (not native `<select>`) matching LocationInput style — keyboard navigable, styled popup
 - **Minimal editorial** aesthetic — no rounded corners, no colored badges, no shadows
 
 ## Design Branch: `design-b-dark-mode`
@@ -116,6 +117,8 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - 24h time format and DD/MM/YYYY date format across chat and board
 - Post cards show creation date
 - Seed posts have varied `createdAt` dates spread across last month
+- Post urgency: LOW/NORMAL/URGENT — shown on cards and detail page, filterable on board, stored as Prisma `Urgency` enum
+- Custom Select component: replaced native `<select>` with styled dropdown matching LocationInput (keyboard nav, consistent UI)
 
 ### Phase 3 — Performance
 - Real-time notifications via Socket.io: replaced 30s polling with user rooms (`user:{id}`), `notifyUser()` helper in `src/lib/socket.ts` for API routes

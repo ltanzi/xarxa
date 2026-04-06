@@ -12,12 +12,14 @@ import { postSchema } from "@/lib/validations";
 
 const CATEGORY_KEYS = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
+const URGENCY_KEYS = ["LOW", "NORMAL", "URGENT"] as const;
 
 interface PostFormData {
   title: string;
   type: string;
   category: string;
   description: string;
+  urgency?: string | null;
   availability?: string | null;
   location?: string | null;
   isRemote: boolean;
@@ -39,12 +41,14 @@ export function PostForm({ postId, initialData }: PostFormProps) {
     value,
     label: value === "OFFER" ? t("posts.offer") : t("posts.request"),
   }));
+  const urgencies = URGENCY_KEYS.map((value) => ({ value, label: t(`urgency.${value}`) }));
 
   const initialType = initialData?.type || (searchParams.get("type") === "REQUEST" ? "REQUEST" : "OFFER");
   const [form, setForm] = useState({
     title: initialData?.title || "",
     type: initialType,
     category: initialData?.category || "OTHER",
+    urgency: initialData?.urgency || "NORMAL",
     description: initialData?.description || "",
     availability: initialData?.availability || "",
     location: initialData?.location || "",
@@ -117,7 +121,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         required
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <Select
           id="type"
           label={t("posts.type")}
@@ -131,6 +135,13 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           options={categories}
           value={form.category}
           onChange={(e) => updateField("category", e.target.value)}
+        />
+        <Select
+          id="urgency"
+          label={t("posts.urgency")}
+          options={urgencies}
+          value={form.urgency}
+          onChange={(e) => updateField("urgency", e.target.value)}
         />
       </div>
 

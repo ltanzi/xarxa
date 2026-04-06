@@ -52,6 +52,7 @@
     "location": "Location",
     "locationOptional": "Location (optional)",
     "availabilityOptional": "Availability (optional)",
+    "urgency": "Urgency",
     "remote": "Remote",
     "tags": "Tags",
     "tagsHelp": "Comma separated",
@@ -80,6 +81,11 @@
     "MANUAL_WORK": "Manual work",
     "TRANSLATION": "Translation",
     "OTHER": "Other"
+  },
+  "urgency": {
+    "LOW": "No rush",
+    "NORMAL": "Normal",
+    "URGENT": "Urgent"
   },
   "dashboard": {
     "title": "Dashboard",

@@ -37,6 +37,7 @@ export const postSchema = z.object({
     "OTHER",
   ]),
   description: z.string().min(1, "Description is required").max(3000),
+  urgency: z.enum(["LOW", "NORMAL", "URGENT"]).optional(),
   availability: z.string().max(200).optional(),
   location: z.string().max(200).optional(),
   isRemote: z.boolean().optional(),
