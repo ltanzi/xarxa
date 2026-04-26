@@ -20,6 +20,7 @@
   "auth": {
     "email": "Correo electrónico",
     "password": "Contraseña",
+    "passwordHint": "Mínimo 8 caracteres, una mayúscula y un símbolo especial",
     "name": "Nombre",
     "signInTitle": "Iniciar sesión",
     "registerTitle": "Unirse",

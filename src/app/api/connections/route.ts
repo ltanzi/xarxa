@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { notifyUser } from "@/lib/socket";
+import { connectionRequestSchema } from "@/lib/validations";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -10,11 +11,15 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { postId } = await request.json();
-
-    if (!postId) {
-      return NextResponse.json({ error: "postId is required" }, { status: 400 });
+    const body = await request.json();
+    const parsed = connectionRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: parsed.error.issues[0].message },
+        { status: 400 }
+      );
     }
+    const { postId } = parsed.data;
 
     const post = await prisma.post.findUnique({ where: { id: postId } });
     if (!post) {

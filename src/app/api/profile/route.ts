@@ -16,7 +16,7 @@ export async function PATCH(request: Request) {
 
     if (!parsed.success) {
       return NextResponse.json(
-        { error: parsed.error.errors[0].message },
+        { error: parsed.error.issues[0].message },
         { status: 400 }
       );
     }
@@ -24,6 +24,21 @@ export async function PATCH(request: Request) {
     const user = await prisma.user.update({
       where: { id: session.user.id },
       data: parsed.data,
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        surname: true,
+        type: true,
+        location: true,
+        bio: true,
+        skills: true,
+        mission: true,
+        profilePhoto: true,
+        languages: true,
+        preferredLanguage: true,
+        createdAt: true,
+      },
     });
 
     revalidatePath(`/profile/${session.user.id}`);

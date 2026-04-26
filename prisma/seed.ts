@@ -13,309 +13,167 @@ async function main() {
   await prisma.post.deleteMany();
   await prisma.user.deleteMany();
 
-  const hashedPassword = await bcrypt.hash("password123", 12);
+  const hashedPassword = await bcrypt.hash("Password1!", 12);
+  const daysAgo = (d: number) => new Date(Date.now() - d * 86400000);
 
-  const maria = await prisma.user.create({
+  // Collectives
+  const foc = await prisma.user.create({
     data: {
-      email: "maria@example.com",
+      email: "info@foc.cat",
       password: hashedPassword,
-      name: "Maria",
-      surname: "Garcia",
-      type: "PRIVATE",
-      location: "Barcelona",
-      bio: "Retired lawyer. I now spend my time translating things nobody asked me to translate and giving unsolicited legal advice at family dinners.",
-      skills: ["Translation", "Legal advice", "Overthinking"],
-      languages: ["Catalan", "Spanish", "English"],
-      preferredLanguage: "ca",
-    },
-  });
-
-  const associacio = await prisma.user.create({
-    data: {
-      email: "info@associaciolliure.org",
-      password: hashedPassword,
-      name: "Associació Lliure",
+      name: "F O C",
       type: "COLLECTIVE",
-      location: "Girona",
-      bio: "We bridge the digital divide. Mostly by explaining what a PDF is, over and over.",
-      mission: "Digital inclusion for all — because everyone deserves the right to accidentally reply-all.",
-      skills: ["Workshops", "Tech support", "Patience"],
-    },
-  });
-
-  const pau = await prisma.user.create({
-    data: {
-      email: "pau@example.com",
-      password: hashedPassword,
-      name: "Pau",
-      surname: "Riera",
-      type: "PRIVATE",
-      location: "Tarragona",
-      bio: "Amateur astronomer and professional procrastinator. I can fix your bicycle or explain why Pluto deserved better.",
-      skills: ["Bicycle repair", "Stargazing", "Existential debates"],
-      languages: ["Catalan", "Spanish"],
+      location: "Barcelona",
+      bio: "Espacio cultural independiente dedicado a la performance, el sonido y las prácticas experimentales.",
+      skills: ["Programación cultural", "Infraestructura DIY", "Alojamiento de eventos"],
       preferredLanguage: "es",
     },
   });
 
-  const laia = await prisma.user.create({
+  const canino = await prisma.user.create({
     data: {
-      email: "laia@example.com",
+      email: "hola@caninofm.com",
       password: hashedPassword,
-      name: "Laia",
-      surname: "Font",
-      type: "PRIVATE",
+      name: "Canino FM",
+      type: "COLLECTIVE",
       location: "Barcelona",
-      bio: "I make sourdough, knit scarves nobody wears, and know far too much about mushrooms.",
-      skills: ["Baking", "Knitting", "Mycology"],
-      languages: ["Catalan", "English", "French"],
+      bio: "Independent online radio focused on music and conversation outside the mainstream.",
+      skills: ["Radio", "Curation", "Community building"],
       preferredLanguage: "en",
     },
   });
 
-  const colectiu = await prisma.user.create({
+  // Private users
+  const emma = await prisma.user.create({
     data: {
-      email: "hola@colectiuverd.cat",
+      email: "emma@example.com",
       password: hashedPassword,
-      name: "Col·lectiu Verd",
-      type: "COLLECTIVE",
-      location: "Vic",
-      bio: "Urban gardening collective. We turn abandoned lots into places where tomatoes can fulfill their destiny.",
-      mission: "More green, less concrete. One guerrilla planter at a time.",
-      skills: ["Gardening", "Composting", "Mild trespassing"],
-    },
-  });
-
-  const daysAgo = (d: number) => new Date(Date.now() - d * 86400000);
-
-  // Maria's posts
-  await prisma.post.create({
-    data: {
-      title: "I will translate your bureaucratic nightmares",
-      type: "OFFER",
-      category: "TRANSLATION",
-      description: "Catalan, Spanish, English — I'll translate your documents, letters, or that email from the tax office that's been sitting unopened for three weeks. No certified translations, but I promise to capture the original tone of institutional indifference.",
-      availability: "Flexible, but not before 10am",
-      isRemote: true,
-      tags: ["translation", "catalan", "documents", "bureaucracy"],
-      authorId: maria.id,
-      createdAt: daysAgo(18),
-      urgency: "LOW",
-    },
-  });
-
-  await prisma.post.create({
-    data: {
-      title: "Free legal advice (non-binding, like my New Year's resolutions)",
-      type: "OFFER",
-      category: "LEGAL",
-      description: "Retired lawyer offering help with immigration procedures, rental contracts, and general 'is this legal?' questions. I can't represent you in court anymore, but I can tell you with great confidence whether you should be worried.",
-      availability: "Weekday evenings",
+      name: "Emma",
+      surname: "Whitfield",
+      type: "PRIVATE",
       location: "Barcelona",
-      isRemote: true,
-      tags: ["legal", "immigration", "contracts"],
-      authorId: maria.id,
-      createdAt: daysAgo(12),
+      bio: "Lawyer specializing in contracts and mediation. I help people understand legal documents before signing them.",
+      skills: ["Legal advice", "Mediation", "Contracts"],
+      languages: ["English", "Spanish"],
+      preferredLanguage: "en",
     },
   });
 
-  // Pau's posts
+  const marc = await prisma.user.create({
+    data: {
+      email: "marc@example.com",
+      password: hashedPassword,
+      name: "Marc",
+      surname: "Puig",
+      type: "PRIVATE",
+      location: "Barcelona",
+      bio: "Veinte años de experiencia en construcción y reparaciones. Puedo ayudar con mudanzas, carpintería, fontanería y trabajo manual en general.",
+      skills: ["Carpintería", "Fontanería", "Cargas pesadas"],
+      languages: ["Catalán", "Español"],
+      preferredLanguage: "es",
+    },
+  });
+
+  const sofia = await prisma.user.create({
+    data: {
+      email: "sofia@example.com",
+      password: hashedPassword,
+      name: "Sofia",
+      surname: "Romero",
+      type: "PRIVATE",
+      location: "Barcelona",
+      bio: "Violinista formada al conservatori amb experiència fent classes a principiants i estudiants de nivell intermedi de totes les edats.",
+      skills: ["Violí", "Teoria musical", "Docència"],
+      languages: ["Català", "Castellà", "Italià"],
+      preferredLanguage: "ca",
+    },
+  });
+
+  // Posts — collective requests
   await prisma.post.create({
     data: {
-      title: "Bicycle repair — I'll fix what you broke",
-      type: "OFFER",
+      title: "Necesitamos ayuda para limpiar el almacén del espacio",
+      type: "REQUEST",
       category: "MANUAL_WORK",
-      description: "Flat tires, broken chains, brakes that scream. Bring your bike and I'll sort it out. I have tools and spare parts. I draw the line at those electric scooters though — some things are beyond saving.",
-      availability: "Weekends",
-      location: "Tarragona",
-      tags: ["bicycle", "repair", "mechanics"],
-      authorId: pau.id,
-      createdAt: daysAgo(25),
-    },
-  });
-
-  await prisma.post.create({
-    data: {
-      title: "Looking for someone to fly to the moon with",
-      type: "REQUEST",
-      category: "OTHER",
-      description: "Not literally. I have a decent telescope and I'm looking for someone to share late-night stargazing sessions. I'll point out constellations, you bring snacks. Bonus points if you can explain why we're here.",
-      availability: "Clear nights",
-      location: "Tarragona",
-      tags: ["astronomy", "stargazing", "existentialism"],
-      authorId: pau.id,
-      createdAt: daysAgo(3),
-      urgency: "LOW",
-    },
-  });
-
-  // Laia's posts
-  await prisma.post.create({
-    data: {
-      title: "Will teach you to bake bread that actually rises",
-      type: "OFFER",
-      category: "EDUCATION",
-      description: "After three years of failed sourdough and one incident that required repainting the kitchen ceiling, I finally know what I'm doing. I'll teach you the basics — flour, water, patience, and the courage to open the oven.",
-      availability: "Saturday afternoons",
+      description: "Buscamos a unas cuantas personas que nos echen una mano un fin de semana para vaciar el cuarto de almacenamiento. Hay años de cables, equipo viejo y materiales que hay que separar, tirar o donar. Ponemos comida y bebida para quien venga a ayudar.",
+      availability: "Un fin de semana de mayo, fechas por confirmar",
       location: "Barcelona",
-      tags: ["baking", "sourdough", "bread"],
-      authorId: laia.id,
-      createdAt: daysAgo(7),
-    },
-  });
-
-  await prisma.post.create({
-    data: {
-      title: "Need someone to identify if this mushroom will kill me",
-      type: "REQUEST",
-      category: "HEALTH",
-      description: "Just kidding — I'm the one who can identify them. If you go foraging and come back with a basket of mystery fungi, I'll tell you which ones are dinner and which ones are a terrible idea. Free of charge, photos welcome.",
-      availability: "Autumn weekends, or anytime with photos",
-      isRemote: true,
-      tags: ["mushrooms", "foraging", "mycology", "nature"],
-      authorId: laia.id,
-      createdAt: daysAgo(1),
+      tags: ["limpieza", "trabajo manual", "fin de semana", "espacio"],
+      authorId: foc.id,
       urgency: "URGENT",
+      createdAt: daysAgo(2),
     },
   });
 
   await prisma.post.create({
     data: {
-      title: "Knitting circle — scarves for everyone, whether you want one or not",
-      type: "OFFER",
-      category: "OTHER",
-      description: "I knit. A lot. I have more scarves than friends to give them to. Join me for a weekly knitting session — I'll teach beginners, chat with experts, and we'll collectively produce enough knitwear to survive a Catalan winter (which, admittedly, barely requires a jacket).",
-      availability: "Thursday evenings",
-      location: "Barcelona",
-      tags: ["knitting", "crafts", "community"],
-      authorId: laia.id,
-      createdAt: daysAgo(30),
-    },
-  });
-
-  // Associació Lliure's posts
-  await prisma.post.create({
-    data: {
-      title: "Volunteers needed: teaching grandparents to video call",
+      title: "Looking for someone to help with our social media",
       type: "REQUEST",
       category: "TECHNOLOGY",
-      description: "We run Saturday workshops for elderly residents who want to learn basic tech skills. Email, video calls, not accidentally sharing their location with the entire contact list. Patience required. Sense of humor essential.",
-      availability: "Saturdays 10:00-13:00",
-      location: "Girona",
-      tags: ["technology", "elderly", "workshops", "volunteering"],
-      authorId: associacio.id,
-      createdAt: daysAgo(10),
-      urgency: "URGENT",
-    },
-  });
-
-  const post_website = await prisma.post.create({
-    data: {
-      title: "Help us build a website (ours looks like it's from 1998)",
-      type: "REQUEST",
-      category: "TECHNOLOGY",
-      description: "We need a simple website to show what we do, when our next events are, and how to join. Our current 'web presence' is a Facebook page run by someone who retired in 2019. We have content and photos — we just need someone who knows what a CSS is.",
+      description: "We're a small online radio looking for someone to help manage our social media presence. Weekly posts, sharing our schedule, and helping us develop a more consistent visual identity. Some experience with Instagram and basic graphic design preferred.",
+      availability: "A few hours a week, ongoing",
       isRemote: true,
-      tags: ["web development", "nonprofit", "website"],
-      authorId: associacio.id,
-      createdAt: daysAgo(21),
-      urgency: "LOW",
-    },
-  });
-
-  // Col·lectiu Verd's posts
-  await prisma.post.create({
-    data: {
-      title: "Adopt a tomato plant (they need love too)",
-      type: "OFFER",
-      category: "OTHER",
-      description: "We have more seedlings than garden space. Take home a tomato, pepper, or basil plant. We'll teach you how not to kill it. No judgment if you do — we've all been there.",
-      availability: "Weekends at the garden",
-      location: "Vic",
-      tags: ["gardening", "plants", "urban garden"],
-      authorId: colectiu.id,
+      tags: ["social media", "instagram", "communication", "radio"],
+      authorId: canino.id,
+      urgency: "NORMAL",
       createdAt: daysAgo(5),
     },
   });
 
+  // Posts — private offers
   await prisma.post.create({
     data: {
-      title: "Seeking hands that don't mind dirt",
-      type: "REQUEST",
-      category: "MANUAL_WORK",
-      description: "We're transforming an empty lot into a community garden. We need people willing to dig, plant, water, and occasionally argue about the correct way to stake a tomato. All skill levels welcome. The soil doesn't judge.",
-      availability: "Saturday mornings",
-      location: "Vic",
-      tags: ["gardening", "community", "volunteering", "manual work"],
-      authorId: colectiu.id,
-      createdAt: daysAgo(14),
-      urgency: "URGENT",
-    },
-  });
-
-  await prisma.post.create({
-    data: {
-      title: "Composting workshop — glamorous, we know",
+      title: "Free legal help for everyday paperwork",
       type: "OFFER",
-      category: "EDUCATION",
-      description: "Learn to turn your kitchen scraps into actual soil. It's slower than you think, smellier than you'd hope, and more satisfying than it has any right to be. Bring gloves.",
-      availability: "First Sunday of each month",
-      location: "Vic",
-      tags: ["composting", "workshop", "sustainability"],
-      authorId: colectiu.id,
+      category: "LEGAL",
+      description: "I offer free orientation on rental contracts, immigration paperwork, and other common legal documents. I can't represent you in court, but I can help you understand what you're signing and what your options are.",
+      availability: "Weekday evenings",
+      location: "Barcelona",
+      isRemote: true,
+      tags: ["legal", "contracts", "advice"],
+      authorId: emma.id,
+      urgency: "LOW",
       createdAt: daysAgo(8),
     },
   });
 
-  // Create a conversation between Maria and Associació Lliure about the website
-  const conversation = await prisma.conversation.create({
+  await prisma.post.create({
     data: {
-      participants: {
-        connect: [{ id: maria.id }, { id: associacio.id }],
-      },
+      title: "Disponible para mudanzas, reparaciones y trabajo manual",
+      type: "OFFER",
+      category: "MANUAL_WORK",
+      description: "Puedo ayudar con mudanzas, pequeñas reparaciones, carpintería y montaje o desmontaje de muebles. Tengo herramientas propias y furgoneta para transporte. Veinte años de experiencia en construcción.",
+      availability: "Fines de semana y tardes entre semana",
+      location: "Barcelona",
+      tags: ["mudanzas", "reparaciones", "carpintería"],
+      authorId: marc.id,
+      urgency: "NORMAL",
+      createdAt: daysAgo(12),
     },
   });
 
-  await prisma.connection.create({
+  await prisma.post.create({
     data: {
-      postId: post_website.id,
-      requesterId: maria.id,
-      status: "ACCEPTED",
-      conversationId: conversation.id,
-    },
-  });
-
-  await prisma.message.create({
-    data: {
-      content: "Hello! I saw you need help with a website. I'm not a developer, but my nephew is and I've watched him do it enough times to be dangerous. Want to chat?",
-      conversationId: conversation.id,
-      senderId: maria.id,
-    },
-  });
-
-  await prisma.message.create({
-    data: {
-      content: "We'll take any help we can get! Our current Facebook page has a cover photo from 2017 that nobody knows how to change.",
-      conversationId: conversation.id,
-      senderId: associacio.id,
-    },
-  });
-
-  await prisma.message.create({
-    data: {
-      content: "Perfect. Let's schedule a call. I promise the website will at least look like it's from this decade.",
-      conversationId: conversation.id,
-      senderId: maria.id,
+      title: "Classes de violí per a principiants i nivell intermedi",
+      type: "OFFER",
+      category: "EDUCATION",
+      description: "Faig classes de violí des de zero fins a nivell intermedi inicial. Obert a adults i infants. Formació al conservatori i diversos anys d'experiència fent classes. Pots portar el teu propi instrument o agafar-ne un de prestat per a la primera classe.",
+      availability: "Dimarts i dijous a la tarda",
+      location: "Barcelona",
+      tags: ["violí", "música", "classes", "educació"],
+      authorId: sofia.id,
+      urgency: "NORMAL",
+      createdAt: daysAgo(15),
     },
   });
 
   console.log("Seed data created successfully!");
-  console.log("Demo accounts (all use password123):");
-  console.log("  maria@example.com (Private)");
-  console.log("  info@associaciolliure.org (Collective)");
-  console.log("  pau@example.com (Private)");
-  console.log("  laia@example.com (Private)");
-  console.log("  hola@colectiuverd.cat (Collective)");
+  console.log("Demo accounts (all use password Password1!):");
+  console.log("  info@foc.cat (Collective)");
+  console.log("  hola@caninofm.com (Collective)");
+  console.log("  emma@example.com (Private — legal)");
+  console.log("  marc@example.com (Private — manual)");
+  console.log("  sofia@example.com (Private — violin)");
 }
 
 main()

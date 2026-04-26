@@ -10,7 +10,6 @@ interface ProfileCardProps {
     location?: string | null;
     bio?: string | null;
     skills?: string[];
-    mission?: string | null;
     profilePhoto?: string | null;
     languages?: string[];
     createdAt: string;
@@ -49,13 +48,6 @@ export async function ProfileCard({ user }: ProfileCardProps) {
               <span key={skill} className="text-xs font-mono border border-fg/20 px-2.5 py-0.5">{skill}</span>
             ))}
           </div>
-        </div>
-      )}
-
-      {user.type === "COLLECTIVE" && user.mission && (
-        <div className="mt-6">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">{t("profile.mission")}</p>
-          <p className="text-sm text-fg/80">{user.mission}</p>
         </div>
       )}
 

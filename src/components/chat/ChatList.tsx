@@ -84,7 +84,7 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
                 {last && (
                   <p className={`text-xs mt-1 truncate ${isUnread ? "text-fg" : "text-muted"}`}>
                     {isWaiting && <span className="font-mono">{t("chat.you")}: </span>}
-                    {last.content}
+                    {last.content.replace(/\s+/g, " ")}
                   </p>
                 )}
               </Link>

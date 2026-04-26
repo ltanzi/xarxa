@@ -20,6 +20,7 @@
   "auth": {
     "email": "Email",
     "password": "Password",
+    "passwordHint": "At least 8 characters, one uppercase letter, one special character",
     "name": "Name",
     "signInTitle": "Sign in",
     "registerTitle": "Join",

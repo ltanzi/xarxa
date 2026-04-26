@@ -25,8 +25,12 @@ npm run dev
 Note: `docker compose up -d` (without specifying service) tries to build the app container and fails — always use `docker compose up -d postgres` for the DB only.
 
 ## Demo Accounts
-- maria@example.com / password123 (Private)
-- info@associaciolliure.org / password123 (Collective)
+All passwords: `Password1!` (meets uppercase + special-char requirement)
+- info@foc.cat (Collective — F O C, cultural space)
+- hola@caninofm.com (Collective — Canino FM, online radio)
+- emma@example.com (Private — Emma Whitfield, legal advice)
+- marc@example.com (Private — Marc Puig, manual work)
+- sofia@example.com (Private — Sofia Romero, violin teacher)
 
 ## Project Structure
 - `server.ts` — Custom server wrapping Next.js + Socket.io

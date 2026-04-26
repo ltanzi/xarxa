@@ -80,15 +80,15 @@ A volunteer service exchange platform where individuals and collectives can offe
 
 ### Demo Accounts
 
-All passwords: `password123`
+All passwords: `Password1!`
 
 | Email | Name | Type | Location |
 |-------|------|------|----------|
-| maria@example.com | Maria Garcia | Private | Barcelona |
-| info@associaciolliure.org | Associació Lliure | Collective | Girona |
-| pau@example.com | Pau Riera | Private | Tarragona |
-| laia@example.com | Laia Font | Private | Barcelona |
-| hola@colectiuverd.cat | Col·lectiu Verd | Collective | Vic |
+| info@foc.cat | F O C | Collective | Barcelona |
+| hola@caninofm.com | Canino FM | Collective | Barcelona |
+| emma@example.com | Emma Whitfield | Private | Barcelona |
+| marc@example.com | Marc Puig | Private | Barcelona |
+| sofia@example.com | Sofia Romero | Private | Barcelona |
 
 ### Deploy script
 

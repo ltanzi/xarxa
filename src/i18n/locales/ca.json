@@ -20,6 +20,7 @@
   "auth": {
     "email": "Correu electrònic",
     "password": "Contrasenya",
+    "passwordHint": "Mínim 8 caràcters, una majúscula i un símbol especial",
     "name": "Nom",
     "signInTitle": "Iniciar sessió",
     "registerTitle": "Unir-se",

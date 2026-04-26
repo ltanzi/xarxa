@@ -42,7 +42,7 @@ export default function RegisterPage() {
     const parsed = registerSchema.safeParse(form);
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
-      parsed.error.errors.forEach((err) => {
+      parsed.error.issues.forEach((err) => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
@@ -171,17 +171,20 @@ export default function RegisterPage() {
             error={errors.email}
             required
           />
-          <Input
-            id="password"
-            label={t("auth.password")}
-            type="password"
-            value={form.password}
-            onChange={(e) => updateField("password", e.target.value)}
-            error={errors.password}
-            required
-          />
+          <div>
+            <Input
+              id="password"
+              label={t("auth.password")}
+              type="password"
+              value={form.password}
+              onChange={(e) => updateField("password", e.target.value)}
+              error={errors.password}
+              required
+            />
+            <p className="mt-1.5 text-xs text-muted">{t("auth.passwordHint")}</p>
+          </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "..." : t("auth.createAccount")}
+            {loading ? t("common.loading") : t("auth.createAccount")}
           </Button>
         </form>
 

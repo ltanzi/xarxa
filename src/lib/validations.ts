@@ -12,7 +12,11 @@ function requireSurnameForPrivate(data: { type: string; surname?: string }, ctx:
 
 export const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .regex(new RegExp("\\p{Lu}", "u"), "Password must contain at least one uppercase letter")
+    .regex(new RegExp("[^\\p{L}\\p{N}]", "u"), "Password must contain at least one special character"),
   name: z.string().min(1, "Name is required").max(100),
   surname: z.string().max(100).optional(),
   type: z.enum(["PRIVATE", "COLLECTIVE"]),
@@ -59,6 +63,10 @@ export const profileSchema = z.object({
 
 export const messageSchema = z.object({
   content: z.string().trim().min(1, "Message cannot be empty").max(2000),
+});
+
+export const connectionRequestSchema = z.object({
+  postId: z.string().min(1).max(40),
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

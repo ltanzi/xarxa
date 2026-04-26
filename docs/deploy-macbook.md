@@ -68,12 +68,12 @@ This installs dependencies, sets up the database, seeds it with demo data, and s
 
 Open http://localhost:3000 — you should see xarxa.
 
-### Demo accounts (all password: `password123`)
-- maria@example.com
-- info@associaciolliure.org
-- pau@example.com
-- laia@example.com
-- hola@colectiuverd.cat
+### Demo accounts (all password: `Password1!`)
+- info@foc.cat (F O C — collective)
+- hola@caninofm.com (Canino FM — collective)
+- emma@example.com (Emma Whitfield — legal)
+- marc@example.com (Marc Puig — manual work)
+- sofia@example.com (Sofia Romero — violin)
 
 ## Sharing with friends
 

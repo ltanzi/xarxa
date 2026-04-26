@@ -25,7 +25,6 @@ interface ProfileFormProps {
     location?: string | null;
     bio?: string | null;
     skills?: string[];
-    mission?: string | null;
     profilePhoto?: string | null;
     preferredLanguage?: string | null;
     languages?: string[];
@@ -41,7 +40,6 @@ export function ProfileForm({ user }: ProfileFormProps) {
     type: user.type as "PRIVATE" | "COLLECTIVE",
     location: user.location || "",
     bio: user.bio || "",
-    mission: user.mission || "",
     preferredLanguage: (user.preferredLanguage || "en") as "en" | "es" | "ca",
   });
   const [skills, setSkills] = useState<string[]>(user.skills || []);
@@ -236,15 +234,6 @@ function updateField(field: string, value: string) {
             />
           </div>
         </div>
-      )}
-
-      {form.type === "COLLECTIVE" && (
-        <Textarea
-          id="mission"
-          label={t("profile.mission")}
-          value={form.mission}
-          onChange={(e) => updateField("mission", e.target.value)}
-        />
       )}
 
       <div className="flex gap-3">

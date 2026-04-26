@@ -76,7 +76,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
     const parsed = postSchema.safeParse(payload);
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
-      parsed.error.errors.forEach((err) => {
+      parsed.error.issues.forEach((err) => {
         if (err.path[0]) fieldErrors[err.path[0] as string] = err.message;
       });
       setErrors(fieldErrors);
@@ -88,22 +88,28 @@ export function PostForm({ postId, initialData }: PostFormProps) {
     const url = isEditing ? `/api/posts/${postId}` : "/api/posts";
     const method = isEditing ? "PATCH" : "POST";
 
-    const res = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
-    if (!res.ok) {
-      const data = await res.json();
-      setServerError(data.error || t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setServerError(data.error || t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
+        setLoading(false);
+        return;
+      }
+
+      const post = await res.json();
+      router.push(`/board/${post.id || postId}`);
+      router.refresh();
+    } catch (err) {
+      console.error("[PostForm submit]", err);
+      setServerError(t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
       setLoading(false);
-      return;
     }
-
-    const post = await res.json();
-    router.push(`/board/${post.id || postId}`);
-    router.refresh();
   }
 
   return (
@@ -121,7 +127,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         required
       />
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Select
           id="type"
           label={t("posts.type")}
@@ -162,7 +168,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         placeholder={t("posts.availabilityPlaceholder")}
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <LocationInput
           label={t("posts.locationOptional")}
           value={form.location}

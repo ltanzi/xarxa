@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 
 interface SelectProps {
   id?: string;
@@ -15,6 +15,8 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const listboxId = useId();
   const selected = options.find((o) => o.value === value) || options[0];
 
   useEffect(() => {
@@ -26,6 +28,12 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  useEffect(() => {
+    if (open && activeIndex >= 0) {
+      itemRefs.current[activeIndex]?.scrollIntoView({ block: "nearest" });
+    }
+  }, [activeIndex, open]);
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (!open) {
@@ -69,19 +77,30 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
       <button
         type="button"
         id={id}
+        role="combobox"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-controls={listboxId}
         onClick={() => setOpen(!open)}
         onKeyDown={handleKeyDown}
-        className={`block w-full border-b bg-transparent px-0 py-2 text-sm text-left focus:outline-none transition-colors ${
+        className={`block w-full border-b bg-transparent px-0 py-2 text-sm text-left focus:outline-none transition-colors focus-visible:ring-1 focus-visible:ring-fg/40 ${
           error ? "border-accent" : "border-fg/15 focus:border-fg"
         }`}
       >
         {selected?.label}
       </button>
       {open && (
-        <ul className="absolute z-50 left-0 right-0 top-full mt-1 bg-bg border border-fg/15 text-sm shadow-sm max-h-52 overflow-y-auto">
+        <ul
+          id={listboxId}
+          role="listbox"
+          className="absolute z-50 left-0 right-0 top-full mt-1 bg-bg border border-fg/15 text-sm shadow-sm max-h-52 overflow-y-auto"
+        >
           {options.map((opt, i) => (
             <li
               key={opt.value}
+              ref={(el) => { itemRefs.current[i] = el; }}
+              role="option"
+              aria-selected={opt.value === value}
               onMouseDown={() => selectOption(opt.value)}
               className={`px-3 py-2 cursor-pointer ${
                 i === activeIndex ? "bg-fg text-bg" : opt.value === value ? "text-fg" : "hover:bg-fg/5"
