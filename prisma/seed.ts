@@ -27,6 +27,7 @@ async function main() {
       bio: "Espacio cultural independiente dedicado a la performance, el sonido y las prácticas experimentales.",
       skills: ["Programación cultural", "Infraestructura DIY", "Alojamiento de eventos"],
       preferredLanguage: "es",
+      profilePhoto: "/seed/foc.webp",
     },
   });
 
@@ -40,6 +41,7 @@ async function main() {
       bio: "Independent online radio focused on music and conversation outside the mainstream.",
       skills: ["Radio", "Curation", "Community building"],
       preferredLanguage: "en",
+      profilePhoto: "/seed/canino.webp",
     },
   });
 
@@ -56,6 +58,7 @@ async function main() {
       skills: ["Legal advice", "Mediation", "Contracts"],
       languages: ["English", "Spanish"],
       preferredLanguage: "en",
+      profilePhoto: "/seed/emma.webp",
     },
   });
 
@@ -71,6 +74,7 @@ async function main() {
       skills: ["Carpintería", "Fontanería", "Cargas pesadas"],
       languages: ["Catalán", "Español"],
       preferredLanguage: "es",
+      profilePhoto: "/seed/marc.webp",
     },
   });
 
@@ -86,6 +90,7 @@ async function main() {
       skills: ["Violí", "Teoria musical", "Docència"],
       languages: ["Català", "Castellà", "Italià"],
       preferredLanguage: "ca",
+      profilePhoto: "/seed/sofia.webp",
     },
   });
 
