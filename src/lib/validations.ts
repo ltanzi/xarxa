@@ -55,7 +55,6 @@ export const profileSchema = z.object({
   location: z.string().max(200).optional(),
   bio: z.string().max(1000).optional(),
   skills: z.array(z.string().max(50)).max(20).optional(),
-  mission: z.string().max(1000).optional(),
   preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
   languages: z.array(z.string().max(50)).max(20).optional(),
   profilePhoto: z.string().nullable().optional(),

@@ -88,6 +88,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
     const url = isEditing ? `/api/posts/${postId}` : "/api/posts";
     const method = isEditing ? "PATCH" : "POST";
 
+    let navigated = false;
     try {
       const res = await fetch(url, {
         method,
@@ -96,19 +97,23 @@ export function PostForm({ postId, initialData }: PostFormProps) {
       });
 
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
+        const data = await res.json().catch((parseErr) => {
+          console.error("[PostForm] non-JSON error body", { status: res.status, parseErr });
+          return {};
+        });
         setServerError(data.error || t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
-        setLoading(false);
         return;
       }
 
       const post = await res.json();
+      navigated = true;
       router.push(`/board/${post.id || postId}`);
       router.refresh();
     } catch (err) {
       console.error("[PostForm submit]", err);
       setServerError(t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
-      setLoading(false);
+    } finally {
+      if (!navigated) setLoading(false);
     }
   }
 

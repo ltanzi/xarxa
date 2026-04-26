@@ -23,6 +23,7 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
+        setActiveIndex(-1);
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -34,6 +35,10 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
       itemRefs.current[activeIndex]?.scrollIntoView({ block: "nearest" });
     }
   }, [activeIndex, open]);
+
+  useEffect(() => {
+    itemRefs.current.length = options.length;
+  }, [options.length]);
 
   function handleKeyDown(e: React.KeyboardEvent) {
     if (!open) {
@@ -81,7 +86,15 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-controls={listboxId}
-        onClick={() => setOpen(!open)}
+        onClick={() => {
+          if (open) {
+            setOpen(false);
+            setActiveIndex(-1);
+          } else {
+            setOpen(true);
+            setActiveIndex(options.findIndex((o) => o.value === value));
+          }
+        }}
         onKeyDown={handleKeyDown}
         className={`block w-full border-b bg-transparent px-0 py-2 text-sm text-left focus:outline-none transition-colors focus-visible:ring-1 focus-visible:ring-fg/40 ${
           error ? "border-accent" : "border-fg/15 focus:border-fg"

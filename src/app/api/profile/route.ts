@@ -26,18 +26,15 @@ export async function PATCH(request: Request) {
       data: parsed.data,
       select: {
         id: true,
-        email: true,
         name: true,
         surname: true,
         type: true,
         location: true,
         bio: true,
         skills: true,
-        mission: true,
         profilePhoto: true,
         languages: true,
         preferredLanguage: true,
-        createdAt: true,
       },
     });
 
