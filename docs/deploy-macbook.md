@@ -50,14 +50,6 @@ For `NEXTAUTH_SECRET`, any random string works. You can generate one with:
 openssl rand -base64 32
 ```
 
-If you want Google OAuth to work, also add:
-```
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-```
-
-Otherwise, Google login won't work (but email/password login will).
-
 ### 4. First deploy
 
 ```bash
@@ -104,6 +96,96 @@ https://some-random-words.trycloudflare.com
 ```
 
 Share that URL with your friends. It works as long as the tunnel is running.
+
+## Keeping it running for a week or two
+
+For a friends beta you usually want xarxa reachable around the clock without
+babysitting two open terminal windows. Two pieces have to stay alive: the
+Next.js server (`npm run dev`) and the Cloudflare tunnel (`cloudflared`). The
+Mac itself also has to stay awake.
+
+### 1. Run each process in a tmux session
+
+`tmux` lets you start a process, detach from it, and come back later — even
+after closing the terminal or rebooting your shell.
+
+```bash
+# Install once
+brew install tmux
+
+# Start a session for the app
+tmux new -s xarxa
+# inside the session, run:
+./deploy.sh
+# leave it running, then detach:  Ctrl+B then D
+```
+
+In a second session, do the same for the tunnel:
+
+```bash
+tmux new -s tunnel
+cloudflared tunnel --url http://localhost:3000
+# detach:  Ctrl+B then D
+```
+
+Useful commands:
+- `tmux ls` — list running sessions
+- `tmux attach -t xarxa` — re-attach to a session to view logs or restart
+- `tmux kill-session -t xarxa` — stop a session
+
+You can close Terminal.app entirely and the sessions keep running. Open a new
+Terminal a day later, run `tmux attach -t xarxa`, and you're back where you
+left it.
+
+### 2. Stop the Mac from sleeping
+
+The cleanest one-shot way is `caffeinate`:
+
+```bash
+# In its own tmux session, so it survives a closed terminal:
+tmux new -s awake
+caffeinate -dims
+# Ctrl+B then D to detach
+```
+
+Flags: `-d` keeps display awake, `-i` prevents idle sleep, `-m` prevents disk
+sleep, `-s` prevents system sleep when on AC power. While `caffeinate` is
+running, your Mac won't sleep at all.
+
+If you'd rather configure it in System Settings (more permanent, no terminal
+needed):
+
+- **System Settings → Lock Screen** — set "Start Screen Saver when inactive"
+  and "Turn display off on power adapter when inactive" to **Never**
+- **System Settings → Battery → Options** — toggle "Prevent automatic sleeping
+  on power adapter when display is off" **on**
+- Keep the Mac plugged in. (You can close the lid only with an external
+  display attached, or use a tool like Amphetamine or InsomniaX. Otherwise
+  leave the lid open.)
+
+### 3. Survive a reboot or crash
+
+If the Mac restarts (power loss, update, kernel panic), tmux sessions are
+gone and you'd need to start everything by hand. For a one- or two-week
+beta this is usually fine — just `tmux attach` after a reboot and restart
+the three sessions.
+
+If you'd like restart-on-failure plus auto-start at login, look at `pm2`
+(Node-friendly, simple) or `launchd` plists (built-in, more setup). Out of
+scope for this guide.
+
+### 4. Quick health check
+
+To confirm everything's up:
+
+```bash
+curl -sI http://localhost:3000 | head -1   # local server
+tmux ls                                     # all sessions present
+pgrep -a caffeinate                         # caffeinate running
+```
+
+The tunnel URL printed by `cloudflared` should also load in a browser. If a
+piece is down, `tmux attach -t <name>` to see what happened.
 
 ## Updating after changes
 
