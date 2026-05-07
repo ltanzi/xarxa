@@ -43,11 +43,12 @@ export default async function DashboardPage() {
     console.error("[dashboard] mark-as-seen failed:", e);
   }
 
-  const incomingConnections = myPosts.flatMap((post) =>
-    post.connections
-      .filter((c) => c.status === "PENDING" || c.status === "ACCEPTED")
-      .map((c) => ({ ...c, post }))
-  );
+  const incomingByPost = myPosts
+    .map((post) => ({
+      post,
+      connections: post.connections.filter((c) => c.status === "PENDING" || c.status === "ACCEPTED"),
+    }))
+    .filter((group) => group.connections.length > 0);
 
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
@@ -55,30 +56,34 @@ export default async function DashboardPage() {
 
       <section className="mb-16">
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-6">{t("dashboard.incoming")}</p>
-        {incomingConnections.length === 0 ? (
+        {incomingByPost.length === 0 ? (
           <p className="text-sm text-muted">{t("dashboard.noIncoming")}</p>
         ) : (
           <div className="divide-y divide-fg/10">
-            {incomingConnections.map((conn) => (
-              <div key={conn.id} className="flex items-center justify-between py-4">
-                <div>
-                  <p className="text-sm">{conn.post.title}</p>
-                  <p className="text-xs text-muted">{conn.requester.name}</p>
-                </div>
-                {conn.status === "PENDING" ? (
-                  <ConnectionActions connectionId={conn.id} />
-                ) : (
-                  <div className="flex items-center gap-4">
-                    <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-                      {t(`dashboard.${conn.status.toLowerCase()}`)}
-                    </span>
-                    {conn.conversationId && (
-                      <Link href={`/chat/${conn.conversationId}`} className="text-xs underline underline-offset-4 hover:no-underline">
-                        {t("nav.chat")}
-                      </Link>
-                    )}
-                  </div>
-                )}
+            {incomingByPost.map(({ post, connections }) => (
+              <div key={post.id} className="py-4">
+                <p className="text-sm mb-2">{post.title}</p>
+                <ul className="divide-y divide-fg/5">
+                  {connections.map((conn) => (
+                    <li key={conn.id} className="flex items-center justify-between py-2">
+                      <span className="text-xs text-muted">{conn.requester.name}</span>
+                      {conn.status === "PENDING" ? (
+                        <ConnectionActions connectionId={conn.id} />
+                      ) : (
+                        <div className="flex items-center gap-4">
+                          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                            {t(`dashboard.${conn.status.toLowerCase()}`)}
+                          </span>
+                          {conn.conversationId && (
+                            <Link href={`/chat/${conn.conversationId}`} className="text-xs underline underline-offset-4 hover:no-underline">
+                              {t("nav.chat")}
+                            </Link>
+                          )}
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
