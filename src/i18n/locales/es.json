@@ -8,14 +8,21 @@
     "done": "Listo"
   },
   "nav": {
-    "dashboard": "Panel",
+    "board": "Tablón",
+    "dashboard": "Actividad",
     "chat": "Chat",
     "profile": "Perfil",
+    "about": "Acerca de",
     "signIn": "Iniciar sesión",
     "join": "Unirse",
     "exit": "Salir",
     "menu": "Menú",
     "close": "Cerrar"
+  },
+  "about": {
+    "title": "Acerca de",
+    "description": "xarxa es un tablón comunitario para el intercambio de servicios gratuitos. Personas y colectivos publican lo que necesitan o lo que pueden ofrecer, y se organizan directamente por chat.",
+    "creditsLabel": "Animación de"
   },
   "auth": {
     "email": "Correo electrónico",
@@ -89,7 +96,7 @@
     "URGENT": "Urgente"
   },
   "dashboard": {
-    "title": "Panel",
+    "title": "Actividad",
     "myPosts": "Mis publicaciones",
     "incoming": "Recibidas",
     "sent": "Enviadas",
@@ -150,5 +157,21 @@
   },
   "board": {
     "title": "Tablón"
+  },
+  "report": {
+    "report": "Reportar publicación",
+    "title": "Reportar esta publicación",
+    "submit": "Enviar reporte",
+    "alreadyReported": "Reportado",
+    "thanksTitle": "Gracias por el reporte",
+    "thanksBody": "Lo hemos guardado y revisaremos la publicación.",
+    "detailsPlaceholder": "Lo que quieras añadir (opcional)",
+    "reasons": {
+      "HATE_SPEECH": "Discurso de odio o discriminación",
+      "HARASSMENT": "Acoso",
+      "SPAM": "Spam o publicidad",
+      "INAPPROPRIATE": "Contenido inapropiado",
+      "OTHER": "Otro"
+    }
   }
 }

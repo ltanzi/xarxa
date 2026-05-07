@@ -8,14 +8,21 @@
     "done": "Fet"
   },
   "nav": {
-    "dashboard": "Tauler",
+    "board": "Tauler",
+    "dashboard": "Activitat",
     "chat": "Xat",
     "profile": "Perfil",
+    "about": "Sobre",
     "signIn": "Iniciar sessió",
     "join": "Unir-se",
     "exit": "Sortir",
     "menu": "Menú",
     "close": "Tancar"
+  },
+  "about": {
+    "title": "Sobre xarxa",
+    "description": "xarxa és un tauler comunitari per a l'intercanvi de serveis gratuïts. Persones i col·lectius publiquen el que necessiten o el que poden oferir, i s'organitzen directament pel xat.",
+    "creditsLabel": "Animació de"
   },
   "auth": {
     "email": "Correu electrònic",
@@ -89,7 +96,7 @@
     "URGENT": "Urgent"
   },
   "dashboard": {
-    "title": "Tauler",
+    "title": "Activitat",
     "myPosts": "Les meves publicacions",
     "incoming": "Rebudes",
     "sent": "Enviades",
@@ -150,5 +157,21 @@
   },
   "board": {
     "title": "Tauler"
+  },
+  "report": {
+    "report": "Reportar publicació",
+    "title": "Reportar aquesta publicació",
+    "submit": "Enviar informe",
+    "alreadyReported": "Reportat",
+    "thanksTitle": "Gràcies per l'informe",
+    "thanksBody": "L'hem desat i revisarem la publicació.",
+    "detailsPlaceholder": "El que vulguis afegir (opcional)",
+    "reasons": {
+      "HATE_SPEECH": "Discurs d'odi o discriminació",
+      "HARASSMENT": "Assetjament",
+      "SPAM": "Brossa o publicitat",
+      "INAPPROPRIATE": "Contingut inadequat",
+      "OTHER": "Altres"
+    }
   }
 }

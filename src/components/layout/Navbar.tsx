@@ -73,6 +73,9 @@ export function Navbar() {
           <div className="hidden md:flex items-center gap-8">
             {session && (
               <div className="flex items-center gap-6">
+                <Link href="/board" className="text-muted hover:text-fg transition-colors">
+                  {t("nav.board")}
+                </Link>
                 <Link href="/dashboard" className="text-muted hover:text-fg transition-colors">
                   {t("nav.dashboard")}
                   <NotifBadge count={pending + accepted} />
@@ -103,7 +106,10 @@ export function Navbar() {
                 </Link>
               </div>
             )}
-            <div className="border-l border-fg/10 pl-6">
+            <div className="flex items-center gap-6 border-l border-fg/10 pl-6">
+              <Link href="/about" className="text-muted hover:text-fg transition-colors">
+                {t("nav.about")}
+              </Link>
               <LanguageSwitcher />
             </div>
           </div>
@@ -130,6 +136,9 @@ export function Navbar() {
         <div className="md:hidden border-t border-fg/10 bg-bg/95 px-6 pb-6 pt-4 flex flex-col gap-5 text-sm">
           {session && (
             <>
+              <Link href="/board" className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
+                {t("nav.board")}
+              </Link>
               <Link href="/dashboard" className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
                 {t("nav.dashboard")}
                 <NotifBadge count={pending + accepted} />
@@ -156,6 +165,9 @@ export function Navbar() {
               </Link>
             </>
           )}
+          <Link href="/about" className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
+            {t("nav.about")}
+          </Link>
           <div className="pt-2 border-t border-fg/10">
             <LanguageSwitcher />
           </div>

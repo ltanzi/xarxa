@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { formatDate } from "@/lib/date";
 import { InterestButton } from "./InterestButton";
 import { PostActions } from "./PostActions";
+import { ReportButton } from "./ReportButton";
 import { getTranslations } from "@/i18n/server";
 
 interface PostPageProps {
@@ -34,6 +35,13 @@ export default async function PostPage({ params }: PostPageProps) {
     ? post.connections.find((c) => c.requesterId === session.user.id)
     : null;
 
+  const alreadyReported = session?.user?.id && !isAuthor
+    ? !!(await prisma.report.findUnique({
+        where: { postId_reporterId: { postId: post.id, reporterId: session.user.id } },
+        select: { id: true },
+      }))
+    : false;
+
   const authorDisplayName = post.author.type === "PRIVATE" && post.author.surname
     ? `${post.author.name} ${post.author.surname}`
     : post.author.name;
@@ -45,7 +53,7 @@ export default async function PostPage({ params }: PostPageProps) {
       </Link>
 
       <div className="mt-8">
-        <div className="flex items-baseline gap-4 mb-6">
+        <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-6">
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
             {t(`posts.${post.type.toLowerCase()}`)}
           </span>
@@ -62,6 +70,9 @@ export default async function PostPage({ params }: PostPageProps) {
           )}
           {post.closed && (
             <span className="font-mono text-[11px] uppercase tracking-wider text-accent">{t("posts.closed")}</span>
+          )}
+          {session && !isAuthor && (
+            <ReportButton postId={post.id} alreadyReported={alreadyReported} triggerClassName="ml-auto" />
           )}
         </div>
 
@@ -96,7 +107,7 @@ export default async function PostPage({ params }: PostPageProps) {
           </div>
         )}
 
-        <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between">
+        <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between gap-4">
           <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
             <p className="text-sm">{authorDisplayName}</p>
             <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type} &middot; {formatDate(post.createdAt)}</p>
@@ -124,6 +135,7 @@ export default async function PostPage({ params }: PostPageProps) {
           )}
         </div>
       </div>
+
 
       {isAuthor && post.connections.length > 0 && (
         <div className="mt-12 pt-8 border-t border-fg/10">

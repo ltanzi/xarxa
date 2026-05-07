@@ -68,8 +68,14 @@ export const connectionRequestSchema = z.object({
   postId: z.string().min(1).max(40),
 });
 
+export const reportSchema = z.object({
+  reason: z.enum(["HATE_SPEECH", "HARASSMENT", "SPAM", "INAPPROPRIATE", "OTHER"]),
+  details: z.string().trim().max(1000).optional(),
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type SignInInput = z.infer<typeof signInSchema>;
 export type PostInput = z.infer<typeof postSchema>;
 export type ProfileInput = z.infer<typeof profileSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
+export type ReportInput = z.infer<typeof reportSchema>;

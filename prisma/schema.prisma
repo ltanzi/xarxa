@@ -38,6 +38,14 @@ enum ConnectionStatus {
   REJECTED
 }
 
+enum ReportReason {
+  HATE_SPEECH
+  HARASSMENT
+  SPAM
+  INAPPROPRIATE
+  OTHER
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -59,6 +67,7 @@ model User {
   connections   Connection[]    @relation("requester")
   messages      Message[]
   conversations Conversation[]  @relation("ConversationParticipants")
+  reports       Report[]        @relation("reporter")
 }
 
 model Post {
@@ -79,12 +88,29 @@ model Post {
   authorId    String
   author      User         @relation(fields: [authorId], references: [id])
   connections Connection[]
+  reports     Report[]
 
   @@index([createdAt])
   @@index([authorId])
   @@index([type])
   @@index([category])
   @@index([closed, createdAt])
+}
+
+model Report {
+  id        String       @id @default(cuid())
+  reason    ReportReason
+  details   String?
+  createdAt DateTime     @default(now())
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  reporterId String
+  reporter   User   @relation("reporter", fields: [reporterId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, reporterId])
+  @@index([createdAt])
 }
 
 model Connection {
