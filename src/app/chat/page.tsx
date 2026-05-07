@@ -21,6 +21,9 @@ export default async function ChatPage() {
         take: 1,
         select: { content: true, createdAt: true, senderId: true, read: true },
       },
+      connection: {
+        select: { post: { select: { title: true } } },
+      },
     },
     orderBy: { createdAt: "desc" },
   });

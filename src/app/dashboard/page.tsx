@@ -62,8 +62,8 @@ export default async function DashboardPage() {
             {incomingConnections.map((conn) => (
               <div key={conn.id} className="flex items-center justify-between py-4">
                 <div>
-                  <p className="text-sm">{conn.requester.name}</p>
-                  <p className="text-xs text-muted">{conn.post.title}</p>
+                  <p className="text-sm">{conn.post.title}</p>
+                  <p className="text-xs text-muted">{conn.requester.name}</p>
                 </div>
                 {conn.status === "PENDING" ? (
                   <ConnectionActions connectionId={conn.id} />

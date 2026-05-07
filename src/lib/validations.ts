@@ -29,7 +29,7 @@ export const signInSchema = z.object({
 });
 
 export const postSchema = z.object({
-  title: z.string().min(1, "Title is required").max(200),
+  title: z.string().min(1, "Title is required").max(100, "Title must be 100 characters or fewer"),
   type: z.enum(["OFFER", "REQUEST"]),
   category: z.enum([
     "LEGAL",

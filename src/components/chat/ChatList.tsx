@@ -11,6 +11,7 @@ interface ConversationSummary {
   id: string;
   participants: { id: string; name: string; profilePhoto: string | null }[];
   messages: { content: string; createdAt: string; senderId: string; read: boolean }[];
+  connection: { post: { title: string } } | null;
 }
 
 export function ChatList({ conversations }: { conversations: ConversationSummary[] }) {
@@ -67,20 +68,25 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
                 className="flex-1 min-w-0 hover:opacity-60 transition-opacity"
               >
                 <div className="flex items-baseline justify-between">
-                  <div className="flex items-baseline gap-2">
+                  <div className="flex items-baseline gap-2 min-w-0">
                     {isUnread && (
-                      <span className="text-[8px] text-fg leading-none">●</span>
+                      <span className="text-[8px] text-fg leading-none shrink-0">●</span>
                     )}
-                    <span className={`text-sm ${isUnread ? "font-medium" : isWaiting ? "text-muted" : ""}`}>
+                    <span className={`text-sm truncate ${isUnread ? "font-medium" : isWaiting ? "text-muted" : ""}`}>
                       {other?.name || "User"}
                     </span>
                   </div>
                   {last && (
-                    <span className="text-xs text-muted">
+                    <span className="text-xs text-muted shrink-0 ml-3">
                       {formatDate(last.createdAt)}
                     </span>
                   )}
                 </div>
+                {conv.connection?.post.title && (
+                  <p className="text-[11px] text-muted font-mono uppercase tracking-wider mt-0.5 truncate">
+                    {conv.connection.post.title}
+                  </p>
+                )}
                 {last && (
                   <p className={`text-xs mt-1 truncate ${isUnread ? "text-fg" : "text-muted"}`}>
                     {isWaiting && <span className="font-mono">{t("chat.you")}: </span>}
