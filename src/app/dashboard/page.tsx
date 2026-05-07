@@ -63,7 +63,7 @@ export default async function DashboardPage() {
             {incomingByPost.map(({ post, connections }) => (
               <div key={post.id} className="py-4">
                 <p className="text-sm mb-2">{post.title}</p>
-                <ul className="divide-y divide-fg/5">
+                <ul>
                   {connections.map((conn) => (
                     <li key={conn.id} className="flex items-center justify-between py-2">
                       <span className="text-xs text-muted">{conn.requester.name}</span>
