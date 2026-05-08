@@ -10,7 +10,7 @@ export default async function HomePage() {
     <>
       <SnakeGame />
       <div className="pt-14">
-        <section className="pt-16 pb-32 sm:pt-20 sm:pb-44 px-6 lg:px-8">
+        <section className="pt-6 pb-32 sm:pt-8 sm:pb-44 px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
             <Image
               src="/hands.png"
@@ -21,13 +21,13 @@ export default async function HomePage() {
               data-snake-obstacle
             />
             <h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.1] tracking-tight text-center"
+              className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.3] tracking-tight text-center"
               data-snake-obstacle
             >
-              {t("landing.heroBefore")} <span className="italic">{t("landing.heroEmphasis")}</span>{t("landing.heroAfter") ? ` ${t("landing.heroAfter")}` : ""}
+              {t("landing.heroBefore")}<br /><span className="italic">{t("landing.heroEmphasis")}</span>{t("landing.heroAfter") ? ` ${t("landing.heroAfter")}` : ""}
             </h1>
             <p
-              className="mt-8 text-muted text-base text-center sm:whitespace-nowrap"
+              className="mt-14 text-muted text-base text-center sm:whitespace-nowrap"
               data-snake-obstacle
             >
               {t("landing.subtitle")}
