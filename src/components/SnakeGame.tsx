@@ -31,6 +31,7 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
     let cols = 0;
     let rows = 0;
     let topOffset = 0;
+    const bodyFont = getComputedStyle(document.body).fontFamily;
     let snake: { x: number; y: number }[] = [];
     let direction = { dx: 0, dy: 0 };
     let pending = { dx: 0, dy: 0 };
@@ -65,7 +66,7 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
                 if (r.width > 0 && r.height > 0) rects.push(r);
               }
             } catch {
-              // ignore range errors on dynamically removed nodes
+              // best-effort: skip glyphs whose Range can't be measured
             }
           }
         } else {
@@ -145,7 +146,6 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
 
       if (idle && snake.length > 0) {
         const head = snake[0];
-        const bodyFont = getComputedStyle(document.body).fontFamily;
         ctx!.fillStyle = HINT_COLOR;
         ctx!.font = `14px ${bodyFont}`;
         ctx!.textAlign = "center";
@@ -210,25 +210,38 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
       const eaten = Math.max(0, snake.length - 3);
       const delay = Math.max(MIN_TICK_MS, START_TICK_MS - eaten * SPEEDUP_PER_APPLE);
       timeoutId = window.setTimeout(() => {
-        tick();
+        try {
+          tick();
+        } catch (err) {
+          console.error("[SnakeGame tick]", err);
+        }
         scheduleNext();
       }, delay);
     }
     scheduleNext();
 
+    let scrollRaf = 0;
+    function onScroll() {
+      if (scrollRaf) return;
+      scrollRaf = window.requestAnimationFrame(() => {
+        scrollRaf = 0;
+        readObstacles();
+      });
+    }
     const onResize = () => {
       resize();
       readObstacles();
     };
     window.addEventListener("resize", onResize);
     window.addEventListener("keydown", handleKey);
-    window.addEventListener("scroll", readObstacles, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     return () => {
       window.clearTimeout(timeoutId);
+      if (scrollRaf) window.cancelAnimationFrame(scrollRaf);
       window.removeEventListener("resize", onResize);
       window.removeEventListener("keydown", handleKey);
-      window.removeEventListener("scroll", readObstacles);
+      window.removeEventListener("scroll", onScroll);
     };
   }, [obstacleSelector]);
 
