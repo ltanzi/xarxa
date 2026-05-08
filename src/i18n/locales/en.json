@@ -62,6 +62,8 @@
     "availabilityOptional": "Availability (optional)",
     "urgency": "Urgency",
     "remote": "Remote",
+    "inPerson": "In person",
+    "mode": "Mode",
     "tags": "Tags",
     "tagsHelp": "Comma separated",
     "interested": "I'm interested",
@@ -157,6 +159,17 @@
   },
   "board": {
     "title": "Board"
+  },
+  "password": {
+    "title": "Change password",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "update": "Update password",
+    "success": "Password updated.",
+    "failed": "Could not update password.",
+    "wrongCurrent": "Current password is incorrect",
+    "confirmMismatch": "Passwords do not match"
   },
   "report": {
     "report": "Report post",

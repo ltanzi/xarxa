@@ -62,6 +62,8 @@
     "availabilityOptional": "Disponibilidad (opcional)",
     "urgency": "Urgencia",
     "remote": "Remoto",
+    "inPerson": "Presencial",
+    "mode": "Modalidad",
     "tags": "Etiquetas",
     "tagsHelp": "Separadas por comas",
     "interested": "Me interesa",
@@ -157,6 +159,17 @@
   },
   "board": {
     "title": "Tablón"
+  },
+  "password": {
+    "title": "Cambiar contraseña",
+    "current": "Contraseña actual",
+    "new": "Nueva contraseña",
+    "confirm": "Confirma la nueva contraseña",
+    "update": "Actualizar contraseña",
+    "success": "Contraseña actualizada.",
+    "failed": "No se pudo actualizar la contraseña.",
+    "wrongCurrent": "La contraseña actual no es correcta",
+    "confirmMismatch": "Las contraseñas no coinciden"
   },
   "report": {
     "report": "Reportar publicación",

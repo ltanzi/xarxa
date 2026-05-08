@@ -173,23 +173,26 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         placeholder={t("posts.availabilityPlaceholder")}
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <LocationInput
-          label={t("posts.locationOptional")}
-          value={form.location}
-          onChange={(val) => updateField("location", val)}
-        />
-        <div className="flex items-end pb-2">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={form.isRemote}
-              onChange={(e) => updateField("isRemote", e.target.checked)}
-              className="accent-fg"
-            />
-            <span className="text-sm">{t("posts.remote")}</span>
-          </label>
+      <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <LocationInput
+            label={t("posts.locationOptional")}
+            value={form.location}
+            onChange={(val) => updateField("location", val)}
+          />
+          <div className="flex items-end pb-2">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.isRemote}
+                onChange={(e) => updateField("isRemote", e.target.checked)}
+                className="accent-fg"
+              />
+              <span className="text-sm">{t("posts.remote")}</span>
+            </label>
+          </div>
         </div>
+        {errors.location && <p className="mt-1.5 text-xs text-accent">{errors.location}</p>}
       </div>
 
       <Input

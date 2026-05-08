@@ -7,6 +7,7 @@ import { useTranslation } from "@/i18n/hook";
 const CATEGORY_KEYS = ["", "LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["", "OFFER", "REQUEST"] as const;
 const URGENCY_KEYS = ["", "LOW", "NORMAL", "URGENT"] as const;
+const MODE_KEYS = ["", "REMOTE", "IN_PERSON"] as const;
 
 export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
   const router = useRouter();
@@ -35,6 +36,11 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
   const urgencies = URGENCY_KEYS.map((value) => ({
     value,
     label: value === "" ? t("posts.all") : t(`urgency.${value}`),
+  }));
+
+  const modes = MODE_KEYS.map((value) => ({
+    value,
+    label: value === "" ? t("posts.all") : value === "REMOTE" ? t("posts.remote") : t("posts.inPerson"),
   }));
 
   function pushSearch(newTags: string[], currentInput: string) {
@@ -170,6 +176,24 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
             }`}
           >
             {urg.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Mode filter */}
+      <div className="flex items-baseline gap-3 sm:gap-6 font-mono text-xs uppercase tracking-widest flex-wrap">
+        <span className="text-fg shrink-0 font-medium">{t("posts.mode")}</span>
+        {modes.map((m) => (
+          <button
+            key={m.value}
+            onClick={() => updateFilter("mode", m.value)}
+            className={`transition-colors ${
+              (searchParams.get("mode") || "") === m.value
+                ? "text-fg underline underline-offset-4"
+                : "text-fg/50 hover:text-fg"
+            }`}
+          >
+            {m.label}
           </button>
         ))}
       </div>

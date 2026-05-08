@@ -12,6 +12,7 @@ interface BoardPageProps {
     type?: string;
     category?: string;
     urgency?: string;
+    mode?: string;
     location?: string;
     search?: string;
     page?: string;
@@ -33,6 +34,11 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
   if (params.urgency) {
     where.urgency = params.urgency as Prisma.EnumUrgencyFilter;
   }
+  if (params.mode === "REMOTE") {
+    where.isRemote = true;
+  } else if (params.mode === "IN_PERSON") {
+    where.isRemote = false;
+  }
   if (params.location) {
     where.location = { contains: params.location, mode: "insensitive" };
   }
@@ -43,6 +49,8 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
         { title: { contains: term, mode: "insensitive" } },
         { description: { contains: term, mode: "insensitive" } },
         { tags: { has: term } },
+        { author: { name: { contains: term, mode: "insensitive" } } },
+        { author: { surname: { contains: term, mode: "insensitive" } } },
       ]);
     }
   }
@@ -67,6 +75,7 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
     if (params.type) sp.set("type", params.type);
     if (params.category) sp.set("category", params.category);
     if (params.urgency) sp.set("urgency", params.urgency);
+    if (params.mode) sp.set("mode", params.mode);
     if (params.location) sp.set("location", params.location);
     if (params.search) sp.set("search", params.search);
     if (p > 1) sp.set("page", String(p));
