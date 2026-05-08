@@ -155,7 +155,8 @@
     "askHelp": "Ask for help",
     "offerHelp": "Offer help",
     "recentPosts": "Recent posts",
-    "seeAll": "See all"
+    "seeAll": "See all",
+    "snakeHint": "press any arrow"
   },
   "board": {
     "title": "Board"

@@ -155,7 +155,8 @@
     "askHelp": "Demanar ajuda",
     "offerHelp": "Oferir ajuda",
     "recentPosts": "Publicacions recents",
-    "seeAll": "Veure tot"
+    "seeAll": "Veure tot",
+    "snakeHint": "prem qualsevol fletxa"
   },
   "board": {
     "title": "Tauler"

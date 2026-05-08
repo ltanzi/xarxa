@@ -155,7 +155,8 @@
     "askHelp": "Pedir ayuda",
     "offerHelp": "Ofrecer ayuda",
     "recentPosts": "Publicaciones recientes",
-    "seeAll": "Ver todo"
+    "seeAll": "Ver todo",
+    "snakeHint": "pulsa cualquier flecha"
   },
   "board": {
     "title": "Tablón"

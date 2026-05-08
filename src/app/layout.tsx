@@ -23,7 +23,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={inconsolata.variable}>
-      <body className="min-h-screen flex flex-col bg-bg text-fg">
+      <body className="min-h-screen flex flex-col text-fg">
         <Providers initialLocale={locale}>
           <Navbar />
           <main className="flex-1">{children}</main>
