@@ -1,0 +1,20 @@
+xarxa.org {
+	encode gzip zstd
+
+	reverse_proxy app:3000 {
+		transport http {
+			keepalive 30s
+		}
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 50mb
+			roll_keep 5
+		}
+	}
+}
+
+www.xarxa.org {
+	redir https://xarxa.org{uri} permanent
+}
