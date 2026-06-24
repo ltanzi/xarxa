@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Standalone output bundles a minimal runtime (server.js + node_modules
+  // subset) under .next/standalone — what the production Dockerfile copies
+  // from. Without this, .next/standalone doesn't exist and the runner stage
+  // fails.
+  output: "standalone",
   images: {
     remotePatterns: [],
   },
