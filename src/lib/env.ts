@@ -12,10 +12,23 @@ const schema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
-const parsed = schema.safeParse(process.env);
-if (!parsed.success) {
-  console.error("[env] Invalid environment variables:", parsed.error.flatten().fieldErrors);
-  throw new Error("Invalid environment variables");
+type Env = z.infer<typeof schema>;
+
+// Skip strict validation during `next build` — env vars aren't supplied at
+// build time inside the container. Runtime reload re-validates when the
+// server actually starts.
+const isBuild = process.env.NEXT_PHASE === "phase-production-build";
+
+let env: Env;
+if (isBuild) {
+  env = process.env as unknown as Env;
+} else {
+  const parsed = schema.safeParse(process.env);
+  if (!parsed.success) {
+    console.error("[env] Invalid environment variables:", parsed.error.flatten().fieldErrors);
+    throw new Error("Invalid environment variables");
+  }
+  env = parsed.data;
 }
 
-export const env = parsed.data;
+export { env };
