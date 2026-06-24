@@ -30,6 +30,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           id: user.id,
           email: user.email,
           name: user.name,
+          emailVerified: user.emailVerified,
         };
       },
     }),
@@ -43,15 +44,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // Google OAuth disabled — see git history for implementation
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
+        // user is AdapterUser | User — the credentials provider returns our shape with emailVerified
+        token.emailVerified = (user as { emailVerified?: Date | null }).emailVerified ?? null;
+      }
+      if (trigger === "update" && token.id) {
+        // Refresh emailVerified from DB when a route calls session.update() after verification
+        const fresh = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { emailVerified: true },
+        });
+        token.emailVerified = fresh?.emailVerified ?? null;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.emailVerified = (token.emailVerified as Date | null) ?? null;
       }
       return session;
     },
