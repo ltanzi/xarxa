@@ -58,7 +58,7 @@
 
 **Migration path away from Hetzner if needed:** `pg_dump` → `pg_restore` to Fly Postgres app, `rsync public/uploads/` to a Fly volume, `flyctl launch` reuses the existing Dockerfile unchanged, swap Cloudflare A record. ~1 evening. Sunk cost on Hetzner is hourly-prorated, ~€2 worst case.
 
-### Domain: xarxa.org
+### Domain: xarxa.help
 
 - Registered at Cloudflare Registrar (at-cost pricing, ~€11/year, free WHOIS privacy)
 - `.org` chosen over `.cat` (registrar friction + €18–25/yr) and `.com` (generic, no signal). `.org` reads "community / non-profit," works in any language.
@@ -76,15 +76,15 @@
   | A | `www` | Hetzner public IP | 301 redirected to apex by Caddy |
   | TXT | `@` | `v=spf1 include:_spf.resend.com -all` | SPF for Resend sending |
   | CNAME | `resend._domainkey` | (provided by Resend at verify) | DKIM |
-  | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:postmaster@xarxa.org` | DMARC, observe-only |
+  | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:postmaster@xarxa.help` | DMARC, observe-only |
   | CAA | `@` | `0 issue "letsencrypt.org"` | Restrict cert issuance to Let's Encrypt |
 
 ### Email provider: Resend
 
 - Free tier (3,000/month, 100/day) covers friend-beta with several orders of magnitude headroom
-- DKIM, SPF, DMARC records added at the apex domain (above) so From addresses can be clean: `hello@xarxa.org`, `noreply@xarxa.org`
+- DKIM, SPF, DMARC records added at the apex domain (above) so From addresses can be clean: `hello@xarxa.help`, `noreply@xarxa.help`
 - React Email templates for full JSX template authoring with the same i18n approach as the rest of the app
-- No receiving mailbox — sending only. Receiving at `@xarxa.org` is a separate future task.
+- No receiving mailbox — sending only. Receiving at `@xarxa.help` is a separate future task.
 
 ### Email verification: soft wall
 
@@ -95,7 +95,7 @@ Unverified users can browse and read but cannot post, express interest, or chat.
 ```
                        ┌──────────────────────────────────────┐
                        │  Cloudflare (DNS, edge, DDoS shield) │
-                       │  xarxa.org  →  A: <hetzner public IP>│
+                       │  xarxa.help  →  A: <hetzner public IP>│
                        └──────────────────┬───────────────────┘
                                           │ HTTPS :443
                                           ▼
@@ -130,7 +130,7 @@ Unverified users can browse and read but cannot post, express interest, or chat.
 - **Postgres in Docker on the same box, not a managed DB.** Saves €5–7/month. Backups (below) cover the durability story.
 - **Caddy, not Nginx.** Automatic Let's Encrypt with three lines of config.
 - **systemd manages `docker compose`,** so the stack starts on reboot.
-- **`xarxa.org` resolved via DNS-only.** Cert is fetched by Caddy directly from Let's Encrypt.
+- **`xarxa.help` resolved via DNS-only.** Cert is fetched by Caddy directly from Let's Encrypt.
 
 ---
 
@@ -154,7 +154,7 @@ Separate from the local-dev `docker-compose.yml`. Differences:
 - Postgres container has no `ports:` published either. Only reachable from app container.
 - Persistent volumes: `pgdata` (database), `uploads` (mounted into app at `/app/public/uploads`).
 - New service: `caddy` (Caddy 2 alpine image) — owns ports 80 + 443, terminates TLS, reverse-proxies `/` to app, proxies WebSocket upgrades for `/socket.io/`.
-- New file: `Caddyfile` — declares the `xarxa.org` site, automatic Let's Encrypt cert, `www.xarxa.org` 301 redirect.
+- New file: `Caddyfile` — declares the `xarxa.help` site, automatic Let's Encrypt cert, `www.xarxa.help` 301 redirect.
 - All containers `restart: unless-stopped`.
 
 ### 3. systemd unit — new file `/etc/systemd/system/xarxa.service`
@@ -320,7 +320,7 @@ NextAuth v5's CSRF tokens cover its own routes. Custom mutating routes are defen
 | Layer | Tool | What it watches | Alerts when |
 |---|---|---|---|
 | Errors | Sentry (`@sentry/nextjs`, free tier 5k events/mo) | Unhandled exceptions, slow API routes | New error type appears |
-| Liveness | UptimeRobot (free, 50 monitors) | `GET https://xarxa.org/` every 5 min | Site unreachable ≥2 checks (~10 min) |
+| Liveness | UptimeRobot (free, 50 monitors) | `GET https://xarxa.help/` every 5 min | Site unreachable ≥2 checks (~10 min) |
 | Resource | Hetzner Cloud Console (built-in) | CPU, RAM, disk graphs | Read manually on incidents |
 | Requests | Caddy `access.log` on box | All HTTP requests | None proactive; SSH in when needed |
 | Email | Resend dashboard | Sent, bounced, complained | New bounce/complaint |
@@ -367,7 +367,7 @@ docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml run --rm \
 docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps app
 
 sleep 5
-curl -sf https://xarxa.org/ > /dev/null || { echo "Smoke failed"; exit 1; }
+curl -sf https://xarxa.help/ > /dev/null || { echo "Smoke failed"; exit 1; }
 echo "Deploy OK at $(date) — sha=$SHA"
 ```
 
@@ -399,7 +399,7 @@ Committed to repo. Sections:
 High-level sequence to be expanded into the implementation plan:
 
 1. Create accounts: Hetzner, Cloudflare, Resend, Sentry, UptimeRobot, Backblaze B2 (operator action with hand-holding)
-2. Buy `xarxa.org` at Cloudflare Registrar (operator)
+2. Buy `xarxa.help` at Cloudflare Registrar (operator)
 3. Provision Hetzner CX22 with Ubuntu 24.04 + SSH key (operator clicks; Claude prepares the SSH key locally)
 4. Initial SSH-in hardening: disable password auth, `ufw` rules, install Docker, install `unattended-upgrades` (Claude drives, operator observes)
 5. Clone repo to `/opt/xarxa`, write `/etc/xarxa/.env`, generate the five secrets (Claude drives)
@@ -428,11 +428,11 @@ High-level sequence to be expanded into the implementation plan:
 
 The deploy is "done" when:
 
-1. `https://xarxa.org/` loads with a valid Let's Encrypt cert, `<title>xarxa</title>`, and the existing homepage
-2. New user can sign up at `/auth/register`, receive a verification email from `noreply@xarxa.org`, click the link, and post on the board
+1. `https://xarxa.help/` loads with a valid Let's Encrypt cert, `<title>xarxa</title>`, and the existing homepage
+2. New user can sign up at `/auth/register`, receive a verification email from `noreply@xarxa.help`, click the link, and post on the board
 3. An unverified user can browse the board but sees "Verify your email" on the create-post and express-interest buttons
 4. Hitting `POST /api/auth/register` 6 times in an hour from one IP returns 429
-5. `curl -sI https://xarxa.org/` shows `Strict-Transport-Security`, CSP, X-Frame-Options headers
+5. `curl -sI https://xarxa.help/` shows `Strict-Transport-Security`, CSP, X-Frame-Options headers
 6. Rebooting the Hetzner box (`sudo reboot`) brings the full stack back up unattended within ~2 minutes (Caddy, app, Postgres all `up`)
 7. Sentry captures a manual `throw new Error("smoke")` from the homepage
 8. UptimeRobot shows the monitor in "up" state with a green history
@@ -457,7 +457,7 @@ Recap of the non-goals so the implementation plan stays focused:
 - Staging environment
 - Product analytics (Plausible / PostHog)
 - Privacy policy and Terms pages (content task; required before fully public, not in this infra spec)
-- Receiving email at `@xarxa.org`
+- Receiving email at `@xarxa.help`
 - Migrating to Fly.io or another host
 - Cloudflare orange-cloud proxy enabled
 - Tightening `style-src` away from `unsafe-inline`

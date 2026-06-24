@@ -6,7 +6,7 @@ const schema = z.object({
   NEXTAUTH_URL: z.string().url(),
   RESEND_API_KEY: z.string().startsWith("re_").optional(),
   SENTRY_DSN: z.string().url().optional(),
-  EMAIL_FROM: z.string().email().default("noreply@xarxa.org"),
+  EMAIL_FROM: z.string().email().default("noreply@xarxa.help"),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

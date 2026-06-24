@@ -1,6 +1,6 @@
 # xarxa — Production Runbook
 
-Single-page incident response for `https://xarxa.org`.
+Single-page incident response for `https://xarxa.help`.
 
 > Specifics in `<angle brackets>` are filled in during Phase I after the box exists.
 
@@ -17,10 +17,10 @@ Run these in order. Each step narrows the failure to a specific layer.
 
 1. **External reachability?**
    ```bash
-   curl -sI https://xarxa.org
+   curl -sI https://xarxa.help
    ```
    - HTTPS 200 → site is up; the original report was wrong, the user's network, or a transient.
-   - `Could not resolve host` → DNS issue. Check Cloudflare dashboard → DNS → `xarxa.org` A record points at the box IP.
+   - `Could not resolve host` → DNS issue. Check Cloudflare dashboard → DNS → `xarxa.help` A record points at the box IP.
    - Connection refused / timeout → box is down or Caddy isn't listening. Go to step 2.
    - 5xx response → Caddy reached the app and got an error. Go to step 4.
 

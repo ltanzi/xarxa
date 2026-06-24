@@ -4,7 +4,7 @@
 
 **Spec:** `docs/superpowers/specs/2026-06-24-xarxa-go-live-design.md`
 
-**Goal:** Move xarxa from MacBook + Cloudflare-tunnel friend-beta to a real production deployment on `https://xarxa.org` with email-verified accounts, off-box encrypted backups, error + uptime monitoring, and the minimum security hardening for an internet-facing app.
+**Goal:** Move xarxa from MacBook + Cloudflare-tunnel friend-beta to a real production deployment on `https://xarxa.help` with email-verified accounts, off-box encrypted backups, error + uptime monitoring, and the minimum security hardening for an internet-facing app.
 
 **Architecture:** One Hetzner CX22 box runs Caddy (TLS terminator) → Next.js + Socket.io app (in Docker) → Postgres 16 (in Docker), with `systemd` supervising `docker compose`. Cloudflare provides DNS-only and registrar. Resend handles transactional email. Sentry + UptimeRobot watch the box. Nightly `pg_dump` + `restic` backups go to Backblaze B2.
 
@@ -82,7 +82,7 @@ All work in this phase happens on the dev workstation against the existing local
     NEXTAUTH_URL: z.string().url(),
     RESEND_API_KEY: z.string().startsWith("re_").optional(),
     SENTRY_DSN: z.string().url().optional(),
-    EMAIL_FROM: z.string().email().default("noreply@xarxa.org"),
+    EMAIL_FROM: z.string().email().default("noreply@xarxa.help"),
     GOOGLE_CLIENT_ID: z.string().optional(),
     GOOGLE_CLIENT_SECRET: z.string().optional(),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
@@ -827,10 +827,10 @@ Still on the dev workstation. These files get committed to git and shipped to th
       environment:
         DATABASE_URL: "postgresql://xarxa:${POSTGRES_PASSWORD}@postgres:5432/xarxa?schema=public"
         NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-        NEXTAUTH_URL: "https://xarxa.org"
+        NEXTAUTH_URL: "https://xarxa.help"
         RESEND_API_KEY: ${RESEND_API_KEY}
         SENTRY_DSN: ${SENTRY_DSN}
-        EMAIL_FROM: "noreply@xarxa.org"
+        EMAIL_FROM: "noreply@xarxa.help"
         NODE_ENV: production
       volumes:
         - uploads:/app/public/uploads
@@ -866,7 +866,7 @@ Still on the dev workstation. These files get committed to git and shipped to th
 
 - [ ] **B2.1** — Create:
   ```
-  xarxa.org {
+  xarxa.help {
     encode gzip zstd
     reverse_proxy app:3000 {
       transport http {
@@ -881,8 +881,8 @@ Still on the dev workstation. These files get committed to git and shipped to th
     }
   }
 
-  www.xarxa.org {
-    redir https://xarxa.org{uri} permanent
+  www.xarxa.help {
+    redir https://xarxa.help{uri} permanent
   }
   ```
 - [ ] **B2.2** — Commit: `git add Caddyfile && git commit -m "feat(infra): Caddyfile (Let's Encrypt + reverse-proxy)"`
@@ -934,7 +934,7 @@ Still on the dev workstation. These files get committed to git and shipped to th
 
   echo "→ Smoke test…"
   sleep 5
-  curl -sfL https://xarxa.org/ > /dev/null || { echo "✗ Smoke failed"; exit 1; }
+  curl -sfL https://xarxa.help/ > /dev/null || { echo "✗ Smoke failed"; exit 1; }
   echo "✓ Deploy OK at $(date -u +%FT%TZ) — sha=$SHA"
   ```
 - [ ] **B4.2** — `chmod +x deploy-prod.sh` (so it's executable after clone).
@@ -1011,17 +1011,17 @@ Still on the dev workstation. These files get committed to git and shipped to th
 
 These tasks run in parallel with operator availability. Each one is the operator clicking through a sign-up flow and pasting the resulting credential back into the conversation, where Claude tucks it into the spec for later use. **No secret value should be pasted into a tool call or commit.** Operator keeps them in a password manager.
 
-### Task C1: Cloudflare account + xarxa.org
+### Task C1: Cloudflare account + xarxa.help
 
 - [ ] **C1.1** — Operator: sign up at https://cloudflare.com. Verify email. Enable 2FA (recommended).
-- [ ] **C1.2** — Operator: in Cloudflare dashboard → Domain Registration → Search "xarxa.org". Expect available. Add to cart, complete checkout (~€11). Free WHOIS privacy enabled by default.
-- [ ] **C1.3** — Operator: generate an API token at My Profile → API Tokens → Create Token. Use the "Edit zone DNS" template. Zone: xarxa.org. Permissions: Zone:DNS:Edit, Zone:Zone:Read. Copy the token to a password manager.
-- [ ] **C1.4** — Operator: confirm to Claude "Cloudflare done, xarxa.org owned, API token in password manager." (Don't paste the token in chat.)
+- [ ] **C1.2** — Operator: in Cloudflare dashboard → Domain Registration → Search "xarxa.help". Expect available. Add to cart, complete checkout (~€11). Free WHOIS privacy enabled by default.
+- [ ] **C1.3** — Operator: generate an API token at My Profile → API Tokens → Create Token. Use the "Edit zone DNS" template. Zone: xarxa.help. Permissions: Zone:DNS:Edit, Zone:Zone:Read. Copy the token to a password manager.
+- [ ] **C1.4** — Operator: confirm to Claude "Cloudflare done, xarxa.help owned, API token in password manager." (Don't paste the token in chat.)
 
 ### Task C2: Resend account
 
 - [ ] **C2.1** — Operator: sign up at https://resend.com (Google sign-in fine). Free plan.
-- [ ] **C2.2** — Operator: Dashboard → Domains → Add Domain → `xarxa.org`. Resend shows three DNS records (1 MX or TXT for SPF, 1 CNAME for DKIM, 1 TXT for DMARC suggestion). **Do not click "Verify" yet** — DNS records get added in Phase E.
+- [ ] **C2.2** — Operator: Dashboard → Domains → Add Domain → `xarxa.help`. Resend shows three DNS records (1 MX or TXT for SPF, 1 CNAME for DKIM, 1 TXT for DMARC suggestion). **Do not click "Verify" yet** — DNS records get added in Phase E.
 - [ ] **C2.3** — Operator: API Keys → Create. Name: `xarxa-prod`. Permission: Sending access. Copy the value (starts with `re_`) to password manager.
 
 ### Task C3: Sentry account + project
@@ -1223,7 +1223,7 @@ All work via `ssh xarxa-prod`. Claude drives — operator confirms each command 
   PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
   # Nightly Postgres dump (03:00 UTC)
-  0 3 * * * root /opt/xarxa/scripts/backup-postgres.sh 2>&1 | logger -t xarxa-backup || curl -s --data "from=alerts@xarxa.org" --data "to=<operator-email>" --data "subject=xarxa backup FAILED" --data "text=See journalctl -t xarxa-backup" "https://api.resend.com/emails" -H "Authorization: Bearer $(grep '^RESEND_API_KEY=' /etc/xarxa/.env | cut -d= -f2-)"
+  0 3 * * * root /opt/xarxa/scripts/backup-postgres.sh 2>&1 | logger -t xarxa-backup || curl -s --data "from=alerts@xarxa.help" --data "to=<operator-email>" --data "subject=xarxa backup FAILED" --data "text=See journalctl -t xarxa-backup" "https://api.resend.com/emails" -H "Authorization: Bearer $(grep '^RESEND_API_KEY=' /etc/xarxa/.env | cut -d= -f2-)"
 
   # Nightly uploads snapshot (03:30 UTC)
   30 3 * * * root /opt/xarxa/scripts/backup-uploads.sh 2>&1 | logger -t xarxa-backup
@@ -1242,21 +1242,21 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task E1: Add A, SPF, DMARC, CAA records
 
-- [ ] **E1.1** — Cloudflare dashboard → xarxa.org → DNS → Records → Add record. Add each:
+- [ ] **E1.1** — Cloudflare dashboard → xarxa.help → DNS → Records → Add record. Add each:
 
   | Type | Name | Content | Proxy | TTL |
   |---|---|---|---|---|
   | A | `@` | `<hetzner-public-ip>` | DNS only | Auto |
   | A | `www` | `<hetzner-public-ip>` | DNS only | Auto |
   | TXT | `@` | `v=spf1 include:_spf.resend.com -all` | n/a | Auto |
-  | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:postmaster@xarxa.org` | n/a | Auto |
+  | TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:postmaster@xarxa.help` | n/a | Auto |
   | CAA | `@` | `0 issue "letsencrypt.org"` | n/a | Auto |
 
-- [ ] **E1.2** — From dev workstation: `dig +short xarxa.org` returns the Hetzner IP. `dig +short -t TXT xarxa.org` shows the SPF. (May take up to 5 min for first resolution.)
+- [ ] **E1.2** — From dev workstation: `dig +short xarxa.help` returns the Hetzner IP. `dig +short -t TXT xarxa.help` shows the SPF. (May take up to 5 min for first resolution.)
 
 ### Task E2: Resend domain verification
 
-- [ ] **E2.1** — Resend dashboard → Domains → `xarxa.org`. Resend shows the DKIM CNAME record (e.g., `resend._domainkey.xarxa.org` → some Resend-provided target). Copy the **exact** name + value.
+- [ ] **E2.1** — Resend dashboard → Domains → `xarxa.help`. Resend shows the DKIM CNAME record (e.g., `resend._domainkey.xarxa.help` → some Resend-provided target). Copy the **exact** name + value.
 - [ ] **E2.2** — Add to Cloudflare DNS:
   | Type | Name | Content | Proxy |
   |---|---|---|---|
@@ -1265,7 +1265,7 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task E3: Wait + verify
 
-- [ ] **E3.1** — From any external machine: `dig +short xarxa.org` returns the box IP. `nslookup -type=txt xarxa.org` shows SPF.
+- [ ] **E3.1** — From any external machine: `dig +short xarxa.help` returns the box IP. `nslookup -type=txt xarxa.help` shows SPF.
 - [ ] **E3.2** — From the box: `curl -v https://acme-staging-v02.api.letsencrypt.org/directory` (sanity: outbound HTTPS works from the box).
 
 ---
@@ -1283,19 +1283,19 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task F2: Verify HTTPS
 
-- [ ] **F2.1** — From dev workstation: `curl -sIL https://xarxa.org/` returns HTTP/2 200 + valid Let's Encrypt cert (no `-k` needed).
-- [ ] **F2.2** — `curl -sIL https://www.xarxa.org/` returns 301 to https://xarxa.org/.
-- [ ] **F2.3** — Open `https://xarxa.org/` in a browser — homepage with hands.png renders. Hard refresh, no CSP errors in DevTools console.
+- [ ] **F2.1** — From dev workstation: `curl -sIL https://xarxa.help/` returns HTTP/2 200 + valid Let's Encrypt cert (no `-k` needed).
+- [ ] **F2.2** — `curl -sIL https://www.xarxa.help/` returns 301 to https://xarxa.help/.
+- [ ] **F2.3** — Open `https://xarxa.help/` in a browser — homepage with hands.png renders. Hard refresh, no CSP errors in DevTools console.
 
 ### Task F3: Verify security headers
 
-- [ ] **F3.1** — `curl -sIL https://xarxa.org/ | grep -iE 'strict-transport|content-security-policy|x-frame|x-content-type|referrer|permissions'` shows all six.
-- [ ] **F3.2** — Run https://www.ssllabs.com/ssltest/analyze.html?d=xarxa.org — expect A or A+.
+- [ ] **F3.1** — `curl -sIL https://xarxa.help/ | grep -iE 'strict-transport|content-security-policy|x-frame|x-content-type|referrer|permissions'` shows all six.
+- [ ] **F3.2** — Run https://www.ssllabs.com/ssltest/analyze.html?d=xarxa.help — expect A or A+.
 
 ### Task F4: End-to-end sign-up + verify + post
 
 - [ ] **F4.1** — In the browser, register a real test account (use a real inbox you control). Submit. Redirected to `/auth/verify-pending` showing "Check your email" in EN.
-- [ ] **F4.2** — Within ~30s, an email lands from `noreply@xarxa.org` with subject "Verify your email — xarxa". Click the link.
+- [ ] **F4.2** — Within ~30s, an email lands from `noreply@xarxa.help` with subject "Verify your email — xarxa". Click the link.
 - [ ] **F4.3** — Browser lands on `/?verified=1`. Verify-banner gone. Try to create a post — works.
 - [ ] **F4.4** — Sign out. Re-register with a different test email but DO NOT click the verify link. Sign in (works — auth gate is the soft wall). Try to create a post → button shows "Verify your email to do this", clicking it surfaces a banner. Browse the board, view post details — all accessible.
 - [ ] **F4.5** — On the verify-pending page for the second account, click "Resend". Watch the inbox.
@@ -1307,14 +1307,14 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
   for i in $(seq 1 8); do
     curl -sw '%{http_code}\n' -o /dev/null -X POST -H 'Content-Type: application/json' \
       -d '{"email":"throw'$i'@example.invalid","password":"Password1!","name":"T","type":"PRIVATE"}' \
-      https://xarxa.org/api/auth/register
+      https://xarxa.help/api/auth/register
   done
   ```
   Expect: first 5 return 400 (validation passes but emails are .invalid → still 200/4xx depending on flow); 6th onward return 429.
 
 ### Task F6: Reboot test
 
-- [ ] **F6.1** — `sudo reboot`. Wait ~90s. From dev workstation: `curl -sI https://xarxa.org/` returns 200. systemd brought the stack back unattended.
+- [ ] **F6.1** — `sudo reboot`. Wait ~90s. From dev workstation: `curl -sI https://xarxa.help/` returns 200. systemd brought the stack back unattended.
 
 ---
 
@@ -1322,7 +1322,7 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task G1: Sentry — trigger a test error
 
-- [ ] **G1.1** — Modify any server-side route temporarily to throw on demand, OR use the Sentry SDK test page (`/api/sentry-test` is a common pattern). Easiest: in browser, open DevTools console on https://xarxa.org/ and run `Sentry.captureException(new Error("smoke test"))` (the Sentry SDK is auto-loaded by the Next.js integration).
+- [ ] **G1.1** — Modify any server-side route temporarily to throw on demand, OR use the Sentry SDK test page (`/api/sentry-test` is a common pattern). Easiest: in browser, open DevTools console on https://xarxa.help/ and run `Sentry.captureException(new Error("smoke test"))` (the Sentry SDK is auto-loaded by the Next.js integration).
 - [ ] **G1.2** — Sentry dashboard → Issues — the smoke error appears within ~1 min, tagged with `release: <commit-sha>`.
 
 ### Task G2: Sentry source maps
@@ -1332,7 +1332,7 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task G3: UptimeRobot
 
-- [ ] **G3.1** — UptimeRobot dashboard → Add New Monitor. Type: HTTPS. URL: `https://xarxa.org/`. Friendly name: `xarxa`. Interval: 5 min. Alert contacts: operator's email.
+- [ ] **G3.1** — UptimeRobot dashboard → Add New Monitor. Type: HTTPS. URL: `https://xarxa.help/`. Friendly name: `xarxa`. Interval: 5 min. Alert contacts: operator's email.
 - [ ] **G3.2** — Wait ~10 min. Monitor should show green.
 
 ---
@@ -1350,7 +1350,7 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task H2: Backup-failure alerting
 
-- [ ] **H2.1** — Temporarily break the script: rename `/etc/xarxa/backup.key` to `backup.key.bak`. Run `sudo /opt/xarxa/scripts/backup-postgres.sh` — should fail. Check that the email-alert step in `/etc/cron.d/xarxa-backups` would have fired (the cron-line failover sends a curl to Resend on non-zero exit). Test manually: `bash -c 'false || curl -s --data "from=alerts@xarxa.org" --data "to=<your-email>" --data "subject=xarxa backup TEST" --data "text=test" "https://api.resend.com/emails" -H "Authorization: Bearer <key>"'`. Confirm the email arrives.
+- [ ] **H2.1** — Temporarily break the script: rename `/etc/xarxa/backup.key` to `backup.key.bak`. Run `sudo /opt/xarxa/scripts/backup-postgres.sh` — should fail. Check that the email-alert step in `/etc/cron.d/xarxa-backups` would have fired (the cron-line failover sends a curl to Resend on non-zero exit). Test manually: `bash -c 'false || curl -s --data "from=alerts@xarxa.help" --data "to=<your-email>" --data "subject=xarxa backup TEST" --data "text=test" "https://api.resend.com/emails" -H "Authorization: Bearer <key>"'`. Confirm the email arrives.
 - [ ] **H2.2** — Restore key: `sudo mv /etc/xarxa/backup.key.bak /etc/xarxa/backup.key`.
 
 ### Task H3: Restore drill (the important one)
@@ -1389,7 +1389,7 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 ### Task I2: Update README
 
-- [ ] **I2.1** — Edit `README.md`. Above the screenshot line add a "Live at" line: `**Live at: [xarxa.org](https://xarxa.org)**`. Add a "Runbook" pointer in the Getting Started section: see `docs/runbook.md` for prod incidents.
+- [ ] **I2.1** — Edit `README.md`. Above the screenshot line add a "Live at" line: `**Live at: [xarxa.help](https://xarxa.help)**`. Add a "Runbook" pointer in the Getting Started section: see `docs/runbook.md` for prod incidents.
 - [ ] **I2.2** — Commit: `git add README.md && git commit -m "docs(readme): point to live site and runbook"`.
 
 ### Task I3: Update CLAUDE.md
@@ -1412,11 +1412,11 @@ Use the Cloudflare web dashboard OR the API (Claude can drive via API if operato
 
 After Phase I, walk through the spec's 13 acceptance criteria one by one. Tick each:
 
-- [ ] **AC1** — `https://xarxa.org/` loads with valid LE cert + `<title>xarxa</title>`
+- [ ] **AC1** — `https://xarxa.help/` loads with valid LE cert + `<title>xarxa</title>`
 - [ ] **AC2** — Sign up → email → click link → can post
 - [ ] **AC3** — Unverified user: browse OK, action buttons gated
 - [ ] **AC4** — 6 register attempts in an hour from one IP → 429
-- [ ] **AC5** — `curl -sI https://xarxa.org/` shows HSTS + CSP + X-Frame
+- [ ] **AC5** — `curl -sI https://xarxa.help/` shows HSTS + CSP + X-Frame
 - [ ] **AC6** — `sudo reboot` brings stack back unattended in ~2 min
 - [ ] **AC7** — Sentry captures manual `throw new Error("smoke")`
 - [ ] **AC8** — UptimeRobot monitor is green

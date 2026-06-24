@@ -4,7 +4,7 @@
 #
 # Reads secrets from /etc/xarxa/.env. Builds the image tagged with the
 # current commit SHA, applies Prisma db push, swaps the app container,
-# smoke-tests https://xarxa.org/.
+# smoke-tests https://xarxa.help/.
 
 set -euo pipefail
 
@@ -29,7 +29,7 @@ docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-
 
 echo "→ Smoke test…"
 sleep 5
-if ! curl -sfL https://xarxa.org/ > /dev/null; then
+if ! curl -sfL https://xarxa.help/ > /dev/null; then
   echo "✗ Smoke failed — check 'docker compose logs app' and 'docker compose logs caddy'"
   exit 1
 fi
