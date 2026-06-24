@@ -25,8 +25,9 @@ RUN adduser --system --uid 1001 nextjs
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
+# Copy node_modules whole — the custom server.ts uses modules (socket.io,
+# its adapters, etc.) that Next.js standalone output doesn't trace.
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/dist/server.js ./server.js
 RUN mkdir -p public/uploads && chown nextjs:nodejs public/uploads
