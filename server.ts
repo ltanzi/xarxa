@@ -102,6 +102,14 @@ app.prepare().then(() => {
         return;
       }
 
+      // Anti-flood: 20 messages per minute per user
+      const { limit } = await import("./src/lib/rate-limit");
+      const rl = limit(`msg:${socket.data.userId}`, 20, 60 * 1000);
+      if (!rl.ok) {
+        socket.emit("error", { code: "RATE_LIMIT", retryAfterSec: rl.retryAfterSec });
+        return;
+      }
+
       socket.to(`conversation:${data.conversationId}`).emit("new-message", data.message);
 
       // Notify other participants to refresh their notification counts

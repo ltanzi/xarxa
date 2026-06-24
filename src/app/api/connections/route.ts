@@ -3,10 +3,14 @@ import { prisma } from "@/lib/prisma";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { notifyUser } from "@/lib/socket";
 import { connectionRequestSchema } from "@/lib/validations";
+import { limit, rateLimited } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
   const { error, session } = await requireVerifiedUser();
   if (error) return error;
+
+  const rl = limit(`conn:${session.user.id}`, 30, 24 * 60 * 60 * 1000);
+  if (!rl.ok) return rateLimited(rl.retryAfterSec);
 
   let body: unknown;
   try {

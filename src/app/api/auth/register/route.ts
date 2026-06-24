@@ -1,11 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { randomBytes, createHash } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { registerSchema } from "@/lib/validations";
 import { sendVerificationEmail, type Locale } from "@/lib/email";
+import { limit, ipKey, rateLimited } from "@/lib/rate-limit";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const rl = limit(`register:${ipKey(request)}`, 5, 60 * 60 * 1000);
+  if (!rl.ok) return rateLimited(rl.retryAfterSec);
+
   try {
     const body = await request.json();
     const parsed = registerSchema.safeParse(body);

@@ -2,11 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomBytes, createHash } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail, type Locale } from "@/lib/email";
+import { limit, rateLimited } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
   const { email } = (await req.json().catch(() => ({}))) as { email?: unknown };
   if (!email || typeof email !== "string") {
     return NextResponse.json({ error: "INVALID_EMAIL" }, { status: 400 });
+  }
+
+  const per1m = limit(`resend:1m:${email}`, 1, 60 * 1000);
+  const per1h = limit(`resend:1h:${email}`, 5, 60 * 60 * 1000);
+  if (!per1m.ok || !per1h.ok) {
+    const retry = Math.max(
+      per1m.ok ? 0 : per1m.retryAfterSec,
+      per1h.ok ? 0 : per1h.retryAfterSec,
+    );
+    return rateLimited(retry);
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
