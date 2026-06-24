@@ -36,11 +36,15 @@ export function LocationInput({ label, value, onChange }: LocationInputProps) {
       const res = await fetch(
         `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&layer=city&limit=6&lang=en`
       );
-      const data = await res.json();
-      const results: Suggestion[] = (data.features || []).map((f: any) => ({
-        name: f.properties.name,
-        country: f.properties.country || "",
-        state: f.properties.state,
+      const data = (await res.json()) as {
+        features?: Array<{
+          properties?: { name?: string; country?: string; state?: string };
+        }>;
+      };
+      const results: Suggestion[] = (data.features || []).map((f) => ({
+        name: f.properties?.name ?? "",
+        country: f.properties?.country ?? "",
+        state: f.properties?.state,
       }));
       // deduplicate by name+country
       const seen = new Set<string>();
