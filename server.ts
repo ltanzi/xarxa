@@ -86,6 +86,22 @@ app.prepare().then(() => {
       // Only relay if sender actually joined this conversation room
       if (!socket.rooms.has(`conversation:${data.conversationId}`)) return;
 
+      // Verified-only — soft wall on chat sending
+      try {
+        const { prisma } = await import("./src/lib/prisma");
+        const sender = await prisma.user.findUnique({
+          where: { id: socket.data.userId },
+          select: { emailVerified: true },
+        });
+        if (!sender?.emailVerified) {
+          socket.emit("error", { code: "EMAIL_NOT_VERIFIED" });
+          return;
+        }
+      } catch (err) {
+        console.error("[socket] verified-check failed:", err);
+        return;
+      }
+
       socket.to(`conversation:${data.conversationId}`).emit("new-message", data.message);
 
       // Notify other participants to refresh their notification counts
