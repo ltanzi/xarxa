@@ -52,8 +52,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // }),
   ],
   callbacks: {
-    async signIn() {
-      // Google OAuth disabled — see git history for implementation
+    async signIn({ user, account, profile }) {
+      // Google OAuth: trust Google's email verification; mark our user verified
+      // on first OAuth sign-in. (Currently dead code — Google provider is disabled —
+      // but in place so it Just Works when the provider is re-enabled.)
+      if (account?.provider === "google" && (profile as { email_verified?: boolean })?.email_verified && user.email) {
+        await prisma.user.update({
+          where: { email: user.email },
+          data: { emailVerified: new Date() },
+        }).catch(() => null);
+      }
       return true;
     },
     async jwt({ token, user, trigger }) {
