@@ -7,6 +7,18 @@
     "error": "Algo salió mal",
     "done": "Listo"
   },
+  "verification": {
+    "pendingTitle": "Revisa tu email",
+    "pendingBody": "Te hemos enviado un enlace para verificar tu correo. Haz clic para terminar el registro.",
+    "errorExpired": "El enlace ha caducado. Solicita otro abajo.",
+    "errorInvalid": "El enlace no es válido. Solicita otro abajo.",
+    "errorMissing": "No se ha proporcionado token.",
+    "resend": "Reenviar correo de verificación",
+    "resent": "Enviado — revisa tu bandeja",
+    "bannerText": "Tu correo aún no está verificado.",
+    "bannerLink": "Verificar ahora",
+    "blockedTooltip": "Verifica tu correo para hacer esto"
+  },
   "nav": {
     "board": "Tablón",
     "dashboard": "Actividad",

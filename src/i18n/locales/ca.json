@@ -7,6 +7,18 @@
     "error": "Alguna cosa ha anat malament",
     "done": "Fet"
   },
+  "verification": {
+    "pendingTitle": "Revisa el teu correu",
+    "pendingBody": "T'hem enviat un enllaç per verificar el teu correu. Fes clic per acabar el registre.",
+    "errorExpired": "L'enllaç ha caducat. Demana'n un de nou a sota.",
+    "errorInvalid": "L'enllaç no és vàlid. Demana'n un de nou a sota.",
+    "errorMissing": "No s'ha proporcionat el token.",
+    "resend": "Reenviar correu de verificació",
+    "resent": "Enviat — revisa la safata d'entrada",
+    "bannerText": "El teu correu encara no està verificat.",
+    "bannerLink": "Verificar ara",
+    "blockedTooltip": "Verifica el teu correu per fer això"
+  },
   "nav": {
     "board": "Tauler",
     "dashboard": "Activitat",

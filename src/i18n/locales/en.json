@@ -7,6 +7,18 @@
     "error": "Something went wrong",
     "done": "Done"
   },
+  "verification": {
+    "pendingTitle": "Check your email",
+    "pendingBody": "We sent you a link to verify your email. Click it to finish signing up.",
+    "errorExpired": "That link has expired. Get a new one below.",
+    "errorInvalid": "That link is invalid. Get a new one below.",
+    "errorMissing": "No token provided.",
+    "resend": "Resend verification email",
+    "resent": "Sent — check your inbox",
+    "bannerText": "Your email isn't verified yet.",
+    "bannerLink": "Verify now",
+    "blockedTooltip": "Verify your email to do this"
+  },
   "nav": {
     "board": "Board",
     "dashboard": "Activity",
