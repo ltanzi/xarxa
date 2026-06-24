@@ -2,38 +2,81 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+const PROTECTED_PATHS = [
+  "/board/new",
+  "/profile/edit",
+  "/dashboard",
+  "/chat",
+];
+
+function isProtected(pathname: string): boolean {
+  return PROTECTED_PATHS.some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`),
+  );
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Google OAuth redirect — commented out while Google login is disabled
-  // const isNewOAuth = request.cookies.get("new_oauth_user")?.value === "1";
-  // if (isNewOAuth && pathname !== "/profile/edit") {
-  //   const response = NextResponse.redirect(new URL("/profile/edit", request.url));
-  //   response.cookies.delete("new_oauth_user");
-  //   return response;
-  // }
-
-  const token = await getToken({
-    req: request,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-
-  if (!token) {
-    const signInUrl = new URL("/auth/signin", request.url);
-    signInUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(signInUrl);
+  // 1. Origin-header check for mutating /api/ requests.
+  //    NextAuth's own routes are matcher-excluded.
+  const method = request.method;
+  if (
+    pathname.startsWith("/api/") &&
+    ["POST", "PUT", "PATCH", "DELETE"].includes(method)
+  ) {
+    const origin = request.headers.get("origin");
+    const expectedOrigin = process.env.NEXTAUTH_URL
+      ? new URL(process.env.NEXTAUTH_URL).origin
+      : null;
+    if (origin && expectedOrigin && origin !== expectedOrigin) {
+      return NextResponse.json({ error: "BAD_ORIGIN" }, { status: 403 });
+    }
   }
 
-  return NextResponse.next();
+  // 2. Auth-redirect for protected paths
+  if (isProtected(pathname)) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    if (!token) {
+      const signInUrl = new URL("/auth/signin", request.url);
+      signInUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
+  }
+
+  // 3. Per-request CSP nonce + headers
+  const nonce = btoa(crypto.randomUUID());
+  const csp = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https:",
+    "connect-src 'self' wss: https://*.sentry.io",
+    "font-src 'self' data:",
+    "frame-ancestors 'none'",
+    "form-action 'self'",
+    "base-uri 'self'",
+  ].join("; ");
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+  response.headers.set("Content-Security-Policy", csp);
+  return response;
 }
 
 export const config = {
+  // Run on everything except NextAuth's own routes (which handle their own CSRF),
+  // static asset prefixes, and favicon.
   matcher: [
-    "/board/new",
-    "/profile/edit",
-    "/dashboard",
-    "/dashboard/:path*",
-    "/chat",
-    "/chat/:path*",
+    {
+      source: "/((?!api/auth|_next/static|_next/image|favicon|seed|uploads).*)",
+    },
   ],
 };
