@@ -94,6 +94,11 @@ async function main() {
     },
   });
 
+  // Mark all seeded users as email-verified so they can interact post-go-live.
+  await prisma.user.updateMany({
+    data: { emailVerified: new Date() },
+  });
+
   // Posts — collective requests
   await prisma.post.create({
     data: {
