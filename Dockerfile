@@ -7,8 +7,13 @@ RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
+ARG COMMIT_SHA=unknown
+ARG SENTRY_AUTH_TOKEN=
+ENV NEXT_PUBLIC_COMMIT_SHA=$COMMIT_SHA
+ENV SENTRY_AUTH_TOKEN=$SENTRY_AUTH_TOKEN
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npx next telemetry disable
 RUN npx prisma generate
 RUN npm run build
 
