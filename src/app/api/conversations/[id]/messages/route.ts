@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-utils";
 import { messageSchema } from "@/lib/validations";
+import { limit, rateLimited } from "@/lib/rate-limit";
 
 export async function GET(
   _request: Request,
@@ -49,10 +51,14 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // Soft-wall: only verified users can send messages via REST too. The
+  // Socket.io send-message handler enforces the same gate; this is the
+  // load-bearing one because the chat client posts here first.
+  const { error, session } = await requireVerifiedUser();
+  if (error) return error;
+
+  const rl = limit(`msg:${session.user.id}`, 20, 60 * 1000);
+  if (!rl.ok) return rateLimited(rl.retryAfterSec);
 
   const { id } = await params;
 
