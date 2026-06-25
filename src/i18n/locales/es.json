@@ -21,7 +21,8 @@
     "blockedTooltip": "Verifica tu correo para hacer esto",
     "confirmTitle": "Un clic más",
     "confirmBody": "Confirma que quieres verificar este correo y terminar tu cuenta en xarxa.",
-    "confirmCta": "Verificar email"
+    "confirmCta": "Verificar email",
+    "verifiedToast": "Correo verificado"
   },
   "nav": {
     "board": "Tablón",

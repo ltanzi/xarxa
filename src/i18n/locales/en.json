@@ -21,7 +21,8 @@
     "blockedTooltip": "Verify your email to do this",
     "confirmTitle": "One more click",
     "confirmBody": "Confirm that you want to verify this email and finish setting up your xarxa account.",
-    "confirmCta": "Verify email"
+    "confirmCta": "Verify email",
+    "verifiedToast": "Email verified"
   },
   "nav": {
     "board": "Board",
