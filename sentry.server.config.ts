@@ -9,4 +9,7 @@ Sentry.init({
   release: process.env.NEXT_PUBLIC_COMMIT_SHA || undefined,
   environment: process.env.NODE_ENV,
   tracesSampleRate: 0.1,
+  // TEMP: turn on the SDK's own log output to debug why events aren't
+  // landing in the project. Remove once smoke confirms ingestion.
+  debug: true,
 });
