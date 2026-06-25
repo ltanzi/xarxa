@@ -73,23 +73,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, trigger }) {
       if (user) {
         token.id = user.id;
-        // user is AdapterUser | User — the credentials provider returns our shape with emailVerified
-        token.emailVerified = (user as { emailVerified?: Date | null }).emailVerified ?? null;
+        // JWT serialises Date → ISO string via JSON.stringify on the way
+        // out, then JSON.parse on the way back in. Store ISO string up
+        // front so the runtime type stays consistent.
+        const raw = (user as { emailVerified?: Date | null }).emailVerified;
+        token.emailVerified = raw ? raw.toISOString() : null;
       }
       if (trigger === "update" && token.id) {
-        // Refresh emailVerified from DB when a route calls session.update() after verification
+        // Refresh emailVerified from DB when a route calls session.update()
+        // after verification.
         const fresh = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: { emailVerified: true },
         });
-        token.emailVerified = fresh?.emailVerified ?? null;
+        token.emailVerified = fresh?.emailVerified ? fresh.emailVerified.toISOString() : null;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.emailVerified = (token.emailVerified as Date | null) ?? null;
+        // emailVerified arrives as ISO string from the JWT.
+        const raw = token.emailVerified as string | null | undefined;
+        session.user.emailVerified = raw ?? null;
       }
       return session;
     },

@@ -15,7 +15,7 @@ export async function requireAuth() {
 }
 
 type RequireResult =
-  | { error: null; session: Session & { user: { id: string; emailVerified: Date } } }
+  | { error: null; session: Session & { user: { id: string; emailVerified: string } } }
   | { error: NextResponse; session: null };
 
 export async function requireVerifiedUser(): Promise<RequireResult> {
@@ -34,6 +34,6 @@ export async function requireVerifiedUser(): Promise<RequireResult> {
   }
   return {
     error: null,
-    session: session as Session & { user: { id: string; emailVerified: Date } },
+    session: session as Session & { user: { id: string; emailVerified: string } },
   };
 }
