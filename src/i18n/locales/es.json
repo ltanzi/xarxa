@@ -13,11 +13,15 @@
     "errorExpired": "El enlace ha caducado. Solicita otro abajo.",
     "errorInvalid": "El enlace no es válido. Solicita otro abajo.",
     "errorMissing": "No se ha proporcionado token.",
+    "errorServer": "Algo ha ido mal en nuestro lado. Inténtalo de nuevo en un momento.",
     "resend": "Reenviar correo de verificación",
     "resent": "Enviado — revisa tu bandeja",
     "bannerText": "Tu correo aún no está verificado.",
     "bannerLink": "Verificar ahora",
-    "blockedTooltip": "Verifica tu correo para hacer esto"
+    "blockedTooltip": "Verifica tu correo para hacer esto",
+    "confirmTitle": "Un clic más",
+    "confirmBody": "Confirma que quieres verificar este correo y terminar tu cuenta en xarxa.",
+    "confirmCta": "Verificar email"
   },
   "nav": {
     "board": "Tablón",

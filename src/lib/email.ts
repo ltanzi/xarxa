@@ -17,7 +17,9 @@ export async function sendVerificationEmail(
     return;
   }
 
-  const verifyUrl = `${env.NEXTAUTH_URL}/api/auth/verify-email?token=${plainToken}`;
+  // Link to the interstitial page (not /api/...); the page POSTs the
+  // token so corporate link-prefetchers can't consume it.
+  const verifyUrl = `${env.NEXTAUTH_URL}/auth/verify?token=${encodeURIComponent(plainToken)}`;
   const subject = {
     en: "Verify your email — xarxa",
     es: "Verifica tu email — xarxa",

@@ -13,11 +13,15 @@
     "errorExpired": "That link has expired. Get a new one below.",
     "errorInvalid": "That link is invalid. Get a new one below.",
     "errorMissing": "No token provided.",
+    "errorServer": "Something went wrong on our side. Try again in a moment.",
     "resend": "Resend verification email",
     "resent": "Sent — check your inbox",
     "bannerText": "Your email isn't verified yet.",
     "bannerLink": "Verify now",
-    "blockedTooltip": "Verify your email to do this"
+    "blockedTooltip": "Verify your email to do this",
+    "confirmTitle": "One more click",
+    "confirmBody": "Confirm that you want to verify this email and finish setting up your xarxa account.",
+    "confirmCta": "Verify email"
   },
   "nav": {
     "board": "Board",

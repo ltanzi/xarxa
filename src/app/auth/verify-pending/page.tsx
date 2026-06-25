@@ -25,6 +25,7 @@ export default async function VerifyPendingPage({
       {err === "expired" && <p className="mt-4 text-rose-700">{t("verification.errorExpired")}</p>}
       {err === "invalid" && <p className="mt-4 text-rose-700">{t("verification.errorInvalid")}</p>}
       {err === "missing" && <p className="mt-4 text-rose-700">{t("verification.errorMissing")}</p>}
+      {err === "server" && <p className="mt-4 text-rose-700">{t("verification.errorServer")}</p>}
       {email && <ResendButton email={email} />}
     </main>
   );
