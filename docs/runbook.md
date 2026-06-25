@@ -94,14 +94,16 @@ docker compose --env-file /etc/xarxa/.env -f /opt/xarxa/docker-compose.prod.yml 
 cd /opt/xarxa
 git log -10 --oneline           # find the last-known-good SHA
 git checkout <good-sha>
-./deploy-prod.sh                # builds and swaps app
+./deploy-prod.sh --keep-head    # builds + restarts at the checked-out SHA
+                                # WITHOUT pulling origin/main (which would
+                                # roll forward and undo your rollback).
 ```
 
-`deploy-prod.sh` won't pull/reset because we're now in detached-HEAD. After verifying, return to a branch:
+After verifying the rollback works, return to a branch so the next normal
+`./deploy-prod.sh` (no flag) resumes following `origin/main`:
 
 ```bash
-git checkout -b hotfix-<topic>
-# fix forward and merge to main; on the next ./deploy-prod.sh, git fetch+reset to origin/main resumes normal flow.
+git checkout -b hotfix-<topic>  # fix forward and merge to main
 ```
 
 If the breakage was a bad migration that left the schema in a weird state, open psql (§2) and `\d` the table; reverse the column add by hand (the spec uses `prisma db push` so there are no migration files to roll back automatically).
