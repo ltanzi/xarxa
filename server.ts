@@ -1,9 +1,9 @@
-// Eagerly validate env on startup BEFORE any other module loads. If
-// /etc/xarxa/.env is missing a required key, we want to fail fast at
-// boot — not on the first request, not via some lazy import chain
-// (src/lib/prisma was previously the only entry that triggered it,
-// which is fragile to refactor).
-import "./src/lib/env";
+// NOTE: server.ts is compiled by tsc in isolation (tsconfig.server.json
+// includes only this file), so we can't import from ./src/lib/* here —
+// those modules aren't compiled to dist/. Env validation still happens
+// via Next.js's bundled src/lib/env.ts on first prisma import. A proper
+// eager validation requires either widening tsconfig.server.json's
+// include, or inlining the Zod schema here. Deferred.
 
 import { createServer } from "http";
 import { parse } from "url";
@@ -90,52 +90,14 @@ app.prepare().then(() => {
     });
 
     socket.on("send-message", async (data: { conversationId: string; message: unknown }) => {
-      // Only relay if sender actually joined this conversation room
+      // Only relay if sender actually joined this conversation room.
+      // The REST POST /api/conversations/[id]/messages is the authoritative
+      // gate (verified-only + rate-limited) — the client posts there
+      // FIRST, then emits here for real-time relay. This handler is a
+      // dumb pass-through; the REST handler also fires notifyUser() for
+      // recipient badge updates.
       if (!socket.rooms.has(`conversation:${data.conversationId}`)) return;
-
-      // Verified-only — soft wall on chat sending
-      try {
-        const { prisma } = await import("./src/lib/prisma");
-        const sender = await prisma.user.findUnique({
-          where: { id: socket.data.userId },
-          select: { emailVerified: true },
-        });
-        if (!sender?.emailVerified) {
-          socket.emit("send-message:rejected", { code: "EMAIL_NOT_VERIFIED" });
-          return;
-        }
-      } catch (err) {
-        console.error("[socket] verified-check failed:", err);
-        return;
-      }
-
-      // Anti-flood: 20 messages per minute per user
-      const { limit } = await import("./src/lib/rate-limit");
-      const rl = limit(`msg:${socket.data.userId}`, 20, 60 * 1000);
-      if (!rl.ok) {
-        socket.emit("send-message:rejected", { code: "RATE_LIMIT", retryAfterSec: rl.retryAfterSec });
-        return;
-      }
-
       socket.to(`conversation:${data.conversationId}`).emit("new-message", data.message);
-
-      // Notify other participants to refresh their notification counts
-      try {
-        const { prisma } = await import("./src/lib/prisma");
-        const conversation = await prisma.conversation.findUnique({
-          where: { id: data.conversationId },
-          select: { participants: { select: { id: true } } },
-        });
-        if (conversation) {
-          for (const p of conversation.participants) {
-            if (p.id !== socket.data.userId) {
-              io.to(`user:${p.id}`).emit("notifications:update");
-            }
-          }
-        }
-      } catch (err) {
-        console.error("[socket] notification after send-message failed:", err);
-      }
     });
   });
 

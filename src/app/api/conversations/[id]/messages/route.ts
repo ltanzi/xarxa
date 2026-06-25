@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { messageSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
+import { notifyUser } from "@/lib/socket";
 
 export async function GET(
   _request: Request,
@@ -93,6 +94,19 @@ export async function POST(
       sender: { select: { id: true, name: true, profilePhoto: true } },
     },
   });
+
+  // Bump notification badges for the other participant(s). Used to live
+  // in server.ts but the dynamic prisma import there is broken in the
+  // standalone build; calling it from here is the canonical path.
+  const fullConv = await prisma.conversation.findUnique({
+    where: { id },
+    select: { participants: { select: { id: true } } },
+  });
+  if (fullConv) {
+    for (const p of fullConv.participants) {
+      if (p.id !== session.user.id) notifyUser(p.id);
+    }
+  }
 
   return NextResponse.json(message, { status: 201 });
 }
