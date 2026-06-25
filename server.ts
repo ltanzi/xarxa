@@ -94,7 +94,7 @@ app.prepare().then(() => {
           select: { emailVerified: true },
         });
         if (!sender?.emailVerified) {
-          socket.emit("error", { code: "EMAIL_NOT_VERIFIED" });
+          socket.emit("send-message:rejected", { code: "EMAIL_NOT_VERIFIED" });
           return;
         }
       } catch (err) {
@@ -106,7 +106,7 @@ app.prepare().then(() => {
       const { limit } = await import("./src/lib/rate-limit");
       const rl = limit(`msg:${socket.data.userId}`, 20, 60 * 1000);
       if (!rl.ok) {
-        socket.emit("error", { code: "RATE_LIMIT", retryAfterSec: rl.retryAfterSec });
+        socket.emit("send-message:rejected", { code: "RATE_LIMIT", retryAfterSec: rl.retryAfterSec });
         return;
       }
 
