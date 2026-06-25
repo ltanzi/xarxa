@@ -5,6 +5,22 @@
 // eager validation requires either widening tsconfig.server.json's
 // include, or inlining the Zod schema here. Deferred.
 
+// Sentry — Node SDK init at the very top, before any handlers can throw.
+// We init here (not via instrumentation.ts) because this is a custom
+// server; Next.js's automatic instrumentation hook isn't fired through
+// our `next({...})` wrapper. The Edge runtime (middleware) still gets
+// initialised via src/instrumentation.ts.
+import * as Sentry from "@sentry/nextjs";
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    release: process.env.NEXT_PUBLIC_COMMIT_SHA || undefined,
+    environment: process.env.NODE_ENV,
+    tracesSampleRate: 0.1,
+  });
+  console.log("[sentry] Node SDK initialised");
+}
+
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
