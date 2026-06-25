@@ -1,3 +1,10 @@
+// Eagerly validate env on startup BEFORE any other module loads. If
+// /etc/xarxa/.env is missing a required key, we want to fail fast at
+// boot — not on the first request, not via some lazy import chain
+// (src/lib/prisma was previously the only entry that triggered it,
+// which is fragile to refactor).
+import "./src/lib/env";
+
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
