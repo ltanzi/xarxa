@@ -19,6 +19,7 @@ services:
       DATABASE_URL: "postgresql://xarxa:${POSTGRES_PASSWORD}@postgres:5432/xarxa?schema=public"
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
       NEXTAUTH_URL: "https://xarxa.help"
+      AUTH_TRUST_HOST: "true"
       RESEND_API_KEY: ${RESEND_API_KEY}
       SENTRY_DSN: ${SENTRY_DSN}
       EMAIL_FROM: "noreply@xarxa.help"
