@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 const PROTECTED_PATHS = [
   "/board/new",
@@ -14,7 +15,7 @@ function isProtected(pathname: string): boolean {
   );
 }
 
-export default auth((request) => {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // 1. Origin-header check for mutating /api/ requests.
@@ -33,13 +34,17 @@ export default auth((request) => {
     }
   }
 
-  // 2. Auth-redirect for protected paths.
-  //    request.auth is provided by the auth() wrapper from NextAuth v5,
-  //    which handles cookie name, secret, and decoding under the hood.
-  if (isProtected(pathname) && !request.auth) {
-    const signInUrl = new URL("/auth/signin", request.url);
-    signInUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(signInUrl);
+  // 2. Auth-redirect for protected paths
+  if (isProtected(pathname)) {
+    const token = await getToken({
+      req: request,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+    if (!token) {
+      const signInUrl = new URL("/auth/signin", request.url);
+      signInUrl.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(signInUrl);
+    }
   }
 
   // 3. Per-request CSP nonce + headers
@@ -64,7 +69,7 @@ export default auth((request) => {
   });
   response.headers.set("Content-Security-Policy", csp);
   return response;
-});
+}
 
 export const config = {
   // Run on everything except NextAuth's own routes (which handle their own CSRF),
