@@ -15,21 +15,44 @@ function isProtected(pathname: string): boolean {
   );
 }
 
+function safeUrlOrigin(value: string): string | null {
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 1. Origin-header check for mutating /api/ requests.
-  //    NextAuth's own routes are matcher-excluded.
+  // 1. Origin-header CSRF defense for mutating /api/ requests.
+  //    Blocks cross-origin POSTs from third-party sites. We require a header
+  //    (Origin preferred, Referer fallback) and reject when it doesn't match
+  //    our expected origin — earlier we let missing-Origin through, but
+  //    modern browsers always send Origin on POST so requiring it is safe.
+  //    NextAuth's [...nextauth] route is matcher-excluded; our custom
+  //    /api/auth/register and /api/auth/resend-verification routes ARE
+  //    covered (the matcher excludes "api/auth" but those routes pattern
+  //    starts with "api/auth/" — see matcher tightening below).
   const method = request.method;
   if (
     pathname.startsWith("/api/") &&
     ["POST", "PUT", "PATCH", "DELETE"].includes(method)
   ) {
     const origin = request.headers.get("origin");
+    const referer = request.headers.get("referer");
     const expectedOrigin = process.env.NEXTAUTH_URL
       ? new URL(process.env.NEXTAUTH_URL).origin
       : null;
-    if (origin && expectedOrigin && origin !== expectedOrigin) {
+
+    const observedOrigin = origin
+      ? origin
+      : referer
+      ? safeUrlOrigin(referer)
+      : null;
+
+    if (!expectedOrigin || observedOrigin !== expectedOrigin) {
       return NextResponse.json({ error: "BAD_ORIGIN" }, { status: 403 });
     }
   }
@@ -80,11 +103,14 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  // Run on everything except NextAuth's own routes (which handle their own CSRF),
-  // static asset prefixes, and favicon.
+  // Run middleware on everything except NextAuth's *own* internal routes,
+  // static assets, and uploads. Custom routes under /api/auth/ that WE
+  // wrote (register, resend-verification, verify-email) must pass through
+  // so CSP and Origin check apply to them.
   matcher: [
     {
-      source: "/((?!api/auth|_next/static|_next/image|favicon|seed|uploads).*)",
+      source:
+        "/((?!api/auth/signin|api/auth/signout|api/auth/callback|api/auth/session|api/auth/csrf|api/auth/providers|api/auth/error|api/auth/verify-request|_next/static|_next/image|favicon|seed|uploads).*)",
     },
   ],
 };
