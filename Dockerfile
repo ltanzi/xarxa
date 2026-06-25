@@ -29,6 +29,7 @@ COPY --from=builder /app/.next/static ./.next/static
 # its adapters, etc.) that Next.js standalone output doesn't trace.
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/dist/server.js ./server.js
 RUN mkdir -p public/uploads && chown nextjs:nodejs public/uploads
 USER nextjs
