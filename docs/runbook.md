@@ -4,10 +4,28 @@ Single-page incident response for `https://xarxa.help`.
 
 > Specifics in `<angle brackets>` are filled in during Phase I after the box exists.
 
-- **SSH:** `ssh xarxa-prod` (resolves via `~/.ssh/config` entry on the operator's workstation; host is `xarxa@<hetzner-box-ip>`)
+- **SSH:** `ssh xarxa-prod` (resolves via `~/.ssh/config` entry on the operator's workstation; host is `xarxa@167.233.204.178`)
 - **App root on box:** `/opt/xarxa`
 - **Secrets on box:** `/etc/xarxa/.env` (mode 600 xarxa), `/etc/xarxa/backup.key` (mode 400 root), `/etc/xarxa/backup.env` (mode 400 root)
-- **Operator email for alerts:** `<operator-email>`
+- **Operator email for alerts:** `l.tanzi@methinks.ai` (set in `/etc/xarxa/.env` as `OPERATOR_EMAIL`)
+- **systemd unit:** `xarxa.service` at `/etc/systemd/system/xarxa.service` — runs `docker compose -f /opt/xarxa/docker-compose.prod.yml --env-file /etc/xarxa/.env up -d` on boot.
+
+### Cron — backup jobs
+
+Backups run via `/opt/xarxa/scripts/backup-with-alert.sh` (a wrapper that
+uses `pipefail` and emails the operator on non-zero exit). Install the
+cron at `/etc/cron.d/xarxa-backups`:
+
+```
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+0 3 * * * root /opt/xarxa/scripts/backup-with-alert.sh postgres
+30 3 * * * root /opt/xarxa/scripts/backup-with-alert.sh uploads
+```
+
+The wrapper reads `RESEND_API_KEY` and `OPERATOR_EMAIL` from `/etc/xarxa/.env`.
+Add `OPERATOR_EMAIL=l.tanzi@methinks.ai` to that file if it isn't already set.
 
 ---
 
