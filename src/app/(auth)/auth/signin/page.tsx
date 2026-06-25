@@ -31,7 +31,12 @@ export default function SignInPage() {
     setLoading(false);
 
     if (result?.error) {
-      setError(t("auth.invalidCredentials"));
+      // NextAuth v5 surfaces the CredentialsSignin subclass via result.code.
+      if (result.code === "rate_limit") {
+        setError(t("auth.rateLimited"));
+      } else {
+        setError(t("auth.invalidCredentials"));
+      }
     } else {
       router.push("/");
       router.refresh();

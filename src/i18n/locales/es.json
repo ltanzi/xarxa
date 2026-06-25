@@ -51,6 +51,7 @@
     "continueWithGoogle": "Continuar con Google",
     "createAccount": "Crear cuenta",
     "invalidCredentials": "Correo o contraseña incorrectos",
+    "rateLimited": "Demasiados intentos. Espera una hora o restablece tu contraseña.",
     "registrationFailed": "Error al registrarse",
     "emailExists": "Este correo ya está registrado",
     "signInAfterRegisterFailed": "Cuenta creada pero el inicio de sesión falló. Por favor inicia sesión manualmente."

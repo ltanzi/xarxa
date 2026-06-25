@@ -51,6 +51,7 @@
     "continueWithGoogle": "Continua amb Google",
     "createAccount": "Crear compte",
     "invalidCredentials": "Correu o contrasenya incorrectes",
+    "rateLimited": "Massa intents. Espera una hora o restableix la contrasenya.",
     "registrationFailed": "Error en el registre",
     "emailExists": "Aquest correu ja està registrat",
     "signInAfterRegisterFailed": "Compte creat però l'inici de sessió ha fallat. Si us plau inicia sessió manualment."

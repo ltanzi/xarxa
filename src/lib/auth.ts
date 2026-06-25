@@ -1,8 +1,14 @@
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./prisma";
 import { limit } from "./rate-limit";
+
+// Distinct error class so the sign-in form can show "wait, you're rate
+// limited" instead of generic "invalid credentials".
+class RateLimitedSigninError extends CredentialsSignin {
+  code = "rate_limit";
+}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   session: { strategy: "jwt" },
@@ -29,7 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const emailLimit = limit(`signin:em:${email}`, 5, 60 * 60 * 1000);
         if (!ipLimit.ok || !emailLimit.ok) {
           console.warn("[auth] sign-in rate limited", { ip, email });
-          return null;
+          throw new RateLimitedSigninError();
         }
 
         const user = await prisma.user.findUnique({ where: { email } });

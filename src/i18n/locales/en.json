@@ -51,6 +51,7 @@
     "continueWithGoogle": "Continue with Google",
     "createAccount": "Create account",
     "invalidCredentials": "Incorrect email or password",
+    "rateLimited": "Too many sign-in attempts. Wait an hour or reset your password.",
     "registrationFailed": "Registration failed",
     "emailExists": "This email is already registered",
     "signInAfterRegisterFailed": "Account created but sign in failed. Please sign in manually."
