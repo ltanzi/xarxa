@@ -1,32 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "@/i18n/hook";
 
-// Reads ?verified=1 from the URL, refreshes the NextAuth session so the
-// JWT picks up the new emailVerified value (without requiring a
-// sign-out + sign-in), then clears the param and shows a short toast.
+// Renders a small "Email verified" toast when ?verified=1 is in the URL.
+// One-shot: a ref guards against React StrictMode double-invocation and
+// against re-fire after the URL is cleaned. Uses window.history.replaceState
+// directly because router.replace can be a no-op when target === current path.
 export default function VerifiedToast() {
-  const params = useSearchParams();
-  const router = useRouter();
-  const { update } = useSession();
   const { t } = useTranslation();
   const [show, setShow] = useState(false);
+  const fired = useRef(false);
 
   useEffect(() => {
+    if (fired.current) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
     if (params.get("verified") !== "1") return;
-    // Trigger the jwt callback's trigger==="update" branch in auth.ts
-    update().catch(() => null);
+    fired.current = true;
+
     setShow(true);
-    // Clear the query so a refresh doesn't re-trigger
-    const url = new URL(window.location.href);
-    url.searchParams.delete("verified");
-    router.replace(url.pathname + (url.search ? `?${url.searchParams.toString()}` : ""), { scroll: false });
+
+    // Clean the URL so a refresh doesn't re-fire (and so the param
+    // doesn't leak via Referer to outbound links).
+    params.delete("verified");
+    const newQs = params.toString();
+    const newUrl =
+      window.location.pathname + (newQs ? `?${newQs}` : "") + window.location.hash;
+    window.history.replaceState(window.history.state, "", newUrl);
+
     const id = window.setTimeout(() => setShow(false), 4000);
     return () => window.clearTimeout(id);
-  }, [params, router, update]);
+  }, []);
 
   if (!show) return null;
 

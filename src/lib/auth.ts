@@ -79,15 +79,24 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const raw = (user as { emailVerified?: Date | null }).emailVerified;
         token.emailVerified = raw ? raw.toISOString() : null;
       }
-      if (trigger === "update" && token.id) {
-        // Refresh emailVerified from DB when a route calls session.update()
-        // after verification.
+      // Self-heal: if the token belongs to an unverified user, re-check
+      // the DB every time it's processed. The moment they click the
+      // verify link, their next page load picks up the fresh state —
+      // no client-side update() coordination needed. Verified users
+      // skip this entirely (the field stays truthy).
+      if (token.id && !token.emailVerified) {
         const fresh = await prisma.user.findUnique({
           where: { id: token.id as string },
           select: { emailVerified: true },
         });
-        token.emailVerified = fresh?.emailVerified ? fresh.emailVerified.toISOString() : null;
+        if (fresh?.emailVerified) {
+          token.emailVerified = fresh.emailVerified.toISOString();
+        }
       }
+      // Explicit update() from the client (e.g. VerifiedToast on /?verified=1)
+      // also goes through here with trigger="update"; the self-heal above
+      // covers it so no additional branch is needed.
+      void trigger;
       return token;
     },
     async session({ session, token }) {

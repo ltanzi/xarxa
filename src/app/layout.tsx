@@ -5,7 +5,6 @@ import { Providers } from "./providers";
 import { Navbar } from "@/components/layout/Navbar";
 import VerifyEmailBanner from "@/components/VerifyEmailBanner";
 import VerifiedToast from "@/components/VerifiedToast";
-import { Suspense } from "react";
 import { cookies } from "next/headers";
 
 const inconsolata = Inconsolata({
@@ -30,9 +29,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Providers initialLocale={locale}>
           <Navbar />
           <VerifyEmailBanner />
-          <Suspense>
-            <VerifiedToast />
-          </Suspense>
+          <VerifiedToast />
           <main className="flex-1">{children}</main>
         </Providers>
       </body>
