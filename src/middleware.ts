@@ -34,11 +34,19 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // 2. Auth-redirect for protected paths
+  // 2. Auth-redirect for protected paths.
+  //    Auth.js v5 uses the "authjs.session-token" cookie name (not the v4
+  //    "next-auth.session-token" default that getToken assumes), so we have
+  //    to pass it explicitly. secureCookie=true adds the __Secure- prefix
+  //    automatically on HTTPS.
   if (isProtected(pathname)) {
+    const isHttps = (process.env.NEXTAUTH_URL ?? "").startsWith("https://");
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
+      cookieName: isHttps ? "__Secure-authjs.session-token" : "authjs.session-token",
+      secureCookie: isHttps,
+      salt: isHttps ? "__Secure-authjs.session-token" : "authjs.session-token",
     });
     if (!token) {
       const signInUrl = new URL("/auth/signin", request.url);
