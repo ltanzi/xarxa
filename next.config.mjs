@@ -10,6 +10,12 @@ const nextConfig = {
   images: {
     remotePatterns: [],
   },
+  // Next.js 14 requires this opt-in for instrumentation.ts to be compiled
+  // into the build. Without it, sentry.server.config.ts never initialises
+  // and server-side errors don't reach Sentry. (Stable in Next 15.)
+  experimental: {
+    instrumentationHook: true,
+  },
   // Pre-existing code in this codebase has type/lint issues the dev server
   // tolerates but `next build` rejects. Unblocking deploy now; cleanup is a
   // follow-up task (see CLAUDE.md roadmap).
