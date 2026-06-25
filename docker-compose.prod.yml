@@ -15,6 +15,9 @@ services:
       args:
         COMMIT_SHA: ${COMMIT_SHA:-unknown}
         SENTRY_AUTH_TOKEN: ${SENTRY_AUTH_TOKEN:-}
+        # NEXT_PUBLIC_* must be set at BUILD time so it gets baked into
+        # the client bundle. Server-side SENTRY_DSN below is runtime.
+        NEXT_PUBLIC_SENTRY_DSN: ${SENTRY_DSN:-}
     environment:
       DATABASE_URL: "postgresql://xarxa:${POSTGRES_PASSWORD}@postgres:5432/xarxa?schema=public"
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}

@@ -1,3 +1,5 @@
+import { withSentryConfig } from "@sentry/nextjs";
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Standalone output bundles a minimal runtime (server.js + node_modules
@@ -29,4 +31,21 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+// withSentryConfig: at build time, uploads source maps to Sentry so
+// stack traces resolve to original file paths. Auth via SENTRY_AUTH_TOKEN
+// (passed as a build arg in docker-compose.prod.yml). If the token is
+// missing (e.g. local dev), the upload step is skipped silently.
+export default withSentryConfig(nextConfig, {
+  org: "xarxa",
+  project: "xarxa",
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: true,
+  // Disable Sentry's own telemetry beacon to keep the build clean.
+  telemetry: false,
+  // Hide the source maps from the public bundle but still upload them
+  // to Sentry — gives readable stack traces without exposing source.
+  hideSourceMaps: true,
+  // Auto-instrument client errors that Next.js handles in its own
+  // error boundary (otherwise they don't reach Sentry).
+  autoInstrumentServerFunctions: true,
+});

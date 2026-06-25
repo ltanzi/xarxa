@@ -79,9 +79,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // 3. Per-request CSP nonce + headers
-  //    connect-src is scoped to our own origin's WSS — a wide-open `wss:`
-  //    would let an XSS exfiltrate over an attacker-chosen WebSocket.
-  //    Sentry will be added back here when @sentry/nextjs is wired up.
+  //    connect-src is scoped to our own origin's WSS (so an XSS can't
+  //    exfiltrate over an attacker-chosen socket) plus Sentry's ingest
+  //    endpoint (the SDK posts errors to *.ingest.sentry.io / sentry.io).
   const nonce = btoa(crypto.randomUUID());
   const expectedOriginForCsp = process.env.NEXTAUTH_URL
     ? new URL(process.env.NEXTAUTH_URL).host
@@ -92,7 +92,7 @@ export async function middleware(request: NextRequest) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
-    `connect-src 'self' ${wssSelf}`.trim(),
+    `connect-src 'self' ${wssSelf} https://*.ingest.sentry.io https://sentry.io`.trim(),
     "font-src 'self' data:",
     "frame-ancestors 'none'",
     "form-action 'self'",
