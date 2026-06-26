@@ -69,6 +69,14 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant }: 
       });
     });
 
+    // Server rejections (verified-only, rate-limited) — surface to the
+    // user. Uses a custom event name; "error" is Socket.io's reserved
+    // transport-level signal and shouldn't carry app meaning.
+    socket.on("send-message:rejected", (payload: { code?: string }) => {
+      console.warn("[chat] send rejected by server:", payload);
+      setSendError(true);
+    });
+
     return socket;
   }, [conversationId]);
 

@@ -7,6 +7,23 @@
     "error": "Something went wrong",
     "done": "Done"
   },
+  "verification": {
+    "pendingTitle": "Check your email",
+    "pendingBody": "We sent you a link to verify your email. Click it to finish signing up.",
+    "errorExpired": "That link has expired. Get a new one below.",
+    "errorInvalid": "That link is invalid. Get a new one below.",
+    "errorMissing": "No token provided.",
+    "errorServer": "Something went wrong on our side. Try again in a moment.",
+    "resend": "Resend verification email",
+    "resent": "Sent — check your inbox",
+    "bannerText": "Your email isn't verified yet.",
+    "bannerLink": "Verify now",
+    "blockedTooltip": "Verify your email to do this",
+    "confirmTitle": "One more click",
+    "confirmBody": "Confirm that you want to verify this email and finish setting up your xarxa account.",
+    "confirmCta": "Verify email",
+    "verifiedToast": "Email verified"
+  },
   "nav": {
     "board": "Board",
     "dashboard": "Activity",
@@ -39,6 +56,7 @@
     "continueWithGoogle": "Continue with Google",
     "createAccount": "Create account",
     "invalidCredentials": "Incorrect email or password",
+    "rateLimited": "Too many sign-in attempts. Wait an hour or reset your password.",
     "registrationFailed": "Registration failed",
     "emailExists": "This email is already registered",
     "signInAfterRegisterFailed": "Account created but sign in failed. Please sign in manually."

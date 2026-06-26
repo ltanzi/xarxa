@@ -1,14 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-utils";
 import { notifyUser } from "@/lib/socket";
 import { connectionRequestSchema } from "@/lib/validations";
+import { limit, rateLimited } from "@/lib/rate-limit";
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { error, session } = await requireVerifiedUser();
+  if (error) return error;
+
+  const rl = limit(`conn:${session.user.id}`, 30, 24 * 60 * 60 * 1000);
+  if (!rl.ok) return rateLimited(rl.retryAfterSec);
 
   let body: unknown;
   try {

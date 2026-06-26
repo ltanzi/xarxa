@@ -1,20 +1,22 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
 import { createId } from "@paralleldrive/cuid2";
 import sharp from "sharp";
+import { limit, rateLimited } from "@/lib/rate-limit";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 const MAX_DIMENSION = 512;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: Request) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { error, session } = await requireVerifiedUser();
+  if (error) return error;
+
+  const rl = limit(`upload:${session.user.id}`, 20, 24 * 60 * 60 * 1000);
+  if (!rl.ok) return rateLimited(rl.retryAfterSec);
 
   try {
     const formData = await request.formData();

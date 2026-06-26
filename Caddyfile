@@ -1,0 +1,26 @@
+xarxa.help {
+	encode gzip zstd
+
+	reverse_proxy app:3000 {
+		# Overwrite XFF/X-Real-IP with Caddy's idea of the immediate peer
+		# so attacker-supplied X-Forwarded-For headers can't spoof the
+		# rate-limit key. {client_ip} is Caddy's verified socket peer.
+		header_up X-Forwarded-For "{client_ip}"
+		header_up X-Real-IP "{client_ip}"
+		transport http {
+			keepalive 120s
+			read_timeout 5m
+		}
+	}
+
+	log {
+		output file /data/access.log {
+			roll_size 50mb
+			roll_keep 5
+		}
+	}
+}
+
+www.xarxa.help {
+	redir https://xarxa.help{uri} permanent
+}

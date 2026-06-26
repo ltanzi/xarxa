@@ -7,6 +7,23 @@
     "error": "Alguna cosa ha anat malament",
     "done": "Fet"
   },
+  "verification": {
+    "pendingTitle": "Revisa el teu correu",
+    "pendingBody": "T'hem enviat un enllaç per verificar el teu correu. Fes clic per acabar el registre.",
+    "errorExpired": "L'enllaç ha caducat. Demana'n un de nou a sota.",
+    "errorInvalid": "L'enllaç no és vàlid. Demana'n un de nou a sota.",
+    "errorMissing": "No s'ha proporcionat el token.",
+    "errorServer": "Alguna cosa ha anat malament al nostre costat. Torna-ho a provar d'aquí a un moment.",
+    "resend": "Reenviar correu de verificació",
+    "resent": "Enviat — revisa la safata d'entrada",
+    "bannerText": "El teu correu encara no està verificat.",
+    "bannerLink": "Verificar ara",
+    "blockedTooltip": "Verifica el teu correu per fer això",
+    "confirmTitle": "Un clic més",
+    "confirmBody": "Confirma que vols verificar aquest correu i acabar el teu compte a xarxa.",
+    "confirmCta": "Verificar correu",
+    "verifiedToast": "Correu verificat"
+  },
   "nav": {
     "board": "Tauler",
     "dashboard": "Activitat",
@@ -39,6 +56,7 @@
     "continueWithGoogle": "Continua amb Google",
     "createAccount": "Crear compte",
     "invalidCredentials": "Correu o contrasenya incorrectes",
+    "rateLimited": "Massa intents. Espera una hora o restableix la contrasenya.",
     "registrationFailed": "Error en el registre",
     "emailExists": "Aquest correu ja està registrat",
     "signInAfterRegisterFailed": "Compte creat però l'inici de sessió ha fallat. Si us plau inicia sessió manualment."

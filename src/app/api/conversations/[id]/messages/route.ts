@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { requireVerifiedUser } from "@/lib/auth-utils";
 import { messageSchema } from "@/lib/validations";
+import { limit, rateLimited } from "@/lib/rate-limit";
+import { notifyUser } from "@/lib/socket";
 
 export async function GET(
   _request: Request,
@@ -49,10 +52,14 @@ export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  // Soft-wall: only verified users can send messages via REST too. The
+  // Socket.io send-message handler enforces the same gate; this is the
+  // load-bearing one because the chat client posts here first.
+  const { error, session } = await requireVerifiedUser();
+  if (error) return error;
+
+  const rl = limit(`msg:${session.user.id}`, 20, 60 * 1000);
+  if (!rl.ok) return rateLimited(rl.retryAfterSec);
 
   const { id } = await params;
 
@@ -87,6 +94,19 @@ export async function POST(
       sender: { select: { id: true, name: true, profilePhoto: true } },
     },
   });
+
+  // Bump notification badges for the other participant(s). Used to live
+  // in server.ts but the dynamic prisma import there is broken in the
+  // standalone build; calling it from here is the canonical path.
+  const fullConv = await prisma.conversation.findUnique({
+    where: { id },
+    select: { participants: { select: { id: true } } },
+  });
+  if (fullConv) {
+    for (const p of fullConv.participants) {
+      if (p.id !== session.user.id) notifyUser(p.id);
+    }
+  }
 
   return NextResponse.json(message, { status: 201 });
 }

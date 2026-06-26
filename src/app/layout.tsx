@@ -3,6 +3,8 @@ import { Inconsolata } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "@/components/layout/Navbar";
+import VerifyEmailBanner from "@/components/VerifyEmailBanner";
+import VerifiedToast from "@/components/VerifiedToast";
 import { cookies } from "next/headers";
 
 const inconsolata = Inconsolata({
@@ -26,6 +28,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen flex flex-col text-fg">
         <Providers initialLocale={locale}>
           <Navbar />
+          <VerifyEmailBanner />
+          <VerifiedToast />
           <main className="flex-1">{children}</main>
         </Providers>
       </body>

@@ -1,3 +1,25 @@
+// NOTE: server.ts is compiled by tsc in isolation (tsconfig.server.json
+// includes only this file), so we can't import from ./src/lib/* here —
+// those modules aren't compiled to dist/. Env validation still happens
+// via Next.js's bundled src/lib/env.ts on first prisma import. A proper
+// eager validation requires either widening tsconfig.server.json's
+// include, or inlining the Zod schema here. Deferred.
+
+// Sentry — Node SDK init at the very top, before any handlers can throw.
+// We init here (not via instrumentation.ts) because this is a custom
+// server; Next.js's automatic instrumentation hook isn't fired through
+// our `next({...})` wrapper. The Edge runtime (middleware) still gets
+// initialised via src/instrumentation.ts.
+import * as Sentry from "@sentry/nextjs";
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    release: process.env.NEXT_PUBLIC_COMMIT_SHA || undefined,
+    environment: process.env.NODE_ENV,
+    tracesSampleRate: 0.1,
+  });
+}
+
 import { createServer } from "http";
 import { parse } from "url";
 import next from "next";
@@ -83,28 +105,14 @@ app.prepare().then(() => {
     });
 
     socket.on("send-message", async (data: { conversationId: string; message: unknown }) => {
-      // Only relay if sender actually joined this conversation room
+      // Only relay if sender actually joined this conversation room.
+      // The REST POST /api/conversations/[id]/messages is the authoritative
+      // gate (verified-only + rate-limited) — the client posts there
+      // FIRST, then emits here for real-time relay. This handler is a
+      // dumb pass-through; the REST handler also fires notifyUser() for
+      // recipient badge updates.
       if (!socket.rooms.has(`conversation:${data.conversationId}`)) return;
-
       socket.to(`conversation:${data.conversationId}`).emit("new-message", data.message);
-
-      // Notify other participants to refresh their notification counts
-      try {
-        const { prisma } = await import("./src/lib/prisma");
-        const conversation = await prisma.conversation.findUnique({
-          where: { id: data.conversationId },
-          select: { participants: { select: { id: true } } },
-        });
-        if (conversation) {
-          for (const p of conversation.participants) {
-            if (p.id !== socket.data.userId) {
-              io.to(`user:${p.id}`).emit("notifications:update");
-            }
-          }
-        }
-      } catch (err) {
-        console.error("[socket] notification after send-message failed:", err);
-      }
     });
   });
 

@@ -143,34 +143,53 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - **Types**: Shared `AuthorSummary`/`AuthorDetail`/`PostWithAuthor` in `src/types/index.ts`; `PostCard` uses shared type; profile page author select includes `surname`
 - **Code quality**: Extracted `requireSurnameForPrivate` in `validations.ts` (shared by register + profile schemas); `PostFormProps` uses discriminated union coupling `postId` + `initialData`; removed redundant comments
 
+## Production
+
+- **Live at:** https://xarxa.help (Hetzner CX23, Frankfurt, ARM-free; Ubuntu 26.04)
+- **SSH:** `ssh xarxa-prod` (alias for `xarxa@167.233.204.178`)
+- **App root on box:** `/opt/xarxa`
+- **Secrets:** `/etc/xarxa/.env` (mode 600 xarxa), `/etc/xarxa/backup.key` (mode 400 root), `/etc/xarxa/backup.env` (mode 400 root)
+- **systemd:** `xarxa.service` runs `docker compose up -d` on boot
+- **Cron:** `/etc/cron.d/xarxa-backups` runs `scripts/backup-with-alert.sh postgres` at 03:00 UTC, `uploads` at 03:30 UTC
+- **TLS:** Caddy auto-renews Let's Encrypt
+- **Edge:** Cloudflare DNS-only (gray cloud) at the registrar; Resend handles transactional email
+- **Backups:** pg_dump + restic → Backblaze B2 bucket `xarxa-backups`
+- **Runbook:** `docs/runbook.md` (decision tree, common commands, rollback, restore drill)
+- **Deploy:** SSH in, `cd /opt/xarxa && ./deploy-prod.sh` (or `--keep-head` for rollback)
+
 ## Roadmap
 
-### Phase 4 — Code Quality & Robustness
-- Environment variable validation at startup (Zod schema for env)
-- Clean up unused dependencies
-- Remaining type safety gaps (typed Socket.IO event maps, strict TypeScript)
-- Upload security hardening (path traversal protection)
-- Standardized API response envelope
-
-### Phase 5 — Before Real Users
-- Rate limiting on auth and API endpoints
-- CSRF protection
-- Content Security Policy headers
-- Move secrets out of docker-compose into proper env management
-- Email verification flow
-- Report/block functionality
+### Phase 5 follow-ups (after go-live)
+- Sentry SDK install + source-map upload (DSN/auth token wired in env)
+- UptimeRobot monitor configured against https://xarxa.help/
+- First nightly backup verified in B2 + quarterly restore drill
+- Pre-existing TS+ESLint cleanup so `next.config.mjs` can drop `ignoreBuildErrors` + `ignoreDuringBuilds`
+- VerificationToken consumedAt DB-level enforcement (currently delete-on-consume convention)
+- Password reset by email
+- Report / block / content moderation flow
+- Tighten CSP `style-src` (drop 'unsafe-inline' once Tailwind/Next runtime styles are nonce'd)
+- Test suite (unit + integration + E2E for critical paths)
 - SEO: meta tags, Open Graph, sitemap
-- Testing: unit tests for validation, integration tests for API routes, E2E for critical flows
+- Privacy policy + Terms pages (content)
 
-## Known Issues
-- Middleware uses `getToken` with explicit `secret` (edge runtime incompatibility)
-- `docker-compose.yml` has `version` key which is obsolete (warning only)
+### Completed at go-live (this is what shipped)
+- Email verification (soft wall): `/auth/verify` interstitial + tokens
+- Rate limiting: register, sign-in, resend, posts, connections, chat (HTTP + Socket.io)
+- Security headers: HSTS, X-Frame-Options, Permissions-Policy, Referrer-Policy, X-Content-Type-Options
+- CSP with per-request nonce + strict-dynamic + scoped connect-src
+- Origin-header CSRF check on mutating /api/* requests; Cloudflare proxy XFF-overwrite in Caddy
+- Zod env validation at server startup
+- Secrets out of git: `/etc/xarxa/.env` mode 600 + docker-compose.prod.yml via --env-file
+- Encrypted off-box backups (gpg + restic → Backblaze B2) with pipefail+email failure alerting
+- Production deploy script with `--keep-head` rollback support
+- Runbook with decision tree + restore recipe
 
 ## GitHub
 - Repo: https://github.com/ltanzi/xarxa
-- All code is pushed to `main`
+- Default branch: `main` — go-live work landed via PR #2 (branch `worktree-go-live`)
 
 ## Design Docs
-- Spec: `docs/superpowers/specs/2026-03-27-xarxa-design.md`
-- Plan: `docs/superpowers/plans/2026-03-27-xarxa.md`
+- Go-live spec: `docs/superpowers/specs/2026-06-24-xarxa-go-live-design.md`
+- Go-live plan: `docs/superpowers/plans/2026-06-24-xarxa-go-live.md`
+- Production runbook: `docs/runbook.md`
 - Tech overview: `docs/tech-overview.md`
