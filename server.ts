@@ -17,9 +17,7 @@ if (process.env.SENTRY_DSN) {
     release: process.env.NEXT_PUBLIC_COMMIT_SHA || undefined,
     environment: process.env.NODE_ENV,
     tracesSampleRate: 0.1,
-    debug: true,
   });
-  console.log("[sentry] Node SDK initialised, dsn host:", new URL(process.env.SENTRY_DSN).host);
 }
 
 import { createServer } from "http";
