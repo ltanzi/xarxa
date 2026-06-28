@@ -76,7 +76,6 @@
     "availability": "Availability",
     "availabilityPlaceholder": "E.g. Weekends, mornings...",
     "location": "Location",
-    "locationOptional": "Location (optional)",
     "availabilityOptional": "Availability (optional)",
     "urgency": "Urgency",
     "remote": "Remote",
