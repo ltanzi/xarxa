@@ -68,14 +68,30 @@ function updateField(field: string, value: string) {
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    setError("");
 
     const formData = new FormData();
     formData.append("file", file);
 
-    const res = await fetch("/api/upload", { method: "POST", body: formData });
-    if (res.ok) {
-      const data = await res.json();
-      setPhoto(data.profilePhoto);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      if (res.ok) {
+        const data = await res.json();
+        setPhoto(data.profilePhoto);
+        return;
+      }
+      // Surface the server's message so the user knows WHY (too big,
+      // wrong type, rate-limited, etc.) instead of the silent no-op
+      // we used to do.
+      const data = await res.json().catch(() => ({}));
+      setError(data.error || t("common.error"));
+    } catch (err) {
+      console.error("[upload]", err);
+      setError(t("common.error"));
+    } finally {
+      // Reset the input so the user can retry with a different file
+      // (browsers don't fire change again for the same selection).
+      e.target.value = "";
     }
   }
 
