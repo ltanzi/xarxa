@@ -31,6 +31,7 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
     let cols = 0;
     let rows = 0;
     let topOffset = 0;
+    let brandX = 24;
     const bodyFont = getComputedStyle(document.body).fontFamily;
     let snake: { x: number; y: number }[] = [];
     let direction = { dx: 0, dy: 0 };
@@ -47,6 +48,10 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       const nav = document.querySelector("nav");
       topOffset = nav ? Math.ceil(nav.getBoundingClientRect().height) : 0;
+      // The "xarxa" brand link is the first <a> inside <nav>. Snap the
+      // hint text's left edge to its left edge so they line up exactly.
+      const brand = nav?.querySelector("a");
+      brandX = brand ? Math.round(brand.getBoundingClientRect().left) : 24;
       cols = Math.floor(window.innerWidth / CELL);
       rows = Math.floor((window.innerHeight - topOffset) / CELL);
     }
@@ -148,9 +153,13 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
         const head = snake[0];
         ctx!.fillStyle = HINT_COLOR;
         ctx!.font = `14px ${bodyFont}`;
-        ctx!.textAlign = "center";
+        ctx!.textAlign = "left";
         ctx!.textBaseline = "alphabetic";
-        ctx!.fillText(hintRef.current, head.x * CELL + CELL / 2, head.y * CELL + topOffset - CELL * 0.4);
+        // X anchored to the navbar brand so "p of press" stays under
+        // the "x of xarxa" regardless of where the snake idles or
+        // which page is mounted. Y still tracks the snake's head so
+        // the hint feels attached to the apple/snake.
+        ctx!.fillText(hintRef.current, brandX, head.y * CELL + topOffset - CELL * 0.4);
       }
     }
 
