@@ -44,8 +44,6 @@
   "auth": {
     "email": "Correo electrónico",
     "password": "Contraseña",
-    "passwordConfirm": "Confirma la contraseña",
-    "passwordMismatch": "Las contraseñas no coinciden",
     "passwordHint": "Mínimo 8 caracteres, una mayúscula y un símbolo especial",
     "name": "Nombre",
     "signInTitle": "Iniciar sesión",
@@ -78,7 +76,6 @@
     "availability": "Disponibilidad",
     "availabilityPlaceholder": "Ej. Fines de semana, mañanas...",
     "location": "Ubicación",
-    "availabilityOptional": "Disponibilidad (opcional)",
     "urgency": "Urgencia",
     "remote": "Remoto",
     "inPerson": "Presencial",
