@@ -12,5 +12,7 @@ export async function register() {
 }
 
 // Re-export Sentry's request-error hook so it gets called on uncaught
-// errors thrown from API routes / server components.
-export { onRequestError } from "@sentry/nextjs";
+// errors thrown from API routes / server components. The export was
+// `onRequestError` in older SDKs and is `captureRequestError` in v10+;
+// Next.js looks for the export named `onRequestError` so we alias.
+export { captureRequestError as onRequestError } from "@sentry/nextjs";

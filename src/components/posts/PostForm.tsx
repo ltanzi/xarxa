@@ -125,7 +125,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
 
       <Input
         id="title"
-        label={t("posts.title")}
+        label={t("posts.title") + " *"}
         value={form.title}
         onChange={(e) => updateField("title", e.target.value)}
         error={errors.title}
@@ -135,14 +135,14 @@ export function PostForm({ postId, initialData }: PostFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Select
           id="type"
-          label={t("posts.type")}
+          label={t("posts.type") + " *"}
           options={types}
           value={form.type}
           onChange={(e) => updateField("type", e.target.value)}
         />
         <Select
           id="category"
-          label={t("posts.category")}
+          label={t("posts.category") + " *"}
           options={categories}
           value={form.category}
           onChange={(e) => updateField("category", e.target.value)}
@@ -158,25 +158,17 @@ export function PostForm({ postId, initialData }: PostFormProps) {
 
       <Textarea
         id="description"
-        label={t("posts.description")}
+        label={t("posts.description") + " *"}
         value={form.description}
         onChange={(e) => updateField("description", e.target.value)}
         error={errors.description}
         required
       />
 
-      <Input
-        id="availability"
-        label={t("posts.availabilityOptional")}
-        value={form.availability}
-        onChange={(e) => updateField("availability", e.target.value)}
-        placeholder={t("posts.availabilityPlaceholder")}
-      />
-
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <LocationInput
-            label={t("posts.location")}
+            label={t("posts.location") + " *"}
             value={form.location}
             onChange={(val) => updateField("location", val)}
           />
@@ -194,6 +186,14 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         </div>
         {errors.location && <p className="mt-1.5 text-xs text-accent">{errors.location}</p>}
       </div>
+
+      <Input
+        id="availability"
+        label={t("posts.availability")}
+        value={form.availability}
+        onChange={(e) => updateField("availability", e.target.value)}
+        placeholder={t("posts.availabilityPlaceholder")}
+      />
 
       <Input
         id="tags"

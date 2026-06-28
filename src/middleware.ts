@@ -82,14 +82,21 @@ export async function middleware(request: NextRequest) {
   //    connect-src is scoped to our own origin's WSS (so an XSS can't
   //    exfiltrate over an attacker-chosen socket) plus Sentry's ingest
   //    endpoint (the SDK posts errors to *.ingest.sentry.io / sentry.io).
+  //
+  //    'unsafe-eval' is added in dev only — Next.js's React Refresh
+  //    (hot-reload) runtime evaluates strings as JS. Without it, the
+  //    dev bundle silently fails to hydrate and event handlers don't
+  //    attach. Production builds don't need eval(), so the prod CSP
+  //    stays strict.
   const nonce = btoa(crypto.randomUUID());
   const expectedOriginForCsp = process.env.NEXTAUTH_URL
     ? new URL(process.env.NEXTAUTH_URL).host
     : "";
   const wssSelf = expectedOriginForCsp ? `wss://${expectedOriginForCsp}` : "";
+  const evalForDev = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${evalForDev}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     `connect-src 'self' ${wssSelf} https://*.ingest.sentry.io https://sentry.io`.trim(),
