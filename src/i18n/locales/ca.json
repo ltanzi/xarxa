@@ -44,6 +44,8 @@
   "auth": {
     "email": "Correu electrònic",
     "password": "Contrasenya",
+    "passwordConfirm": "Confirma la contrasenya",
+    "passwordMismatch": "Les contrasenyes no coincideixen",
     "passwordHint": "Mínim 8 caràcters, una majúscula i un símbol especial",
     "name": "Nom",
     "signInTitle": "Iniciar sessió",
@@ -76,7 +78,6 @@
     "availability": "Disponibilitat",
     "availabilityPlaceholder": "Ex. Caps de setmana, matins...",
     "location": "Ubicació",
-    "locationOptional": "Ubicació (opcional)",
     "availabilityOptional": "Disponibilitat (opcional)",
     "urgency": "Urgència",
     "remote": "Remot",

@@ -23,6 +23,7 @@ export default function RegisterPage() {
     surname: "",
     email: "",
     password: "",
+    passwordConfirm: "",
     type: "PRIVATE" as "PRIVATE" | "COLLECTIVE",
     preferredLanguage: "en" as "en" | "es" | "ca",
   });
@@ -39,7 +40,18 @@ export default function RegisterPage() {
     e.preventDefault();
     setServerError("");
 
-    const parsed = registerSchema.safeParse(form);
+    // Client-side check that confirm matches password. The server never
+    // receives passwordConfirm — it's not in registerSchema and is
+    // stripped out below.
+    if (form.password !== form.passwordConfirm) {
+      setErrors({ passwordConfirm: t("auth.passwordMismatch") });
+      return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordConfirm: _omit, ...payload } = form;
+
+    const parsed = registerSchema.safeParse(payload);
     if (!parsed.success) {
       const fieldErrors: Record<string, string> = {};
       parsed.error.issues.forEach((err) => {
@@ -55,7 +67,7 @@ export default function RegisterPage() {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -183,6 +195,15 @@ export default function RegisterPage() {
             />
             <p className="mt-1.5 text-xs text-muted">{t("auth.passwordHint")}</p>
           </div>
+          <Input
+            id="passwordConfirm"
+            label={t("auth.passwordConfirm")}
+            type="password"
+            value={form.passwordConfirm}
+            onChange={(e) => updateField("passwordConfirm", e.target.value)}
+            error={errors.passwordConfirm}
+            required
+          />
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? t("common.loading") : t("auth.createAccount")}
           </Button>

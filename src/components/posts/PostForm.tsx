@@ -176,7 +176,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
       <div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <LocationInput
-            label={t("posts.locationOptional")}
+            label={t("posts.location")}
             value={form.location}
             onChange={(val) => updateField("location", val)}
           />
