@@ -44,6 +44,8 @@
   "auth": {
     "email": "Email",
     "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "passwordMismatch": "Passwords do not match",
     "passwordHint": "At least 8 characters, one uppercase letter, one special character",
     "name": "Name",
     "signInTitle": "Sign in",
