@@ -34,12 +34,15 @@
     "join": "Unirse",
     "exit": "Salir",
     "menu": "Menú",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "confirmExit": "¿Seguro?",
+    "yes": "Sí",
+    "no": "No"
   },
   "about": {
     "title": "Acerca de",
     "description": "xarxa es un tablón comunitario para el intercambio de servicios gratuitos. Personas y colectivos publican lo que necesitan o lo que pueden ofrecer, y se organizan directamente por chat.",
-    "creditsLabel": "Animación de"
+    "creditsLabel": "Ilustración de"
   },
   "auth": {
     "email": "Correo electrónico",

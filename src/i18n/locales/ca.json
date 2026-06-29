@@ -34,12 +34,15 @@
     "join": "Unir-se",
     "exit": "Sortir",
     "menu": "Menú",
-    "close": "Tancar"
+    "close": "Tancar",
+    "confirmExit": "Segur?",
+    "yes": "Sí",
+    "no": "No"
   },
   "about": {
     "title": "Sobre xarxa",
     "description": "xarxa és un tauler comunitari per a l'intercanvi de serveis gratuïts. Persones i col·lectius publiquen el que necessiten o el que poden oferir, i s'organitzen directament pel xat.",
-    "creditsLabel": "Animació de"
+    "creditsLabel": "Il·lustració de"
   },
   "auth": {
     "email": "Correu electrònic",

@@ -16,6 +16,30 @@ function NotifBadge({ count }: { count: number }) {
   );
 }
 
+function ExitButton({ onConfirm }: { onConfirm: () => void }) {
+  const { t } = useTranslation();
+  const [confirming, setConfirming] = useState(false);
+
+  if (!confirming) {
+    return (
+      <button onClick={() => setConfirming(true)} className="text-muted hover:text-fg transition-colors">
+        {t("nav.exit")}
+      </button>
+    );
+  }
+  return (
+    <span className="flex items-center gap-3">
+      <span className="text-muted">{t("nav.confirmExit")}</span>
+      <button onClick={onConfirm} className="text-fg hover:opacity-60 transition-opacity">
+        {t("nav.yes")}
+      </button>
+      <button onClick={() => setConfirming(false)} className="text-muted hover:text-fg transition-colors">
+        {t("nav.no")}
+      </button>
+    </span>
+  );
+}
+
 export function Navbar() {
   const { data: session } = useSession();
   const { t } = useTranslation();
@@ -91,9 +115,7 @@ export function Navbar() {
                 <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors">
                   {t("nav.profile")}
                 </Link>
-                <button onClick={() => signOut({ callbackUrl: "/" })} className="text-muted hover:text-fg transition-colors">
-                  {t("nav.exit")}
-                </button>
+                <ExitButton onConfirm={() => signOut({ callbackUrl: "/" })} />
               </div>
             )}
             {!session && (
@@ -150,9 +172,7 @@ export function Navbar() {
               <Link href={`/profile/${session.user.id}`} className="text-muted hover:text-fg transition-colors" onClick={() => setMenuOpen(false)}>
                 {t("nav.profile")}
               </Link>
-              <button onClick={() => { signOut({ callbackUrl: "/" }); setMenuOpen(false); }} className="text-left text-muted hover:text-fg transition-colors">
-                {t("nav.exit")}
-              </button>
+              <ExitButton onConfirm={() => { signOut({ callbackUrl: "/" }); setMenuOpen(false); }} />
             </>
           )}
           {!session && (
