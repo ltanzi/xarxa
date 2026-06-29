@@ -69,6 +69,7 @@ model User {
   messages      Message[]
   conversations Conversation[]  @relation("ConversationParticipants")
   reports       Report[]        @relation("reporter")
+  passwordResetTokens PasswordResetToken[]
 }
 
 model VerificationToken {
@@ -77,6 +78,16 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+  @@index([expires])
+}
+
+model PasswordResetToken {
+  token   String   @id
+  userId  String
+  expires DateTime
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@index([expires])
 }
 

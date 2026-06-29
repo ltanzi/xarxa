@@ -90,6 +90,14 @@ export default function SignInPage() {
               )}
             </button>
           </div>
+          <div className="text-right">
+            <Link
+              href="/auth/forgot-password"
+              className="text-xs text-muted hover:text-fg transition-colors underline underline-offset-4 hover:no-underline"
+            >
+              {t("auth.forgotPassword")}
+            </Link>
+          </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "..." : t("auth.signInTitle")}
           </Button>

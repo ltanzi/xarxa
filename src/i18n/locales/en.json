@@ -62,7 +62,17 @@
     "rateLimited": "Too many sign-in attempts. Wait an hour or reset your password.",
     "registrationFailed": "Registration failed",
     "emailExists": "This email is already registered",
-    "signInAfterRegisterFailed": "Account created but sign in failed. Please sign in manually."
+    "signInAfterRegisterFailed": "Account created but sign in failed. Please sign in manually.",
+    "forgotPassword": "Forgot your password?",
+    "forgotPasswordTitle": "Reset your password",
+    "forgotPasswordBody": "Enter your email and we'll send you a link to choose a new password.",
+    "forgotPasswordSent": "If an account exists for that email, we've sent a reset link. Check your inbox.",
+    "sendResetLink": "Send reset link",
+    "resetPasswordTitle": "Choose a new password",
+    "resetPasswordBody": "Enter a new password for your account.",
+    "resetPasswordSuccess": "Password updated. Redirecting to sign in…",
+    "resetPasswordInvalid": "This link is invalid or has expired. Request a new one.",
+    "updatePassword": "Update password"
   },
   "posts": {
     "offer": "Offer",
