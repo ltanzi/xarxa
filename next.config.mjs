@@ -21,6 +21,18 @@ const nextConfig = {
   // follow-up task (see CLAUDE.md roadmap).
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
+  async rewrites() {
+    // Runtime-uploaded files live in a docker volume at /app/public/uploads,
+    // but Next.js standalone's static handler only serves what was in public/
+    // at BUILD time. Route /uploads/* to an API handler that streams from disk
+    // so volume-stored files (existing + freshly uploaded) are servable.
+    return [
+      {
+        source: "/uploads/:filename",
+        destination: "/api/uploads/:filename",
+      },
+    ];
+  },
   async headers() {
     return [
       {
