@@ -165,7 +165,6 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - First nightly backup verified in B2 + quarterly restore drill
 - Pre-existing TS+ESLint cleanup so `next.config.mjs` can drop `ignoreBuildErrors` + `ignoreDuringBuilds`
 - VerificationToken consumedAt DB-level enforcement (currently delete-on-consume convention)
-- Password reset by email
 - Report / block / content moderation flow
 - Tighten CSP `style-src` (drop 'unsafe-inline' once Tailwind/Next runtime styles are nonce'd)
 - Test suite (unit + integration + E2E for critical paths)
