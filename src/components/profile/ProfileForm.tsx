@@ -77,7 +77,11 @@ function updateField(field: string, value: string) {
       const res = await fetch("/api/upload", { method: "POST", body: formData });
       if (res.ok) {
         const data = await res.json();
-        setPhoto(data.profilePhoto);
+        // Cache-bust: next/image keys its optimizer cache by URL, and a
+        // freshly-written file occasionally 404s on the optimizer's first
+        // probe (volume/fs race). A unique query param dodges the cached
+        // failure and forces a fresh fetch.
+        setPhoto(`${data.profilePhoto}?t=${Date.now()}`);
         return;
       }
       // Surface the server's message so the user knows WHY (too big,

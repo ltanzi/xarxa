@@ -106,7 +106,12 @@ export function SnakeGame({ obstacleSelector = "[data-snake-obstacle]" }: { obst
     }
 
     function reset() {
-      const startX = Math.max(2, Math.floor(cols * 0.15));
+      // Center the snake's start cell horizontally on the hint text,
+      // so the head's circle sits visually under "press any arrow".
+      ctx!.font = `14px ${bodyFont}`;
+      const hintWidth = ctx!.measureText(hintRef.current).width;
+      const hintCenterPx = brandX + hintWidth / 2;
+      const startX = Math.max(2, Math.round((hintCenterPx - CELL / 2) / CELL));
       const startY = Math.max(2, rows - 4);
       snake = [
         { x: startX, y: startY },
