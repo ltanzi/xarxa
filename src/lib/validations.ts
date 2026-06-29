@@ -10,18 +10,29 @@ function requireSurnameForPrivate(data: { type: string; surname?: string }, ctx:
   }
 }
 
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .regex(new RegExp("\\p{Lu}", "u"), "Password must contain at least one uppercase letter")
+  .regex(new RegExp("[^\\p{L}\\p{N}]", "u"), "Password must contain at least one special character");
+
 export const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(new RegExp("\\p{Lu}", "u"), "Password must contain at least one uppercase letter")
-    .regex(new RegExp("[^\\p{L}\\p{N}]", "u"), "Password must contain at least one special character"),
+  password: passwordSchema,
   name: z.string().min(1, "Name is required").max(100),
   surname: z.string().max(100).optional(),
   type: z.enum(["PRIVATE", "COLLECTIVE"]),
   preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
 }).superRefine(requireSurnameForPrivate);
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().email("Invalid email address"),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1),
+  password: passwordSchema,
+});
 
 export const signInSchema = z.object({
   email: z.string().email("Invalid email address"),

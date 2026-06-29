@@ -62,7 +62,17 @@
     "rateLimited": "Demasiados intentos. Espera una hora o restablece tu contraseña.",
     "registrationFailed": "Error al registrarse",
     "emailExists": "Este correo ya está registrado",
-    "signInAfterRegisterFailed": "Cuenta creada pero el inicio de sesión falló. Por favor inicia sesión manualmente."
+    "signInAfterRegisterFailed": "Cuenta creada pero el inicio de sesión falló. Por favor inicia sesión manualmente.",
+    "forgotPassword": "¿Olvidaste la contraseña?",
+    "forgotPasswordTitle": "Restablecer contraseña",
+    "forgotPasswordBody": "Introduce tu correo y te enviaremos un enlace para elegir una nueva contraseña.",
+    "forgotPasswordSent": "Si existe una cuenta con ese correo, te hemos enviado un enlace. Revisa tu bandeja de entrada.",
+    "sendResetLink": "Enviar enlace",
+    "resetPasswordTitle": "Elige una nueva contraseña",
+    "resetPasswordBody": "Introduce una nueva contraseña para tu cuenta.",
+    "resetPasswordSuccess": "Contraseña actualizada. Redirigiendo…",
+    "resetPasswordInvalid": "Este enlace no es válido o ha caducado. Solicita uno nuevo.",
+    "updatePassword": "Actualizar contraseña"
   },
   "posts": {
     "offer": "Oferta",

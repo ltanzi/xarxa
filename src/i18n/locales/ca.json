@@ -62,7 +62,17 @@
     "rateLimited": "Massa intents. Espera una hora o restableix la contrasenya.",
     "registrationFailed": "Error en el registre",
     "emailExists": "Aquest correu ja està registrat",
-    "signInAfterRegisterFailed": "Compte creat però l'inici de sessió ha fallat. Si us plau inicia sessió manualment."
+    "signInAfterRegisterFailed": "Compte creat però l'inici de sessió ha fallat. Si us plau inicia sessió manualment.",
+    "forgotPassword": "Has oblidat la contrasenya?",
+    "forgotPasswordTitle": "Restableix la contrasenya",
+    "forgotPasswordBody": "Introdueix el teu correu i t'enviarem un enllaç per triar una nova contrasenya.",
+    "forgotPasswordSent": "Si existeix un compte amb aquest correu, t'hem enviat un enllaç. Revisa la safata d'entrada.",
+    "sendResetLink": "Enviar enllaç",
+    "resetPasswordTitle": "Tria una nova contrasenya",
+    "resetPasswordBody": "Introdueix una nova contrasenya per al teu compte.",
+    "resetPasswordSuccess": "Contrasenya actualitzada. Redirigint…",
+    "resetPasswordInvalid": "Aquest enllaç no és vàlid o ha caducat. Demana'n un de nou.",
+    "updatePassword": "Actualitzar contrasenya"
   },
   "posts": {
     "offer": "Oferta",
