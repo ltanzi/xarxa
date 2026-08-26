@@ -100,7 +100,28 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
       </div>
       <PostFilters />
       {posts.length === 0 ? (
-        <p className="text-muted text-sm py-20">{t("posts.noResults")}</p>
+        // Two different empty states: "your filters excluded everything"
+        // (offer the way out) vs "the board is genuinely empty" (invite
+        // the first post). One flat string served both before.
+        params.type || params.category || params.urgency || params.mode || params.search || params.location ? (
+          <p className="text-muted text-sm py-20">
+            {t("board.emptyFiltered")}{" "}
+            <Link href="/board" className="text-fg underline underline-offset-4 hover:no-underline">
+              {t("board.clearFilters")}
+            </Link>
+          </p>
+        ) : (
+          <p className="text-muted text-sm py-20">
+            {t("board.emptyBoard")}{" "}
+            <Link href="/board/new?type=REQUEST" className="text-fg underline underline-offset-4 hover:no-underline">
+              {t("landing.askHelp")}
+            </Link>
+            {" / "}
+            <Link href="/board/new?type=OFFER" className="text-fg underline underline-offset-4 hover:no-underline">
+              {t("landing.offerHelp")}
+            </Link>
+          </p>
+        )
       ) : (
         <>
           <div className="border-t border-fg/10">
@@ -111,13 +132,21 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
           {totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 mt-8 text-sm font-mono">
               {page > 1 && (
-                <Link href={pageUrl(page - 1)} className="underline underline-offset-4 hover:no-underline">
+                <Link
+                  href={pageUrl(page - 1)}
+                  aria-label={t("posts.prevPage")}
+                  className="underline underline-offset-4 hover:no-underline px-2 py-1"
+                >
                   &larr;
                 </Link>
               )}
               <span className="text-muted">{page} / {totalPages}</span>
               {page < totalPages && (
-                <Link href={pageUrl(page + 1)} className="underline underline-offset-4 hover:no-underline">
+                <Link
+                  href={pageUrl(page + 1)}
+                  aria-label={t("posts.nextPage")}
+                  className="underline underline-offset-4 hover:no-underline px-2 py-1"
+                >
                   &rarr;
                 </Link>
               )}

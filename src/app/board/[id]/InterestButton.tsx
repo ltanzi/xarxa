@@ -25,11 +25,19 @@ export function InterestButton({ postId, existingStatus }: InterestButtonProps) 
   }
 
   if (status === "PENDING") {
-    return <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{t("posts.interestSent")}</span>;
+    return (
+      <div>
+        <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{t("posts.interestSent")}</span>
+        {/* Without this line the requester is told nothing about what
+            happens next — the loop's next step was invisible. */}
+        <p className="mt-1 text-xs text-muted">{t("posts.interestSentHint")}</p>
+      </div>
+    );
   }
 
   if (status === "REJECTED") {
-    return null;
+    // Used to render null — the post just silently lost its action button.
+    return <span className="font-mono text-[11px] uppercase tracking-wider text-muted">{t("posts.notAccepted")}</span>;
   }
 
   async function handleInterest() {

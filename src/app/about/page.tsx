@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "@/i18n/server";
 
 export default async function AboutPage() {
@@ -12,6 +13,11 @@ export default async function AboutPage() {
           </h1>
           <p className="text-base leading-relaxed text-fg">
             {t("about.description")}
+          </p>
+          <p className="mt-6">
+            <Link href="/guidelines" className="text-sm underline underline-offset-4 hover:no-underline">
+              {t("guidelines.link")}
+            </Link>
           </p>
           <div className="mt-16 pt-8 border-t border-fg/10">
             <p className="font-mono text-[11px] uppercase tracking-wider text-muted mb-2">

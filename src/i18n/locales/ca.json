@@ -5,7 +5,9 @@
     "cancel": "Cancel·lar",
     "loading": "Carregant...",
     "error": "Alguna cosa ha anat malament",
-    "done": "Fet"
+    "done": "Fet",
+    "showPassword": "Mostrar contrasenya",
+    "hidePassword": "Amagar contrasenya"
   },
   "verification": {
     "pendingTitle": "Revisa el teu correu",
@@ -110,7 +112,14 @@
     "closePost": "Tancar publicació",
     "reopenPost": "Reobrir",
     "updatePost": "Actualitzar publicació",
-    "failedToUpdate": "Error en actualitzar la publicació"
+    "failedToUpdate": "Error en actualitzar la publicació",
+    "interestSentHint": "L'autor/a ho revisarà — rebràs un correu quan accepti.",
+    "notAccepted": "No acceptat",
+    "searchLabel": "Cercar al tauler",
+    "filtersToggle": "Filtres",
+    "prevPage": "Pàgina anterior",
+    "nextPage": "Pàgina següent",
+    "removeTerm": "Treure terme de cerca"
   },
   "categories": {
     "LEGAL": "Legal",
@@ -185,10 +194,16 @@
     "offerHelp": "Oferir ajuda",
     "recentPosts": "Publicacions recents",
     "seeAll": "Veure tot",
-    "snakeHint": "prem qualsevol fletxa"
+    "snakeHint": "prem qualsevol fletxa",
+    "how1": "01 — Publica el que necessites o el que pots donar",
+    "how2": "02 — Connecta quan algú mostri interès",
+    "how3": "03 — Organitzeu els detalls pel xat"
   },
   "board": {
-    "title": "Tauler"
+    "title": "Tauler",
+    "emptyFiltered": "Cap publicació coincideix amb els teus filtres.",
+    "clearFilters": "Treure filtres",
+    "emptyBoard": "Encara no hi ha res al tauler. Sigues la primera persona —"
   },
   "password": {
     "title": "Canvia la contrasenya",
@@ -216,5 +231,22 @@
       "INAPPROPRIATE": "Contingut inadequat",
       "OTHER": "Altres"
     }
+  },
+  "guidelines": {
+    "title": "Normes",
+    "intro": "xarxa funciona perquè la gent es tracta bé. Cinc normes ho mantenen així.",
+    "g1": "L'ajuda és gratuïta. Mai hi ha diners pel mig.",
+    "g2": "Sigues clar sobre el que ofereixes o necessites — estalvia temps a tothom.",
+    "g3": "Quedes amb algú nou? Tria un lloc públic la primera vegada.",
+    "g4": "Respecta el temps dels altres: vine, o avisa que no pots.",
+    "g5": "Alguna cosa no quadra? Reporta-ho — revisem tots els informes.",
+    "safety": "xarxa connecta desconeguts. Comparteix dades personals només quan t'hi sentis còmode.",
+    "link": "Normes de la comunitat"
+  },
+  "errors": {
+    "title": "Alguna cosa ha anat malament",
+    "retry": "Torna-ho a provar",
+    "notFoundTitle": "Pàgina no trobada",
+    "goHome": "Anar a l'inici"
   }
 }
