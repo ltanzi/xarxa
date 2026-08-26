@@ -58,23 +58,16 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant }: 
     });
     socketRef.current = socket;
 
-    socket.on("connect", () => {
-      socket.emit("join-conversation", conversationId);
-    });
-
-    socket.on("new-message", (message: Message) => {
+    // Messages arrive on the personal user:{id} room (joined server-side
+    // on connect), emitted by the REST route that persisted them. The
+    // payload carries conversationId so we only render ours — this same
+    // socket also receives messages for the user's other conversations.
+    socket.on("new-message", (payload: { conversationId: string; message: Message }) => {
+      if (payload?.conversationId !== conversationId) return;
       setMessages((prev) => {
-        if (prev.some((m) => m.id === message.id)) return prev;
-        return [...prev, message];
+        if (prev.some((m) => m.id === payload.message.id)) return prev;
+        return [...prev, payload.message];
       });
-    });
-
-    // Server rejections (verified-only, rate-limited) — surface to the
-    // user. Uses a custom event name; "error" is Socket.io's reserved
-    // transport-level signal and shouldn't carry app meaning.
-    socket.on("send-message:rejected", (payload: { code?: string }) => {
-      console.warn("[chat] send rejected by server:", payload);
-      setSendError(true);
     });
 
     return socket;
@@ -115,12 +108,14 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant }: 
 
       if (res.ok) {
         const saved = await res.json();
-        setMessages((prev) => prev.map((m) => (m.id === optimisticMessage.id ? saved : m)));
-
-        socketRef.current?.emit("send-message", {
-          conversationId,
-          message: saved,
-        });
+        // The server also echoes the saved message to our own socket
+        // (multi-tab sync). If the echo won the race, the saved id is
+        // already in the list — just drop the optimistic placeholder.
+        setMessages((prev) =>
+          prev.some((m) => m.id === saved.id)
+            ? prev.filter((m) => m.id !== optimisticMessage.id)
+            : prev.map((m) => (m.id === optimisticMessage.id ? saved : m))
+        );
       } else {
         setMessages((prev) => prev.filter((m) => m.id !== optimisticMessage.id));
         setNewMessage(messageContent);
