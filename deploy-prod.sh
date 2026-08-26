@@ -7,9 +7,11 @@
 #                                   for rollbacks (you've already checked
 #                                   out a known-good SHA in detached HEAD).
 #
-# Reads secrets from /etc/xarxa/.env. Builds the image tagged with the
-# current commit SHA, applies Prisma db push, swaps the app container,
-# smoke-tests https://xarxa.help/.
+# Reads secrets from /etc/xarxa/.env. Builds the image (COMMIT_SHA is a
+# build arg baked into the app env, not an image tag), applies Prisma
+# db push, swaps the app container, smoke-tests https://xarxa.help/,
+# then prunes build cache + dangling images older than 72h so repeated
+# deploys can't fill the disk.
 
 set -euo pipefail
 
@@ -46,5 +48,12 @@ if ! curl -sfL https://xarxa.help/ > /dev/null; then
   echo "✗ Smoke failed — check 'docker compose logs app' and 'docker compose logs caddy'"
   exit 1
 fi
+
+# Keep the disk bounded: without this, every deploy leaves ~1GB of build cache
+# and an orphaned <none> image behind (measured 19GB accumulated before
+# this was added). 72h filter keeps recent layers so rebuilds stay fast.
+echo "→ Pruning old build cache + dangling images…"
+docker builder prune -f --filter "until=72h" | tail -1 || true
+docker image prune -f | tail -1 || true
 
 echo "✓ Deploy OK at $(date -u +%FT%TZ) — sha=$SHA"
