@@ -101,6 +101,12 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           console.error("[PostForm] non-JSON error body", { status: res.status, parseErr });
           return {};
         });
+        // Soft-wall: show the translated explanation, not the raw
+        // machine string "EMAIL_NOT_VERIFIED".
+        if (res.status === 403 && data.error === "EMAIL_NOT_VERIFIED") {
+          setServerError(t("verification.blockedTooltip"));
+          return;
+        }
         setServerError(data.error || t(isEditing ? "posts.failedToUpdate" : "posts.failedToCreate"));
         return;
       }
