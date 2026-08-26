@@ -99,7 +99,9 @@ export async function middleware(request: NextRequest) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${evalForDev}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
-    `connect-src 'self' ${wssSelf} https://*.ingest.sentry.io https://sentry.io`.trim(),
+    // photon.komoot.io = city autocomplete (LocationInput). Without it the
+    // browser blocks the geocode fetch and suggestions silently never show.
+    `connect-src 'self' ${wssSelf} https://*.ingest.sentry.io https://sentry.io https://photon.komoot.io`.trim(),
     "font-src 'self' data:",
     "frame-ancestors 'none'",
     "form-action 'self'",

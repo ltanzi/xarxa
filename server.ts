@@ -54,6 +54,7 @@ async function getUserIdFromCookie(cookieHeader: string | undefined): Promise<st
     return (decoded?.id as string) || null;
   } catch (err) {
     console.error("[socket] JWT decode failed:", err);
+    Sentry.captureException(err);
     return null;
   }
 }
@@ -82,38 +83,15 @@ app.prepare().then(() => {
   });
 
   io.on("connection", (socket) => {
-    // Join personal notification room
+    // Join personal notification + delivery room. This is the ONLY room
+    // the socket layer manages: chat messages and notification updates
+    // are both emitted into user:{id} rooms from the REST routes (see
+    // src/lib/socket.ts emitToUser). There are no conversation rooms and
+    // no client-driven relay — the old join-conversation handler needed
+    // a prisma import that the standalone build doesn't ship, so it
+    // silently failed in prod. server.ts must stay free of src/lib/*
+    // imports (tsc compiles it in isolation; see tsconfig.server.json).
     socket.join(`user:${socket.data.userId}`);
-
-    socket.on("join-conversation", async (conversationId: string) => {
-      try {
-        const { prisma } = await import("./src/lib/prisma");
-        const conversation = await prisma.conversation.findFirst({
-          where: {
-            id: conversationId,
-            participants: { some: { id: socket.data.userId } },
-          },
-          select: { id: true },
-        });
-
-        if (conversation) {
-          socket.join(`conversation:${conversationId}`);
-        }
-      } catch (err) {
-        console.error("[socket] join-conversation error:", err);
-      }
-    });
-
-    socket.on("send-message", async (data: { conversationId: string; message: unknown }) => {
-      // Only relay if sender actually joined this conversation room.
-      // The REST POST /api/conversations/[id]/messages is the authoritative
-      // gate (verified-only + rate-limited) — the client posts there
-      // FIRST, then emits here for real-time relay. This handler is a
-      // dumb pass-through; the REST handler also fires notifyUser() for
-      // recipient badge updates.
-      if (!socket.rooms.has(`conversation:${data.conversationId}`)) return;
-      socket.to(`conversation:${data.conversationId}`).emit("new-message", data.message);
-    });
   });
 
   httpServer.listen(port, hostname, () => {

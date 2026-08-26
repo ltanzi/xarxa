@@ -6,7 +6,7 @@ export function getIO(): SocketIOServer | null {
 
 let warnedNoIO = false;
 
-export function notifyUser(userId: string) {
+export function emitToUser(userId: string, event: string, payload?: unknown) {
   const io = getIO();
   if (!io) {
     if (!warnedNoIO) {
@@ -15,5 +15,9 @@ export function notifyUser(userId: string) {
     }
     return;
   }
-  io.to(`user:${userId}`).emit("notifications:update");
+  io.to(`user:${userId}`).emit(event, payload);
+}
+
+export function notifyUser(userId: string) {
+  emitToUser(userId, "notifications:update");
 }

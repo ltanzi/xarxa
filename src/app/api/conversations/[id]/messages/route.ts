@@ -4,7 +4,7 @@ import { auth } from "@/lib/auth";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { messageSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
-import { notifyUser } from "@/lib/socket";
+import { emitToUser, notifyUser } from "@/lib/socket";
 
 export async function GET(
   _request: Request,
@@ -95,15 +95,21 @@ export async function POST(
     },
   });
 
-  // Bump notification badges for the other participant(s). Used to live
-  // in server.ts but the dynamic prisma import there is broken in the
-  // standalone build; calling it from here is the canonical path.
+  // Real-time delivery happens HERE, server-side, because this route is
+  // the authority (membership-checked, validated, persisted). The message
+  // is emitted to every participant's personal user:{id} room — including
+  // the sender, so their other open tabs stay in sync (the sending tab
+  // dedupes by id). Conversation rooms and the client-side relay were
+  // removed: the old join-conversation handler needed a prisma import
+  // that doesn't exist in the standalone build, so rooms silently never
+  // joined in prod and no message ever relayed live.
   const fullConv = await prisma.conversation.findUnique({
     where: { id },
     select: { participants: { select: { id: true } } },
   });
   if (fullConv) {
     for (const p of fullConv.participants) {
+      emitToUser(p.id, "new-message", { conversationId: id, message });
       if (p.id !== session.user.id) notifyUser(p.id);
     }
   }

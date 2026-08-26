@@ -36,3 +36,6 @@ public/uploads/*
 !public/uploads/.gitkeep
 
 /src/generated/prisma
+
+# personal walkthrough notes (kept local)
+overview.md
