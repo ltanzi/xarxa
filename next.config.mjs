@@ -16,11 +16,8 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
-  // Pre-existing code in this codebase has type/lint issues the dev server
-  // tolerates but `next build` rejects. Unblocking deploy now; cleanup is a
-  // follow-up task (see CLAUDE.md roadmap).
-  typescript: { ignoreBuildErrors: true },
-  eslint: { ignoreDuringBuilds: true },
+  // Type and lint errors now FAIL the build (the ignore flags that hid
+  // three real type errors are gone; CI runs the same checks on PRs).
   async rewrites() {
     // Runtime-uploaded files live in a docker volume at /app/public/uploads,
     // but Next.js standalone's static handler only serves what was in public/

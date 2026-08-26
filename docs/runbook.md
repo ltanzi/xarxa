@@ -20,9 +20,15 @@ cron at `/etc/cron.d/xarxa-backups`:
 SHELL=/bin/bash
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
-0 3 * * * root /opt/xarxa/scripts/backup-with-alert.sh postgres
+# Postgres dump every 4 hours (RPO ~4h — the DB is tiny, B2 cost is cents)
+0 */4 * * * root /opt/xarxa/scripts/backup-with-alert.sh postgres
+# Uploads snapshot nightly (restic dedups; photos change rarely)
 30 3 * * * root /opt/xarxa/scripts/backup-with-alert.sh uploads
 ```
+
+A separate host-health cron at `/etc/cron.d/xarxa-health` runs
+`scripts/health-alert.sh` every 30 min and emails when disk > 80% or
+available RAM < 300MB.
 
 The wrapper reads `RESEND_API_KEY` and `OPERATOR_EMAIL` from `/etc/xarxa/.env`.
 Add `OPERATOR_EMAIL=l.tanzi@methinks.ai` to that file if it isn't already set.
@@ -108,6 +114,18 @@ docker compose --env-file /etc/xarxa/.env -f /opt/xarxa/docker-compose.prod.yml 
 
 ## 3. Rollback after a bad deploy
 
+**Fast path (~10 seconds, no rebuild).** The last 5 deploys' images are
+kept on disk, tagged `xarxa-app:<sha>`:
+
+```bash
+cd /opt/xarxa
+docker images xarxa-app         # see which SHAs are available
+COMMIT_SHA=<good-sha> docker compose --env-file /etc/xarxa/.env \
+  -f docker-compose.prod.yml up -d --no-deps --wait app
+```
+
+**Slow path (full rebuild)** — for a SHA whose image was already pruned:
+
 ```bash
 cd /opt/xarxa
 git log -10 --oneline           # find the last-known-good SHA
@@ -124,7 +142,13 @@ After verifying the rollback works, return to a branch so the next normal
 git checkout -b hotfix-<topic>  # fix forward and merge to main
 ```
 
-If the breakage was a bad migration that left the schema in a weird state, open psql (§2) and `\d` the table; reverse the column add by hand (the spec uses `prisma db push` so there are no migration files to roll back automatically).
+If the breakage was a bad migration: schema changes now ship as recorded
+migrations (`prisma/migrations/*`, applied by `prisma migrate deploy` in the
+deploy script — the DB was baselined `0_init` on 2026-08-26). Rolling back
+code does NOT undo an applied migration; to reverse one, write the inverse
+SQL by hand in psql (§2), then `prisma migrate resolve --rolled-back <name>`
+so the ledger matches reality. New schema work: `npx prisma migrate dev
+--name <what-changed>` locally and commit the generated folder.
 
 ---
 

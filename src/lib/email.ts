@@ -37,6 +37,39 @@ export async function sendVerificationEmail(
   if (error) throw new Error(`Resend send failed: ${error.message}`);
 }
 
+// Operator-facing alert when a post gets reported — plain text, no
+// template. Without this, reports landed in the DB and nowhere else,
+// while the UI promised "we will review it".
+export async function sendReportAlertEmail(params: {
+  postId: string;
+  postTitle: string;
+  reason: string;
+  details: string | null;
+  reportCount: number;
+  autoClosed: boolean;
+}): Promise<void> {
+  if (!client || !env.OPERATOR_EMAIL) {
+    console.warn("[email] report alert skipped (no RESEND_API_KEY or OPERATOR_EMAIL)");
+    return;
+  }
+  const { postId, postTitle, reason, details, reportCount, autoClosed } = params;
+  const { error } = await client.emails.send({
+    from: env.EMAIL_FROM,
+    to: env.OPERATOR_EMAIL,
+    subject: `xarxa: post reported (${reason}) — "${postTitle}"`,
+    text: [
+      `Post: ${postTitle}`,
+      `${env.NEXTAUTH_URL}/board/${postId}`,
+      ``,
+      `Reason: ${reason}`,
+      details ? `Details: ${details}` : `Details: (none)`,
+      `Distinct reports so far: ${reportCount}`,
+      autoClosed ? `>> Post auto-closed (threshold reached). Reopen from the post page after review.` : ``,
+    ].join("\n"),
+  });
+  if (error) throw new Error(`Resend send failed: ${error.message}`);
+}
+
 export async function sendPasswordResetEmail(
   email: string,
   locale: Locale,

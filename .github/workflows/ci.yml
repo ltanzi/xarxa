@@ -1,0 +1,48 @@
+# CI: type-check (both compilers), lint, and production build on every
+# PR and push to main. This is the gate that didn't exist when three
+# type errors and a prod-only module-resolution bug shipped silently.
+# No DB is needed: `next build` skips strict env validation via the
+# NEXT_PHASE guard in src/lib/env.ts, and prisma generate only reads
+# the schema.
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Type-check app
+        run: npx tsc --noEmit
+
+      - name: Type-check custom server (tsc emits dist/ — must stay a single file)
+        run: |
+          npx tsc --project tsconfig.server.json
+          test "$(find dist -type f | wc -l)" = "1" || {
+            echo "::error::server build emitted more than dist/server.js — an import from src/ crept into server.ts (this exact pattern broke prod chat once; the Dockerfile only ships dist/server.js)"
+            find dist -type f
+            exit 1
+          }
+
+      - name: Lint
+        run: npx next lint
+
+      - name: Build
+        run: npm run build

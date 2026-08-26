@@ -12,7 +12,7 @@ interface ProfileCardProps {
     skills?: string[];
     profilePhoto?: string | null;
     languages?: string[];
-    createdAt: string;
+    createdAt: Date | string;
   };
 }
 
