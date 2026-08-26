@@ -28,10 +28,20 @@ export default async function ChatPage() {
     orderBy: { createdAt: "desc" },
   });
 
+  // Sort by ACTIVITY, not creation: an old conversation with a fresh
+  // message belongs on top (it used to stay buried under newer-but-dead
+  // ones). The last message is already included above; conversations
+  // with no messages fall back to their creation date.
+  const byActivity = [...conversations].sort((a, b) => {
+    const at = a.messages[0]?.createdAt ?? a.createdAt;
+    const bt = b.messages[0]?.createdAt ?? b.createdAt;
+    return new Date(bt).getTime() - new Date(at).getTime();
+  });
+
   return (
     <div className="mx-auto max-w-3xl px-6 lg:px-8 pt-24 pb-16">
       <h1 className="text-3xl font-light mb-12">{t("chat.title")}</h1>
-      <ChatList conversations={JSON.parse(JSON.stringify(conversations))} />
+      <ChatList conversations={JSON.parse(JSON.stringify(byActivity))} />
     </div>
   );
 }

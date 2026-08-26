@@ -52,6 +52,7 @@ services:
       SENTRY_DSN: ${SENTRY_DSN}
       EMAIL_FROM: "noreply@xarxa.help"
       OPERATOR_EMAIL: ${OPERATOR_EMAIL}
+      CRON_SECRET: ${CRON_SECRET}
       NODE_ENV: production
     volumes:
       - uploads:/app/public/uploads

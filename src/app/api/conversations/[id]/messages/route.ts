@@ -4,7 +4,8 @@ import { auth } from "@/lib/auth";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { messageSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
-import { emitToUser, notifyUser } from "@/lib/socket";
+import { emitToUser, getIO, notifyUser } from "@/lib/socket";
+import { sendNotificationEmail, type Locale } from "@/lib/email";
 
 export async function GET(
   _request: Request,
@@ -111,6 +112,39 @@ export async function POST(
     for (const p of fullConv.participants) {
       emitToUser(p.id, "new-message", { conversationId: id, message });
       if (p.id !== session.user.id) notifyUser(p.id);
+    }
+
+    // Offline email, self-batching without any timer state:
+    // send only when (a) the recipient has no connected socket — they're
+    // not on the site at all — and (b) this is their FIRST unread message
+    // in this conversation. A burst of messages produces exactly one
+    // email; the next one can only fire after they open the conversation
+    // (which marks messages read). Failure never fails the request.
+    try {
+      const io = getIO();
+      for (const p of fullConv.participants) {
+        if (p.id === session.user.id) continue;
+        const sockets = io ? await io.in(`user:${p.id}`).fetchSockets() : [];
+        if (sockets.length > 0) continue;
+        const unread = await prisma.message.count({
+          where: { conversationId: id, senderId: { not: p.id }, read: false },
+        });
+        if (unread !== 1) continue;
+        const recipient = await prisma.user.findUnique({
+          where: { id: p.id },
+          select: { email: true, preferredLanguage: true },
+        });
+        if (recipient) {
+          await sendNotificationEmail(
+            "newMessages",
+            recipient.email,
+            (recipient.preferredLanguage as Locale) || "en",
+            { title: message.sender.name, path: `/chat/${id}` },
+          );
+        }
+      }
+    } catch (err) {
+      console.error("[messages] offline email failed:", err);
     }
   }
 

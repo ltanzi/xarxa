@@ -4,6 +4,7 @@ import { requireVerifiedUser } from "@/lib/auth-utils";
 import { notifyUser } from "@/lib/socket";
 import { connectionRequestSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
+import { sendNotificationEmail, type Locale } from "@/lib/email";
 
 export async function POST(request: Request) {
   const { error, session } = await requireVerifiedUser();
@@ -56,8 +57,26 @@ export async function POST(request: Request) {
       },
     });
 
-    // Notify the post author about the new connection request
+    // Notify the post author: socket badge now, email for when they're
+    // away (the loop stalls forever if the author never learns someone
+    // responded). Email failure must not fail the request.
     notifyUser(post.authorId);
+    try {
+      const author = await prisma.user.findUnique({
+        where: { id: post.authorId },
+        select: { email: true, preferredLanguage: true },
+      });
+      if (author) {
+        await sendNotificationEmail(
+          "interestReceived",
+          author.email,
+          (author.preferredLanguage as Locale) || "en",
+          { title: post.title, path: "/dashboard" },
+        );
+      }
+    } catch (err) {
+      console.error("[connections] interest email failed:", err);
+    }
     return NextResponse.json(connection, { status: 201 });
   } catch (e) {
     console.error("[connections POST error]", e);
