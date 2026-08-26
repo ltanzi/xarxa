@@ -122,7 +122,7 @@ function updateField(field: string, value: string) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>
+        <p className="text-xs text-accent" role="alert">{error}</p>
       )}
 
       <div className="flex items-center gap-4">

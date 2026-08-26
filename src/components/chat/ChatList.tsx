@@ -96,7 +96,8 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
               </Link>
               <button
                 onClick={() => { setConfirmingId(isConfirming ? null : conv.id); setError(false); }}
-                className="text-xs text-muted hover:text-accent transition-colors shrink-0 mt-0.5"
+                aria-label={t("chat.deleteChat")}
+                className="text-xs text-muted hover:text-accent transition-colors shrink-0 mt-0.5 p-2 -m-2"
               >
                 ×
               </button>

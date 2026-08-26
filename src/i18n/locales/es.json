@@ -5,7 +5,9 @@
     "cancel": "Cancelar",
     "loading": "Cargando...",
     "error": "Algo salió mal",
-    "done": "Listo"
+    "done": "Listo",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "verification": {
     "pendingTitle": "Revisa tu email",
@@ -110,7 +112,14 @@
     "closePost": "Cerrar publicación",
     "reopenPost": "Reabrir",
     "updatePost": "Actualizar publicación",
-    "failedToUpdate": "Error al actualizar la publicación"
+    "failedToUpdate": "Error al actualizar la publicación",
+    "interestSentHint": "La persona autora lo revisará — recibirás un correo cuando acepte.",
+    "notAccepted": "No aceptado",
+    "searchLabel": "Buscar en el tablón",
+    "filtersToggle": "Filtros",
+    "prevPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "removeTerm": "Quitar término de búsqueda"
   },
   "categories": {
     "LEGAL": "Legal",
@@ -185,10 +194,16 @@
     "offerHelp": "Ofrecer ayuda",
     "recentPosts": "Publicaciones recientes",
     "seeAll": "Ver todo",
-    "snakeHint": "pulsa cualquier flecha"
+    "snakeHint": "pulsa cualquier flecha",
+    "how1": "01 — Publica lo que necesitas o lo que puedes dar",
+    "how2": "02 — Conecta cuando alguien muestre interés",
+    "how3": "03 — Organizad los detalles por chat"
   },
   "board": {
-    "title": "Tablón"
+    "title": "Tablón",
+    "emptyFiltered": "Ninguna publicación coincide con tus filtros.",
+    "clearFilters": "Quitar filtros",
+    "emptyBoard": "Aún no hay nada en el tablón. Sé la primera persona —"
   },
   "password": {
     "title": "Cambiar contraseña",
@@ -216,5 +231,22 @@
       "INAPPROPRIATE": "Contenido inapropiado",
       "OTHER": "Otro"
     }
+  },
+  "guidelines": {
+    "title": "Normas",
+    "intro": "xarxa funciona porque la gente se trata bien. Cinco normas lo mantienen así.",
+    "g1": "La ayuda es gratuita. Nunca hay dinero de por medio.",
+    "g2": "Sé claro sobre lo que ofreces o necesitas — ahorra tiempo a todos.",
+    "g3": "¿Quedas con alguien nuevo? Elige un lugar público la primera vez.",
+    "g4": "Respeta el tiempo de los demás: acude, o avisa de que no puedes.",
+    "g5": "¿Algo no cuadra? Repórtalo — revisamos todos los informes.",
+    "safety": "xarxa conecta a desconocidos. Comparte datos personales solo cuando te sientas a gusto.",
+    "link": "Normas de la comunidad"
+  },
+  "errors": {
+    "title": "Algo ha ido mal",
+    "retry": "Reintentar",
+    "notFoundTitle": "Página no encontrada",
+    "goHome": "Ir al inicio"
   }
 }

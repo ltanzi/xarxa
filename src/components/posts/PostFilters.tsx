@@ -19,6 +19,10 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
     return s ? s.split(",").filter(Boolean) : [];
   });
   const [input, setInput] = useState("");
+  // Mobile: Category/Urgency/Mode collapse behind one "FILTERS +" line —
+  // ~18 tiny buttons across 6 wrapped rows pushed the first post far
+  // below the fold. Desktop always shows everything.
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
   const searchParamsRef = useRef(searchParams);
   useEffect(() => { searchParamsRef.current = searchParams; }, [searchParams]);
@@ -115,7 +119,8 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
             {tag}
             <button
               onClick={() => removeTag(tag)}
-              className="hover:opacity-60 transition-opacity leading-none"
+              aria-label={`${t("posts.removeTerm")}: ${tag}`}
+              className="hover:opacity-60 transition-opacity leading-none p-1 -m-1"
             >
               ×
             </button>
@@ -126,6 +131,7 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
+          aria-label={t("posts.searchLabel")}
           placeholder={tags.length === 0 ? t("posts.searchPlaceholder") : ""}
           className="flex-1 min-w-[120px] bg-transparent text-sm placeholder:text-fg/30 focus:outline-none py-1"
         />
@@ -137,8 +143,9 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
         {types.map((type) => (
           <button
             key={type.value}
+            aria-pressed={(searchParams.get("type") || "") === type.value}
             onClick={() => updateFilter("type", type.value)}
-            className={`transition-colors ${
+            className={`transition-colors py-1 -my-1 ${
               (searchParams.get("type") || "") === type.value
                 ? "text-fg underline underline-offset-4"
                 : "text-fg/50 hover:text-fg"
@@ -149,14 +156,26 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
         ))}
       </div>
 
+      {/* Mobile-only disclosure for the remaining filter rows */}
+      <button
+        type="button"
+        onClick={() => setFiltersOpen((o) => !o)}
+        aria-expanded={filtersOpen}
+        className="sm:hidden self-start font-mono text-xs uppercase tracking-widest text-fg/70 hover:text-fg transition-colors py-1"
+      >
+        {t("posts.filtersToggle")} {filtersOpen ? "−" : "+"}
+      </button>
+
+      <div className={`${filtersOpen ? "flex" : "hidden"} sm:flex flex-col gap-3`}>
       {/* Category filter */}
       <div className="flex items-baseline gap-3 sm:gap-6 font-mono text-xs uppercase tracking-widest flex-wrap">
         <span className="text-fg shrink-0 font-medium">{t("posts.category")}</span>
         {categories.map((cat) => (
           <button
             key={cat.value}
+            aria-pressed={(searchParams.get("category") || "") === cat.value}
             onClick={() => updateFilter("category", cat.value)}
-            className={`transition-colors ${
+            className={`transition-colors py-1 -my-1 ${
               (searchParams.get("category") || "") === cat.value
                 ? "text-fg underline underline-offset-4"
                 : "text-fg/50 hover:text-fg"
@@ -173,8 +192,9 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
         {urgencies.map((urg) => (
           <button
             key={urg.value}
+            aria-pressed={(searchParams.get("urgency") || "") === urg.value}
             onClick={() => updateFilter("urgency", urg.value)}
-            className={`transition-colors ${
+            className={`transition-colors py-1 -my-1 ${
               (searchParams.get("urgency") || "") === urg.value
                 ? "text-fg underline underline-offset-4"
                 : "text-fg/50 hover:text-fg"
@@ -191,8 +211,9 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
         {modes.map((m) => (
           <button
             key={m.value}
+            aria-pressed={(searchParams.get("mode") || "") === m.value}
             onClick={() => updateFilter("mode", m.value)}
-            className={`transition-colors ${
+            className={`transition-colors py-1 -my-1 ${
               (searchParams.get("mode") || "") === m.value
                 ? "text-fg underline underline-offset-4"
                 : "text-fg/50 hover:text-fg"
@@ -201,6 +222,7 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
             {m.label}
           </button>
         ))}
+      </div>
       </div>
     </div>
   );

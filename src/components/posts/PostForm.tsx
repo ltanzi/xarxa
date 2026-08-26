@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { LocationInput } from "@/components/ui/LocationInput";
 import { Select } from "@/components/ui/Select";
@@ -126,7 +127,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {serverError && (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{serverError}</div>
+        <p className="text-xs text-accent" role="alert">{serverError}</p>
       )}
 
       <Input
@@ -212,6 +213,15 @@ export function PostForm({ postId, initialData }: PostFormProps) {
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? t("common.loading") : t(isEditing ? "posts.updatePost" : "posts.createPost")}
       </Button>
+
+      <p className="text-center">
+        <Link
+          href="/guidelines"
+          className="text-xs text-muted underline underline-offset-4 hover:text-fg hover:no-underline transition-colors"
+        >
+          {t("guidelines.link")}
+        </Link>
+      </p>
     </form>
   );
 }

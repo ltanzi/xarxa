@@ -110,7 +110,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <div className="mt-12 pt-8 border-t border-fg/10 flex items-center justify-between gap-4">
           <Link href={`/profile/${post.author.id}`} className="hover:opacity-60 transition-opacity">
             <p className="text-sm">{authorDisplayName}</p>
-            <p className="text-xs text-muted font-mono uppercase tracking-wider">{post.author.type} &middot; {formatDate(post.createdAt)}</p>
+            <p className="text-xs text-muted font-mono uppercase tracking-wider">{t(post.author.type === "PRIVATE" ? "auth.individual" : "auth.collective")} &middot; {formatDate(post.createdAt)}</p>
           </Link>
 
           {isAuthor ? (

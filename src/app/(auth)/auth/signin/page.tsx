@@ -83,9 +83,9 @@ export default function SignInPage() {
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-0 bottom-2 text-muted hover:text-fg transition-colors"
-              tabIndex={-1}
-              aria-label="Toggle password visibility"
+              className="absolute right-0 bottom-2 text-muted hover:text-fg transition-colors p-1 -m-1"
+              aria-pressed={showPassword}
+              aria-label={t(showPassword ? "common.hidePassword" : "common.showPassword")}
             >
               {showPassword ? (
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

@@ -28,7 +28,7 @@ export async function ProfileCard({ user }: ProfileCardProps) {
             {user.name}{user.type === "PRIVATE" && user.surname ? ` ${user.surname}` : ""}
           </h1>
           <div className="flex items-center gap-4 mt-1 text-xs text-muted font-mono uppercase tracking-wider">
-            <span>{user.type}</span>
+            <span>{t(user.type === "PRIVATE" ? "auth.individual" : "auth.collective")}</span>
             {user.location && <span>{user.location}</span>}
           </div>
         </div>

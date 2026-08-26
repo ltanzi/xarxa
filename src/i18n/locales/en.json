@@ -5,7 +5,9 @@
     "cancel": "Cancel",
     "loading": "Loading...",
     "error": "Something went wrong",
-    "done": "Done"
+    "done": "Done",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "verification": {
     "pendingTitle": "Check your email",
@@ -110,7 +112,14 @@
     "closePost": "Close post",
     "reopenPost": "Reopen",
     "updatePost": "Update post",
-    "failedToUpdate": "Failed to update post"
+    "failedToUpdate": "Failed to update post",
+    "interestSentHint": "The author will review it — you'll get an email when they accept.",
+    "notAccepted": "Not accepted",
+    "searchLabel": "Search the board",
+    "filtersToggle": "Filters",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "removeTerm": "Remove search term"
   },
   "categories": {
     "LEGAL": "Legal",
@@ -185,10 +194,16 @@
     "offerHelp": "Offer help",
     "recentPosts": "Recent posts",
     "seeAll": "See all",
-    "snakeHint": "press any arrow"
+    "snakeHint": "press any arrow",
+    "how1": "01 — Post what you need or what you can give",
+    "how2": "02 — Connect when someone shows interest",
+    "how3": "03 — Arrange the details in chat"
   },
   "board": {
-    "title": "Board"
+    "title": "Board",
+    "emptyFiltered": "No posts match your filters.",
+    "clearFilters": "Clear filters",
+    "emptyBoard": "Nothing on the board yet. Be the first —"
   },
   "password": {
     "title": "Change password",
@@ -216,5 +231,22 @@
       "INAPPROPRIATE": "Inappropriate content",
       "OTHER": "Other"
     }
+  },
+  "guidelines": {
+    "title": "Guidelines",
+    "intro": "xarxa works because people treat each other well. Five norms keep it that way.",
+    "g1": "Help is free. No money changes hands, ever.",
+    "g2": "Be clear about what you offer or need — it saves everyone time.",
+    "g3": "Meeting someone new? Choose a public place the first time.",
+    "g4": "Respect people's time: show up, or say you can't.",
+    "g5": "See something off? Report it — we review every report.",
+    "safety": "xarxa connects strangers. Share personal details only when you feel comfortable.",
+    "link": "Community guidelines"
+  },
+  "errors": {
+    "title": "Something went wrong",
+    "retry": "Try again",
+    "notFoundTitle": "Page not found",
+    "goHome": "Go home"
   }
 }
