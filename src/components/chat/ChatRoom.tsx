@@ -68,6 +68,12 @@ export function ChatRoom({ conversationId, initialMessages, otherParticipant }: 
         if (prev.some((m) => m.id === payload.message.id)) return prev;
         return [...prev, payload.message];
       });
+      // We're looking at the conversation — mark it read immediately so
+      // the navbar badge clears (it used to stay lit until re-entering
+      // the page) and the offline-email batching sees truthful state.
+      fetch(`/api/conversations/${conversationId}/read`, { method: "POST" })
+        .then(() => window.dispatchEvent(new CustomEvent("notifications:refresh")))
+        .catch((err) => console.error("[chat] mark-read failed:", err));
     });
 
     return socket;
