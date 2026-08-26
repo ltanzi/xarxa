@@ -16,8 +16,20 @@ const passwordSchema = z
   .regex(new RegExp("\\p{Lu}", "u"), "Password must contain at least one uppercase letter")
   .regex(new RegExp("[^\\p{L}\\p{N}]", "u"), "Password must contain at least one special character");
 
+// One email schema for every auth surface. Normalizing here (not per-route)
+// is load-bearing: register/sign-in used to store and look up the email
+// as-typed while forgot-password lowercased it, so a user who registered
+// with any uppercase could never reset their password (the lookup missed,
+// and the anti-enumeration 200 hid it). Postgres uniqueness is also
+// case-sensitive, so without this Bob@x.com and bob@x.com were two accounts.
+export const emailSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .email("Invalid email address");
+
 export const registerSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: emailSchema,
   password: passwordSchema,
   name: z.string().min(1, "Name is required").max(100),
   surname: z.string().max(100).optional(),
@@ -26,7 +38,7 @@ export const registerSchema = z.object({
 }).superRefine(requireSurnameForPrivate);
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: emailSchema,
 });
 
 export const resetPasswordSchema = z.object({
@@ -35,7 +47,7 @@ export const resetPasswordSchema = z.object({
 });
 
 export const signInSchema = z.object({
-  email: z.string().email("Invalid email address"),
+  email: emailSchema,
   password: z.string().min(1, "Password is required"),
 });
 
@@ -97,11 +109,7 @@ export const reportSchema = z.object({
 
 export const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
-  newPassword: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(new RegExp("\\p{Lu}", "u"), "Password must contain at least one uppercase letter")
-    .regex(new RegExp("[^\\p{L}\\p{N}]", "u"), "Password must contain at least one special character"),
+  newPassword: passwordSchema,
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
