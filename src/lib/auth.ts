@@ -134,9 +134,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        // emailVerified arrives as ISO string from the JWT.
+        // emailVerified arrives as ISO string from the JWT. The cast is
+        // needed because our Session augmentation (string | null) merges
+        // with AdapterUser's Date | null into an unsatisfiable
+        // `Date & string` — runtime is consistently the ISO string.
         const raw = token.emailVerified as string | null | undefined;
-        session.user.emailVerified = raw ?? null;
+        (session.user as unknown as { emailVerified: string | null }).emailVerified = raw ?? null;
       }
       return session;
     },
