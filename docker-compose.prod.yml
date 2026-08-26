@@ -1,5 +1,16 @@
+# Log caps on every service: Docker's json-file driver is unbounded by
+# default, so container logs were a slow disk leak alongside build cache.
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+
 services:
   postgres:
+    # Pinned minor: bump deliberately. A MAJOR bump (17+) will NOT start
+    # against the v16 pgdata volume — that upgrade is dump → new volume →
+    # restore (see runbook §4 for the restore recipe).
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: xarxa
@@ -7,9 +18,23 @@ services:
       POSTGRES_DB: xarxa
     volumes:
       - pgdata:/var/lib/postgresql/data
+    # Memory cap so an app-side leak can never starve the database (and
+    # vice versa) — the box has 4GB total shared by everything.
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U xarxa -d xarxa"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *default-logging
     restart: unless-stopped
 
   app:
+    # Tagging by commit SHA makes rollback a 10-second container swap
+    # (COMMIT_SHA=<good-sha> docker compose up -d --no-deps app) instead
+    # of a full rebuild on an already-misbehaving box. The deploy script
+    # keeps the last few SHA images and prunes older ones.
+    image: xarxa-app:${COMMIT_SHA:-latest}
     build:
       context: .
       args:
@@ -26,11 +51,25 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY}
       SENTRY_DSN: ${SENTRY_DSN}
       EMAIL_FROM: "noreply@xarxa.help"
+      OPERATOR_EMAIL: ${OPERATOR_EMAIL}
       NODE_ENV: production
     volumes:
       - uploads:/app/public/uploads
+    mem_limit: 1800m
+    # "Started" used to mean "process spawned"; now it means "app answers
+    # /api/health". The deploy script's `up --wait` gates on this, so a
+    # broken image can't replace a working one. wget because the runner
+    # image is alpine (busybox wget, no curl).
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging: *default-logging
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     restart: unless-stopped
 
   caddy:
@@ -42,6 +81,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+    logging: *default-logging
     depends_on:
       - app
     restart: unless-stopped
