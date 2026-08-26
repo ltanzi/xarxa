@@ -39,3 +39,6 @@ public/uploads/*
 
 # personal walkthrough notes (kept local)
 overview.md
+
+# server.ts local build output (prod builds it inside Docker)
+/dist
