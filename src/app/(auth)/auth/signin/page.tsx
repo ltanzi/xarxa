@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -10,7 +10,18 @@ import { useTranslation } from "@/i18n/hook";
 
 export default function SignInPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { t } = useTranslation();
+
+  // Middleware sends signed-out visitors here with ?callbackUrl=<their
+  // destination>. Honor it (same-origin paths only — "/x" but not "//host"
+  // or absolute URLs) so "Ask help → sign in" lands back on the form,
+  // not the homepage.
+  const rawCallback = searchParams.get("callbackUrl");
+  const callbackUrl =
+    rawCallback && rawCallback.startsWith("/") && !rawCallback.startsWith("//")
+      ? rawCallback
+      : "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -38,7 +49,7 @@ export default function SignInPage() {
         setError(t("auth.invalidCredentials"));
       }
     } else {
-      router.push("/");
+      router.push(callbackUrl);
       router.refresh();
     }
   }

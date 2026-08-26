@@ -5,10 +5,12 @@ import { sendVerificationEmail, type Locale } from "@/lib/email";
 import { limit, refund, rateLimited } from "@/lib/rate-limit";
 
 export async function POST(req: NextRequest) {
-  const { email } = (await req.json().catch(() => ({}))) as { email?: unknown };
-  if (!email || typeof email !== "string") {
+  const { email: emailRaw } = (await req.json().catch(() => ({}))) as { email?: unknown };
+  if (!emailRaw || typeof emailRaw !== "string") {
     return NextResponse.json({ error: "INVALID_EMAIL" }, { status: 400 });
   }
+  // Same normalization as emailSchema — DB emails are stored lowercased.
+  const email = emailRaw.trim().toLowerCase();
 
   // Consume both buckets up-front; if either is over, refund the other so
   // the user isn't double-penalised.

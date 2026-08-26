@@ -23,15 +23,22 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
   const { t } = await getTranslations();
   const params = await searchParams;
   const where: Prisma.PostWhereInput = { closed: false };
-  const page = Math.max(1, parseInt(params.page || "1", 10));
+  // Guard everything that reaches the Prisma query: ?page=abc parses to
+  // NaN (Prisma throws on skip: NaN → error page), and an arbitrary
+  // ?category=FOO string fails enum validation the same way. Any crawler
+  // could 500 the board at will.
+  const parsedPage = parseInt(params.page || "1", 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const CATEGORIES = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"];
+  const URGENCIES = ["LOW", "NORMAL", "URGENT"];
 
   if (params.type === "OFFER" || params.type === "REQUEST") {
     where.type = params.type;
   }
-  if (params.category) {
+  if (params.category && CATEGORIES.includes(params.category)) {
     where.category = params.category as Prisma.EnumCategoryFilter;
   }
-  if (params.urgency) {
+  if (params.urgency && URGENCIES.includes(params.urgency)) {
     where.urgency = params.urgency as Prisma.EnumUrgencyFilter;
   }
   if (params.mode === "REMOTE") {

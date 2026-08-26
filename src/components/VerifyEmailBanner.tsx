@@ -9,10 +9,12 @@ export default function VerifyEmailBanner() {
   const { t } = useTranslation();
   if (!session?.user) return null;
   if (session.user.emailVerified) return null;
+  // mt-14 clears the fixed h-14 navbar — without it this banner rendered
+  // entirely underneath the nav and new users never saw it.
   return (
-    <div className="bg-amber-100 border-b border-amber-300 px-4 py-2 text-sm text-amber-900 text-center">
+    <div className="mt-14 bg-soft border-b border-fg/15 px-4 py-2.5 text-center font-mono text-xs uppercase tracking-wider text-fg">
       {t("verification.bannerText")}{" "}
-      <Link href="/auth/verify-pending" className="underline">
+      <Link href="/auth/verify-pending" className="underline underline-offset-4 hover:no-underline">
         {t("verification.bannerLink")}
       </Link>
     </div>

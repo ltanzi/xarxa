@@ -78,7 +78,10 @@ export default function RegisterPage() {
       if (result?.error) {
         setServerError(t("auth.signInAfterRegisterFailed"));
       } else {
-        router.push("/");
+        // Land on the "check your email" page, not the homepage — the
+        // homepage gave no hint a verification email was sent, and the
+        // user's next action (posting) would fail behind the soft wall.
+        router.push("/auth/verify-pending");
         router.refresh();
       }
     } catch (e) {

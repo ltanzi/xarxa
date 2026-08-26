@@ -51,6 +51,9 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
     } else {
       params.delete("search");
     }
+    // A new search means a new result set — a stale ?page=3 from the old
+    // one would show "no results" even when matches exist.
+    params.delete("page");
     router.push(`${basePath}?${params.toString()}`);
   }
 
@@ -95,6 +98,8 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
     const params = new URLSearchParams(searchParamsRef.current.toString());
     if (value) params.set(key, value);
     else params.delete(key);
+    // Same reason as pushSearch: filters change the result set.
+    params.delete("page");
     router.push(`${basePath}?${params.toString()}`);
   }
 

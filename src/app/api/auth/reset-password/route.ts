@@ -41,7 +41,10 @@ export async function POST(request: NextRequest) {
     await prisma.$transaction([
       prisma.user.update({
         where: { id: row.userId },
-        data: { password: passwordHash },
+        // passwordChangedAt revokes every JWT issued before this moment
+        // (checked in the jwt callback) — a stolen session doesn't
+        // survive the victim's recovery.
+        data: { password: passwordHash, passwordChangedAt: new Date() },
       }),
       prisma.passwordResetToken.delete({ where: { token: hashedToken } }),
     ]);
