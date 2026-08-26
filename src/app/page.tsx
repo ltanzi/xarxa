@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import { getTranslations } from "@/i18n/server";
 import { SnakeGame } from "@/components/SnakeGame";
 
@@ -12,14 +11,20 @@ export default async function HomePage() {
       <div className="pt-14">
         <section className="pt-6 pb-32 sm:pt-8 sm:pb-44 px-6 lg:px-8">
           <div className="mx-auto max-w-4xl">
-            <Image
-              src="/hands.png"
-              alt=""
-              width={280}
-              height={210}
-              className="mx-auto mb-10 opacity-40 mix-blend-multiply animate-walk-bob"
+            <div
+              className="mx-auto mb-10 w-[280px] h-[210px] overflow-hidden"
               data-snake-obstacle
-            />
+            >
+              <video
+                src="/animation.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
+                aria-hidden="true"
+                className="w-full h-full object-cover scale-110 opacity-60 mix-blend-darken"
+              />
+            </div>
             <h1
               className="text-4xl sm:text-6xl lg:text-7xl font-light leading-[1.3] tracking-tight text-center"
               data-snake-obstacle
