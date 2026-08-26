@@ -23,6 +23,21 @@ export async function GET(
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
+  // Who expressed interest in a post is between them and the author —
+  // don't hand an anonymous caller the requester IDs + statuses (this is
+  // a help platform; "who is asking for legal/health help" is sensitive).
+  // The author sees the full list; everyone else only their own row (the
+  // detail page uses it to render the interest-button state).
+  const session = await auth();
+  if (session?.user?.id !== post.authorId) {
+    return NextResponse.json({
+      ...post,
+      connections: post.connections.filter(
+        (c) => c.requesterId === session?.user?.id
+      ),
+    });
+  }
+
   return NextResponse.json(post);
 }
 
