@@ -150,23 +150,27 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - **App root on box:** `/opt/xarxa`
 - **Secrets:** `/etc/xarxa/.env` (mode 600 xarxa), `/etc/xarxa/backup.key` (mode 400 root), `/etc/xarxa/backup.env` (mode 400 root)
 - **systemd:** `xarxa.service` runs `docker compose up -d` on boot
-- **Cron:** `/etc/cron.d/xarxa-backups` runs `scripts/backup-with-alert.sh postgres` at 03:00 UTC, `uploads` at 03:30 UTC
+- **Cron:** `/etc/cron.d/xarxa-backups` runs `scripts/backup-with-alert.sh postgres` every 4h, `uploads` at 03:30 UTC; `/etc/cron.d/xarxa-health` runs `scripts/health-alert.sh` every 30min (emails on disk >80% / RAM <300MB)
 - **TLS:** Caddy auto-renews Let's Encrypt
 - **Edge:** Cloudflare DNS-only (gray cloud) at the registrar; Resend handles transactional email
 - **Backups:** pg_dump + restic → Backblaze B2 bucket `xarxa-backups`
 - **Runbook:** `docs/runbook.md` (decision tree, common commands, rollback, restore drill)
-- **Deploy:** SSH in, `cd /opt/xarxa && ./deploy-prod.sh` (or `--keep-head` for rollback)
+- **Deploy:** SSH in, `cd /opt/xarxa && ./deploy-prod.sh`. Health-gated (`up --wait` on `/api/health`); images tagged `xarxa-app:<sha>` (last 5 kept). Instant rollback: `COMMIT_SHA=<good-sha> docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app`
+- **Migrations:** `prisma migrate deploy` in the deploy script (baselined `0_init` 2026-08-26). New schema work: `npx prisma migrate dev --name <change>` locally, commit the folder. Never `db push` against prod.
+- **CI:** `.github/workflows/ci.yml` — tsc (app + server, asserts dist/ is a single file), lint, build on every PR. Type/lint errors fail the build (ignore flags removed).
 
 ## Roadmap
 
 ### Phase 5 follow-ups (after go-live)
-- Sentry SDK install + source-map upload (DSN/auth token wired in env)
-- UptimeRobot monitor configured against https://xarxa.help/
-- First nightly backup verified in B2 + quarterly restore drill
-- Pre-existing TS+ESLint cleanup so `next.config.mjs` can drop `ignoreBuildErrors` + `ignoreDuringBuilds`
+- UptimeRobot: add second keyword monitor (`"socket":true`) against https://xarxa.help/api/health
+- Verify Hetzner automated snapshots are enabled (console)
 - VerificationToken consumedAt DB-level enforcement (currently delete-on-consume convention)
-- Report / block / content moderation flow
+- Block-user / report-user from chat (post reports shipped: operator email + auto-close at 3 distinct reports)
 - Tighten CSP `style-src` (drop 'unsafe-inline' once Tailwind/Next runtime styles are nonce'd)
+- Email notifications for interest/accept/unread-message (the #1 retention gap — see review artifact)
+- Post expiry / auto-archive with "still active?" nudge
+- How-it-works lines on landing + /guidelines page
+- Accessibility pass: Select ARIA, input label associations, eye-toggle keyboard access, mobile filter collapse
 - Test suite (unit + integration + E2E for critical paths)
 - SEO: meta tags, Open Graph, sitemap
 - Privacy policy + Terms pages (content)
