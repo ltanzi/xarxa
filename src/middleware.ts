@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
   const method = request.method;
   if (
     pathname.startsWith("/api/") &&
+    !pathname.startsWith("/api/cron/") && // host-cron curl sends no Origin; these routes require a Bearer CRON_SECRET instead
     ["POST", "PUT", "PATCH", "DELETE"].includes(method)
   ) {
     const origin = request.headers.get("origin");

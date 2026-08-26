@@ -19,6 +19,9 @@ const schema = z.object({
   SENTRY_DSN: z.string().url().optional(),
   EMAIL_FROM: z.string().email().default("noreply@xarxa.help"),
   OPERATOR_EMAIL: z.string().email().optional(),
+  // Bearer token for host-cron-invoked routes (/api/cron/*). Optional so
+  // dev works without it — the routes 401 when it's unset.
+  CRON_SECRET: z.string().min(32).optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

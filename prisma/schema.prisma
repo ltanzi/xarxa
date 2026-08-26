@@ -107,6 +107,10 @@ model Post {
   isRemote     Boolean  @default(false)
   tags         String[]
   closed       Boolean  @default(false)
+  // When the "your post will close soon — still active?" nudge email was
+  // sent. Cleared implicitly by comparing against updatedAt: any edit or
+  // reopen bumps updatedAt past it, re-arming the nudge for the next cycle.
+  expiryNudgedAt DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
