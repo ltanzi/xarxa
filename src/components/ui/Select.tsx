@@ -60,6 +60,12 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
       if (activeIndex >= 0) {
         selectOption(options[activeIndex].value);
       }
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      setActiveIndex(0);
+    } else if (e.key === "End") {
+      e.preventDefault();
+      setActiveIndex(options.length - 1);
     } else if (e.key === "Escape") {
       setOpen(false);
       setActiveIndex(-1);
@@ -86,6 +92,12 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-controls={listboxId}
+        // Screen readers announce the highlighted option as you arrow
+        // through — without this, focus stays on the button and arrowing
+        // was silent.
+        aria-activedescendant={open && activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined}
+        // Tabbing away used to leave the popup open.
+        onBlur={() => { setOpen(false); setActiveIndex(-1); }}
         onClick={() => {
           if (open) {
             setOpen(false);
@@ -111,6 +123,7 @@ export function Select({ label, error, options, value, onChange, id }: SelectPro
           {options.map((opt, i) => (
             <li
               key={opt.value}
+              id={`${listboxId}-opt-${i}`}
               ref={(el) => { itemRefs.current[i] = el; }}
               role="option"
               aria-selected={opt.value === value}

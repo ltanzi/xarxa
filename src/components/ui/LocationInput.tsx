@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from "react";
 
 interface Suggestion {
   name: string;
@@ -21,10 +21,22 @@ export function LocationInput({ label, value, onChange }: LocationInputProps) {
   const [activeIndex, setActiveIndex] = useState(-1);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  // Monotonic request counter: a slow response for "Bar" must not
+  // overwrite the results already shown for "Barcelona".
+  const requestSeq = useRef(0);
+  const inputId = useId();
+  const listboxId = useId();
 
   useEffect(() => {
     setInput(value);
   }, [value]);
+
+  // Clear any in-flight debounce on unmount.
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const fetchSuggestions = useCallback(async (q: string) => {
     if (q.length < 2) {
@@ -32,6 +44,7 @@ export function LocationInput({ label, value, onChange }: LocationInputProps) {
       setOpen(false);
       return;
     }
+    const seq = ++requestSeq.current;
     try {
       const res = await fetch(
         `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&layer=city&limit=6&lang=en`
@@ -54,10 +67,12 @@ export function LocationInput({ label, value, onChange }: LocationInputProps) {
         seen.add(key);
         return true;
       });
+      if (seq !== requestSeq.current) return; // stale response — a newer query is in flight
       setSuggestions(unique);
       setOpen(unique.length > 0);
       setActiveIndex(-1);
     } catch {
+      if (seq !== requestSeq.current) return;
       setSuggestions([]);
       setOpen(false);
     }
@@ -115,11 +130,17 @@ export function LocationInput({ label, value, onChange }: LocationInputProps) {
   return (
     <div ref={containerRef} className="relative w-full">
       {label && (
-        <label className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
+        <label htmlFor={inputId} className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">
           {label}
         </label>
       )}
       <input
+        id={inputId}
+        role="combobox"
+        aria-expanded={open}
+        aria-autocomplete="list"
+        aria-controls={listboxId}
+        aria-activedescendant={open && activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined}
         value={input}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
@@ -128,10 +149,13 @@ export function LocationInput({ label, value, onChange }: LocationInputProps) {
         className="block w-full border-b bg-transparent px-0 py-2 text-sm focus:outline-none transition-colors border-fg/15 focus:border-fg"
       />
       {open && (
-        <ul className="absolute z-50 left-0 right-0 top-full mt-1 bg-bg border border-fg/15 text-sm shadow-sm max-h-52 overflow-y-auto">
+        <ul id={listboxId} role="listbox" className="absolute z-50 left-0 right-0 top-full mt-1 bg-bg border border-fg/15 text-sm shadow-sm max-h-52 overflow-y-auto">
           {suggestions.map((s, i) => (
             <li
-              key={i}
+              key={`${s.name}|${s.country}`}
+              id={`${listboxId}-opt-${i}`}
+              role="option"
+              aria-selected={i === activeIndex}
               onMouseDown={() => selectSuggestion(s)}
               className={`px-3 py-2 cursor-pointer flex justify-between gap-4 ${
                 i === activeIndex ? "bg-fg text-bg" : "hover:bg-fg/5"

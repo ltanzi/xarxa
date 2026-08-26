@@ -145,6 +145,7 @@ export function Navbar() {
             )}
             <button
               onClick={() => setMenuOpen((o) => !o)}
+              aria-expanded={menuOpen}
               className="font-mono text-xs uppercase tracking-widest text-muted hover:text-fg transition-colors"
             >
               {menuOpen ? t("nav.close") : t("nav.menu")}

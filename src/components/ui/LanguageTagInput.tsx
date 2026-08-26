@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useId } from "react";
 import { LANGUAGES } from "@/lib/languages";
 
 interface LanguageTagInputProps {
@@ -15,6 +15,7 @@ export function LanguageTagInput({ label, placeholder, value, onChange }: Langua
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [activeIndex, setActiveIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputId = useId();
 
   useEffect(() => {
     if (input.length === 0) {
@@ -88,7 +89,7 @@ export function LanguageTagInput({ label, placeholder, value, onChange }: Langua
   return (
     <div ref={containerRef} className="relative w-full">
       {label && (
-        <p className="text-xs font-mono uppercase tracking-wider text-muted mb-2">{label}</p>
+        <label htmlFor={inputId} className="block text-xs font-mono uppercase tracking-wider text-muted mb-2">{label}</label>
       )}
       <div className="flex items-center gap-2 flex-wrap border-b border-fg/20 pb-2">
         {value.map((lang) => (
@@ -100,13 +101,15 @@ export function LanguageTagInput({ label, placeholder, value, onChange }: Langua
             <button
               type="button"
               onClick={() => removeTag(lang)}
-              className="hover:opacity-60 transition-opacity"
+              aria-label={`${lang} ×`}
+              className="hover:opacity-60 transition-opacity p-1 -m-1"
             >
               ×
             </button>
           </span>
         ))}
         <input
+          id={inputId}
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
