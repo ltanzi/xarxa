@@ -13,15 +13,22 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get("category");
   const location = searchParams.get("location");
   const search = searchParams.get("search");
-  const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
-  const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, parseInt(searchParams.get("limit") || String(DEFAULT_PAGE_SIZE), 10)));
+  // NaN-guard: parseInt("abc") → NaN survives Math.max/Math.min and makes
+  // Prisma throw on skip/take → unhandled 500.
+  const parsedPage = parseInt(searchParams.get("page") || "1", 10);
+  const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
+  const parsedLimit = parseInt(searchParams.get("limit") || String(DEFAULT_PAGE_SIZE), 10);
+  const limit = Number.isFinite(parsedLimit)
+    ? Math.min(MAX_PAGE_SIZE, Math.max(1, parsedLimit))
+    : DEFAULT_PAGE_SIZE;
 
   const where: Record<string, unknown> = {};
+  const CATEGORIES = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"];
 
   if (type && (type === "OFFER" || type === "REQUEST")) {
     where.type = type;
   }
-  if (category) {
+  if (category && CATEGORIES.includes(category)) {
     where.category = category;
   }
   if (location) {
