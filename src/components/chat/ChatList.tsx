@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "@/i18n/hook";
@@ -21,6 +21,16 @@ export function ChatList({ conversations }: { conversations: ConversationSummary
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+
+  // Live previews: the Navbar's socket rebroadcasts incoming messages as
+  // this window event. Refreshing re-renders the server component with
+  // fresh previews, unread state, and activity order — previously the
+  // list showed the old last message until a manual reload.
+  useEffect(() => {
+    const onNewMessage = () => router.refresh();
+    window.addEventListener("chat:new-message", onNewMessage);
+    return () => window.removeEventListener("chat:new-message", onNewMessage);
+  }, [router]);
 
   async function handleDelete(id: string) {
     setLoading(true);

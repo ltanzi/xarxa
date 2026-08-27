@@ -62,11 +62,6 @@ export default async function HomePage() {
                 </Link>
               </div>
             </div>
-            <div className="mt-16 flex flex-col items-center gap-2 font-mono text-xs uppercase tracking-wider text-muted">
-              <p data-snake-obstacle>{t("landing.how1")}</p>
-              <p data-snake-obstacle>{t("landing.how2")}</p>
-              <p data-snake-obstacle>{t("landing.how3")}</p>
-            </div>
           </div>
         </section>
       </div>

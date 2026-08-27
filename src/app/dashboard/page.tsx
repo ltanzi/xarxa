@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { ConnectionActions } from "./ConnectionActions";
 import { getTranslations } from "@/i18n/server";
+import { notifyUser } from "@/lib/socket";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -35,10 +36,14 @@ export default async function DashboardPage() {
 
   // Mark newly accepted connections as seen (non-critical — don't crash page if this fails)
   try {
-    await prisma.connection.updateMany({
+    const marked = await prisma.connection.updateMany({
       where: { requesterId: session.user.id, status: "ACCEPTED", seenByRequester: false },
       data: { seenByRequester: true },
     });
+    // Tell OUR OWN navbar the counts changed — it only refetches on a
+    // socket event, so without this the badge stayed lit until some
+    // unrelated trigger, long after the user had already looked.
+    if (marked.count > 0) notifyUser(session.user.id);
   } catch (e) {
     console.error("[dashboard] mark-as-seen failed:", e);
   }
