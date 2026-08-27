@@ -73,6 +73,9 @@ export async function PATCH(
       }
 
       notifyUser(connection.requesterId);
+      // Also our own badge: the pending count just dropped, and the
+      // author's navbar only refetches on a socket event.
+      notifyUser(session.user.id);
       // Email the requester — acceptance is the moment the loop most
       // often dies (they've closed the tab by now). Never fails the request.
       try {
@@ -99,6 +102,9 @@ export async function PATCH(
       data: { status: "REJECTED" },
     });
 
+    // Declining also drops the author's pending count — refresh their badge.
+    // (The requester is deliberately not notified of a decline.)
+    notifyUser(session.user.id);
     return NextResponse.json(updated);
   } catch (e) {
     console.error("[connections PATCH error]", e);

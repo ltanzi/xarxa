@@ -78,6 +78,14 @@ export function Navbar() {
 
     socket.on("notifications:update", fetchCounts);
 
+    // Rebroadcast incoming chat messages as a window event so pages that
+    // show message content (the chat list's previews) can refresh without
+    // opening their own socket. The Navbar is the one component that is
+    // always mounted, so its socket doubles as the app-wide receiver.
+    socket.on("new-message", () => {
+      window.dispatchEvent(new CustomEvent("chat:new-message"));
+    });
+
     return () => {
       window.removeEventListener("notifications:refresh", fetchCounts);
       socket.disconnect();
