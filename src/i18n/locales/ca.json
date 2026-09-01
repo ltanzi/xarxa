@@ -43,7 +43,7 @@
   },
   "about": {
     "title": "Sobre xarxa",
-    "description": "xarxa és un tauler comunitari per a l'intercanvi de serveis gratuïts. Persones i col·lectius publiquen el que necessiten o el que poden oferir, i s'organitzen directament pel xat.",
+    "description": "xarxa és un tauler comunitari per a l'intercanvi de serveis gratuïts. Tant individuals com col·lectius poden publicar el que necessiten o el que poden oferir, i s'organitzen independentment pel xat.",
     "creditsLabel": "Animació de"
   },
   "auth": {
@@ -128,7 +128,7 @@
     "TECHNOLOGY": "Tecnologia",
     "MANUAL_WORK": "Treball manual",
     "TRANSLATION": "Traducció",
-    "OTHER": "Altre"
+    "OTHER": "Altres"
   },
   "urgency": {
     "LOW": "Sense pressa",
