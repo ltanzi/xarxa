@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { postSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
+import { parseCategoryParam } from "@/lib/categories";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -23,13 +24,13 @@ export async function GET(request: NextRequest) {
     : DEFAULT_PAGE_SIZE;
 
   const where: Record<string, unknown> = {};
-  const CATEGORIES = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"];
 
   if (type && (type === "OFFER" || type === "REQUEST")) {
     where.type = type;
   }
-  if (category && CATEGORIES.includes(category)) {
-    where.category = category;
+  const selectedCategories = parseCategoryParam(category);
+  if (selectedCategories.length > 0) {
+    where.categories = { hasSome: selectedCategories };
   }
   if (location) {
     where.location = { contains: location, mode: "insensitive" };

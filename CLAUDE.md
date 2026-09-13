@@ -88,6 +88,21 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - `notifyUser(userId)` in `src/lib/socket.ts` — API routes call this to push notifications via `globalThis.__io`
 - `/api/connections/seen` — POST to mark accepted connections seen (also done server-side on dashboard + chat page load)
 
+## Categories
+- **One source of truth**: `src/lib/categories.ts` — `CATEGORY_KEYS` (17, order = UI order),
+  `MAX_CATEGORIES_PER_POST` (3), `parseCategoryParam()`. The board page, posts API,
+  post form, filters and the Zod schema all import from it. It used to be
+  copy-pasted into four files.
+- **Posts carry several**: `Post.categories Category[]` (GIN-indexed), 1–3 enforced in
+  `postSchema`. Queries use `{ categories: { hasSome: [...] } }`.
+- **Filtering is multi-select**: `?category=MOVING,GARDENING` — OR, not AND. Junk keys
+  are dropped by `parseCategoryParam` before reaching Prisma.
+- **`categoryOther`**: free text shown only when OTHER is among the chosen categories;
+  cleared in the schema transform when it isn't. It's a harvester — read it to decide
+  which categories to promote into the enum next.
+- **Adding one**: value in `categories.ts` + value in the `Category` enum + migration +
+  a label under `categories.` in all three locale files.
+
 ## Search (PostFilters)
 - Tag-based: type a word → Enter → black pill tag; multiple tags = OR search
 - Real-time debounced (300ms) as you type
@@ -174,6 +189,17 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - Test suite (unit + integration + E2E for critical paths)
 - SEO: meta tags, Open Graph, sitemap
 - Privacy policy + Terms pages (content)
+
+### Profile — next up
+Skills were removed (2026-09-13): they were write-only — stored and shown on the
+profile, queried by nothing. No user directory exists, so they connected no one.
+That leaves the profile thin on purpose; these two fill it back in.
+- **Make the profile fun.** It is currently a form (name, bio, location, languages).
+  Needs a reason to visit someone's profile that isn't admin. Open question for the
+  creative direction — prompts, a vibe, something hand-drawn.
+- **Profile verification, collectives first.** A trust mark for collectives (F O C,
+  Canino FM…). Start manual: a boolean set by hand for the handful you know, shown
+  as a small mark. Don't build an application flow for five organizations.
 
 ### Completed at go-live (this is what shipped)
 - Email verification (soft wall): `/auth/verify` interstitial + tokens

@@ -31,7 +31,6 @@ export async function PATCH(request: Request) {
         type: true,
         location: true,
         bio: true,
-        skills: true,
         profilePhoto: true,
         languages: true,
         preferredLanguage: true,

@@ -9,7 +9,6 @@ interface ProfileCardProps {
     type: string;
     location?: string | null;
     bio?: string | null;
-    skills?: string[];
     profilePhoto?: string | null;
     languages?: string[];
     createdAt: Date | string;
@@ -37,17 +36,6 @@ export async function ProfileCard({ user }: ProfileCardProps) {
       {user.bio && (
         <div className="mt-4">
           <p className="text-fg/80 leading-relaxed">{user.bio}</p>
-        </div>
-      )}
-
-      {user.type === "PRIVATE" && user.skills && user.skills.length > 0 && (
-        <div className="mt-6">
-          <p className="font-mono text-[11px] uppercase tracking-widest text-muted mb-2">{t("profile.skills")}</p>
-          <div className="flex flex-wrap gap-2">
-            {user.skills.map((skill) => (
-              <span key={skill} className="text-xs font-mono border border-fg/20 px-2.5 py-0.5">{skill}</span>
-            ))}
-          </div>
         </div>
       )}
 

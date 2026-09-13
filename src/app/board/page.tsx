@@ -4,6 +4,7 @@ import { PostFilters } from "@/components/posts/PostFilters";
 import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { getTranslations } from "@/i18n/server";
+import { parseCategoryParam } from "@/lib/categories";
 
 const PAGE_SIZE = 20;
 
@@ -29,14 +30,17 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
   // could 500 the board at will.
   const parsedPage = parseInt(params.page || "1", 10);
   const page = Number.isFinite(parsedPage) && parsedPage > 0 ? parsedPage : 1;
-  const CATEGORIES = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"];
   const URGENCIES = ["LOW", "NORMAL", "URGENT"];
 
   if (params.type === "OFFER" || params.type === "REQUEST") {
     where.type = params.type;
   }
-  if (params.category && CATEGORIES.includes(params.category)) {
-    where.category = params.category as Prisma.EnumCategoryFilter;
+  // ?category=MOVING,GARDENING — a post matches if it carries ANY of them.
+  // parseCategoryParam drops anything that isn't a real key, so a crawler
+  // can't reach Prisma with junk.
+  const selectedCategories = parseCategoryParam(params.category);
+  if (selectedCategories.length > 0) {
+    where.categories = { hasSome: selectedCategories };
   }
   if (params.urgency && URGENCIES.includes(params.urgency)) {
     where.urgency = params.urgency as Prisma.EnumUrgencyFilter;

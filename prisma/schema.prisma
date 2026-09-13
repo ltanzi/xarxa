@@ -16,13 +16,24 @@ enum PostType {
   REQUEST
 }
 
+// Order here is cosmetic; src/lib/categories.ts owns the order the UI shows.
 enum Category {
-  LEGAL
-  EDUCATION
-  HEALTH
-  TECHNOLOGY
   MANUAL_WORK
-  TRANSLATION
+  MOVING
+  GARDENING
+  ANIMALS
+  COOKING
+  CARE
+  HEALTH
+  EDUCATION
+  LANGUAGES
+  PAPERWORK
+  LEGAL
+  TECHNOLOGY
+  COMMUNICATION
+  CREATIVE
+  MUSIC
+  EVENTS
   OTHER
 }
 
@@ -55,7 +66,6 @@ model User {
   type         UserType  @default(PRIVATE)
   location     String?
   bio          String?
-  skills       String[]
   mission      String?
   profilePhoto      String?
   preferredLanguage String?
@@ -99,7 +109,14 @@ model Post {
   id           String   @id @default(cuid())
   title        String
   type         PostType
-  category     Category
+  // A post is rarely one thing — "help me move a piano" is Moving and
+  // Music. Capped at MAX_CATEGORIES_PER_POST in the Zod schema so a post
+  // can't claim the whole board.
+  categories   Category[]
+  // Free text the author types when they pick OTHER. Kept deliberately
+  // uncontrolled: reading what people actually write here is how a real
+  // category earns its place in the Category enum later.
+  categoryOther String?
   description  String
   urgency      Urgency  @default(NORMAL)
   availability String?
@@ -122,7 +139,7 @@ model Post {
   @@index([createdAt])
   @@index([authorId])
   @@index([type])
-  @@index([category])
+  @@index([categories], type: Gin)
   @@index([closed, createdAt])
 }
 

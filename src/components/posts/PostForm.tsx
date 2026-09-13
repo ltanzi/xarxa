@@ -6,19 +6,21 @@ import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { LocationInput } from "@/components/ui/LocationInput";
 import { Select } from "@/components/ui/Select";
+import { MultiSelect } from "@/components/ui/MultiSelect";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n/hook";
 import { postSchema } from "@/lib/validations";
+import { CATEGORY_KEYS, MAX_CATEGORIES_PER_POST } from "@/lib/categories";
 
-const CATEGORY_KEYS = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
 const URGENCY_KEYS = ["LOW", "NORMAL", "URGENT"] as const;
 
 interface PostFormData {
   title: string;
   type: string;
-  category: string;
+  categories: string[];
+  categoryOther?: string | null;
   description: string;
   urgency?: string | null;
   availability?: string | null;
@@ -48,7 +50,11 @@ export function PostForm({ postId, initialData }: PostFormProps) {
   const [form, setForm] = useState({
     title: initialData?.title || "",
     type: initialType,
-    category: initialData?.category || "OTHER",
+    // No pre-selection: "Other" used to be the default, which meant it was
+    // also what you got by not choosing — the one bucket whose contents we
+    // actually read. An empty start forces a deliberate pick.
+    categories: initialData?.categories || [],
+    categoryOther: initialData?.categoryOther || "",
     urgency: initialData?.urgency || "NORMAL",
     description: initialData?.description || "",
     availability: initialData?.availability || "",
@@ -61,6 +67,11 @@ export function PostForm({ postId, initialData }: PostFormProps) {
   const [loading, setLoading] = useState(false);
 
   function updateField(field: string, value: string | boolean) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  }
+
+  function updateList(field: string, value: string[]) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   }
@@ -139,7 +150,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         required
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           id="type"
           label={t("posts.type") + " *"}
@@ -147,13 +158,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           value={form.type}
           onChange={(e) => updateField("type", e.target.value)}
         />
-        <Select
-          id="category"
-          label={t("posts.category") + " *"}
-          options={categories}
-          value={form.category}
-          onChange={(e) => updateField("category", e.target.value)}
-        />
+
         <Select
           id="urgency"
           label={t("posts.urgency")}
@@ -162,6 +167,32 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           onChange={(e) => updateField("urgency", e.target.value)}
         />
       </div>
+
+      <MultiSelect
+        id="categories"
+        label={t("posts.category") + " *"}
+        options={categories}
+        value={form.categories}
+        onChange={(next) => updateList("categories", next)}
+        placeholder={t("posts.categoryPlaceholder")}
+        hint={t("posts.categoryHint")}
+        error={errors.categories}
+        max={MAX_CATEGORIES_PER_POST}
+      />
+
+      {/* "Other" is a dead end on its own — this is where the author says
+          what it actually is, and where new categories come from. */}
+      {form.categories.includes("OTHER") && (
+        <Input
+          id="categoryOther"
+          label={t("posts.categoryOther")}
+          value={form.categoryOther}
+          onChange={(e) => updateField("categoryOther", e.target.value)}
+          placeholder={t("posts.categoryOtherPlaceholder")}
+          error={errors.categoryOther}
+          maxLength={50}
+        />
+      )}
 
       <Textarea
         id="description"

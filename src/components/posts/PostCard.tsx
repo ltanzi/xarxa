@@ -19,9 +19,15 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
             {t(`posts.${post.type.toLowerCase()}`)}
           </span>
-          <span className="font-mono text-[11px] text-muted">
-            {t(`categories.${post.category}`)}
-          </span>
+          {/* One label per category, in the order the author picked them.
+              An author's own words beat a generic "Other". */}
+          {post.categories.map((c) => (
+            <span key={c} className="font-mono text-[11px] text-muted">
+              {c === "OTHER" && post.categoryOther
+                ? post.categoryOther
+                : t(`categories.${c}`)}
+            </span>
+          ))}
           {post.urgency !== "NORMAL" && (
             <span className={`font-mono text-[11px] uppercase tracking-wider ${post.urgency === "URGENT" ? "text-accent" : "text-muted"}`}>
               {t(`urgency.${post.urgency}`)}
