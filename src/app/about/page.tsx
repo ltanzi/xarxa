@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getTranslations } from "@/i18n/server";
+import { FeedbackForm } from "@/components/FeedbackForm";
 
 // xarxa.help has no MX record, so this address can't receive anything yet:
 // SPF/Resend authorise the domain to SEND, which is a different thing. Set
@@ -77,6 +78,17 @@ export default async function AboutPage() {
                 )}
               </li>
             </ul>
+          </div>
+
+          {/* Anchored so "leave us feedback" can be linked from anywhere. */}
+          <div id="feedback" className="mt-12 pt-8 border-t border-fg/10 scroll-mt-20">
+            <p className="font-mono text-[11px] uppercase tracking-wider text-muted mb-2">
+              {t("feedback.title")}
+            </p>
+            <p className="text-sm text-muted leading-relaxed mb-5 max-w-xl">
+              {t("feedback.intro")}
+            </p>
+            <FeedbackForm />
           </div>
 
           <div className="mt-12 pt-8 border-t border-fg/10">

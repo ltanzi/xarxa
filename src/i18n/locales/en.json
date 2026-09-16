@@ -48,6 +48,17 @@
     "soon": "Soon",
     "creditsLabel": "Animation by"
   },
+  "feedback": {
+    "title": "Feedback",
+    "intro": "Help us make xarxa better. Tell us what worked, what didn't, what's missing",
+    "label": "Your feedback",
+    "placeholder": "What would you change?",
+    "send": "Send feedback",
+    "thanks": "Thank you - we'll read it :)",
+    "tooMany": "That's a few messages already. Try again in a while.",
+    "signInCta": "Sign in",
+    "signInRest": "to leave us feedback."
+  },
   "auth": {
     "email": "Email",
     "password": "Password",

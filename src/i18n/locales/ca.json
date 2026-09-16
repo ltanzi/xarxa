@@ -48,6 +48,17 @@
     "soon": "Aviat",
     "creditsLabel": "Animació de"
   },
+  "feedback": {
+    "title": "Feedback",
+    "intro": "Ajuda'ns a millorar xarxa. Explica'ns què va funcionar, què no i què falta",
+    "label": "El teu feedback",
+    "placeholder": "Què canviaries?",
+    "send": "Enviar feedback",
+    "thanks": "Gràcies - ho llegirem :)",
+    "tooMany": "Ja són uns quants missatges. Torna-ho a provar d'aquí a una estona.",
+    "signInCta": "Inicia sessió",
+    "signInRest": "per deixar-nos el teu feedback."
+  },
   "auth": {
     "email": "Correu electrònic",
     "password": "Contrasenya",

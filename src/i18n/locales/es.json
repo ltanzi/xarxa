@@ -48,6 +48,17 @@
     "soon": "Pronto",
     "creditsLabel": "Animación de"
   },
+  "feedback": {
+    "title": "Feedback",
+    "intro": "Ayúdanos a mejorar xarxa. Cuéntanos qué funcionó, qué no y qué falta",
+    "label": "Tu feedback",
+    "placeholder": "¿Qué cambiarías?",
+    "send": "Enviar feedback",
+    "thanks": "Gracias - lo leeremos :)",
+    "tooMany": "Ya son unos cuantos mensajes. Inténtalo de nuevo en un rato.",
+    "signInCta": "Inicia sesión",
+    "signInRest": "para dejarnos tu feedback."
+  },
   "auth": {
     "email": "Correo electrónico",
     "password": "Contraseña",

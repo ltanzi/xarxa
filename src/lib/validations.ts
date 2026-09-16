@@ -128,6 +128,13 @@ export const reportSchema = z.object({
   details: z.string().trim().max(1000).optional(),
 });
 
+export const feedbackSchema = z.object({
+  message: z.string().trim().min(1, "Write something first").max(2000, "Keep it under 2000 characters"),
+  // Which page they were on — context that makes vague feedback actionable.
+  // No reply address: only signed-in people can send, so we already have one.
+  path: z.string().max(200).optional().nullable(),
+});
+
 export const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
   newPassword: passwordSchema,
@@ -140,3 +147,4 @@ export type ProfileInput = z.infer<typeof profileSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
 export type ReportInput = z.infer<typeof reportSchema>;
 export type PasswordChangeInput = z.infer<typeof passwordChangeSchema>;
+export type FeedbackInput = z.infer<typeof feedbackSchema>;
