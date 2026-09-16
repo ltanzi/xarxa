@@ -121,6 +121,10 @@ model Post {
   urgency      Urgency  @default(NORMAL)
   availability String?
   location     String?
+  // Optional, and only offered when location is Barcelona: one of the 73
+  // official barris (see src/lib/barcelona.ts). Enough geography to judge
+  // "could I get there?", nowhere near an address.
+  neighborhood String?
   isRemote     Boolean  @default(false)
   tags         String[]
   closed       Boolean  @default(false)

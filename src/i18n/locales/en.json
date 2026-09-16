@@ -95,6 +95,8 @@
     "availability": "Availability",
     "availabilityPlaceholder": "E.g. Weekends, mornings...",
     "location": "Location",
+    "neighborhood": "Neighbourhood",
+    "neighborhoodPlaceholder": "Optional — pick a barri",
     "urgency": "Urgency",
     "remote": "Remote",
     "inPerson": "In person",

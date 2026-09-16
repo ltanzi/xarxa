@@ -95,6 +95,8 @@
     "availability": "Disponibilidad",
     "availabilityPlaceholder": "Ej. Fines de semana, mañanas...",
     "location": "Ubicación",
+    "neighborhood": "Barrio",
+    "neighborhoodPlaceholder": "Opcional — elige un barrio",
     "urgency": "Urgencia",
     "remote": "Remoto",
     "inPerson": "Presencial",

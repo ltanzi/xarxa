@@ -95,6 +95,8 @@
     "availability": "Disponibilitat",
     "availabilityPlaceholder": "Ex. Caps de setmana, matins...",
     "location": "Ubicació",
+    "neighborhood": "Barri",
+    "neighborhoodPlaceholder": "Opcional — tria un barri",
     "urgency": "Urgència",
     "remote": "Remot",
     "inPerson": "Presencial",

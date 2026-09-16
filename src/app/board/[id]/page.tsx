@@ -96,6 +96,9 @@ export default async function PostPage({ params }: PostPageProps) {
               <div>
                 <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">{t("posts.location")}</span>
                 <span className="text-fg">{post.location}</span>
+                {post.neighborhood && (
+                  <span className="block text-xs text-muted">{post.neighborhood}</span>
+                )}
               </div>
             )}
           </div>

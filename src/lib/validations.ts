@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { CATEGORY_KEYS, MAX_CATEGORIES_PER_POST } from "./categories";
+import { isBarcelonaBarri, isInBarcelona } from "./barcelona";
 
 function requireSurnameForPrivate(data: { type: string; surname?: string }, ctx: z.RefinementCtx) {
   if (data.type === "PRIVATE" && !data.surname?.trim()) {
@@ -70,6 +71,7 @@ export const postSchema = z
     urgency: z.enum(["LOW", "NORMAL", "URGENT"]).optional(),
     availability: z.string().max(200).optional(),
     location: z.string().max(200).optional(),
+    neighborhood: z.string().max(80).optional().nullable(),
     isRemote: z.boolean().optional(),
     tags: z.array(z.string().max(50)).max(20).optional(),
   })
@@ -91,6 +93,15 @@ export const postSchema = z
     categoryOther: data.categories.includes("OTHER")
       ? data.categoryOther?.trim() || null
       : null,
+    // Same rule for the barri: it only means anything on a Barcelona post,
+    // so moving a post to another city drops it rather than leaving a
+    // Barcelona neighbourhood stamped on a post in Girona. Unknown values
+    // are dropped too — the picker only ever emits real barris, so anything
+    // else arrived by hand and isn't worth storing.
+    neighborhood:
+      isInBarcelona(data.location) && data.neighborhood && isBarcelonaBarri(data.neighborhood)
+        ? data.neighborhood
+        : null,
   }));
 
 export const profileSchema = z.object({

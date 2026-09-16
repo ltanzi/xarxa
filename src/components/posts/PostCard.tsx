@@ -52,7 +52,9 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
           {post.location && (
             <>
               <span>&middot;</span>
-              <span>{post.location}</span>
+              {/* The barri is the more useful half on a city-wide board —
+                  show it in place of "Barcelona", not alongside it. */}
+              <span>{post.neighborhood || post.location}</span>
             </>
           )}
           <span>&middot;</span>

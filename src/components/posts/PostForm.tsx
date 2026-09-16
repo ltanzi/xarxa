@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n/hook";
 import { postSchema } from "@/lib/validations";
 import { CATEGORY_KEYS, MAX_CATEGORIES_PER_POST } from "@/lib/categories";
+import { NeighborhoodInput } from "@/components/ui/NeighborhoodInput";
+import { isInBarcelona } from "@/lib/barcelona";
 
 const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
 const URGENCY_KEYS = ["LOW", "NORMAL", "URGENT"] as const;
@@ -25,6 +27,7 @@ interface PostFormData {
   urgency?: string | null;
   availability?: string | null;
   location?: string | null;
+  neighborhood?: string | null;
   isRemote: boolean;
   tags: string[];
 }
@@ -59,6 +62,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
     description: initialData?.description || "",
     availability: initialData?.availability || "",
     location: initialData?.location || "",
+    neighborhood: initialData?.neighborhood || "",
     isRemote: initialData?.isRemote || false,
     tags: initialData?.tags?.join(", ") || "",
   });
@@ -223,6 +227,20 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           </div>
         </div>
         {errors.location && <p className="mt-1.5 text-xs text-accent">{errors.location}</p>}
+
+        {/* Barcelona only. Elsewhere the plain location is all we have, and
+            a barri picker would be nonsense; the server drops the value if
+            the location moves away, so a stale barri can't survive an edit. */}
+        {isInBarcelona(form.location) && (
+          <div className="mt-4 sm:w-1/2 sm:pr-2">
+            <NeighborhoodInput
+              label={t("posts.neighborhood")}
+              placeholder={t("posts.neighborhoodPlaceholder")}
+              value={form.neighborhood}
+              onChange={(val) => updateField("neighborhood", val)}
+            />
+          </div>
+        )}
       </div>
 
       <Input
