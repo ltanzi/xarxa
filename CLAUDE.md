@@ -190,6 +190,35 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - SEO: meta tags, Open Graph, sitemap
 - Privacy policy + Terms pages (content)
 
+### Email — next up
+Sending works; **receiving does not exist**. `xarxa.help` has no MX record, so
+`info@xarxa.help` (shown on /about) currently bounces. SPF + Resend authorise the
+domain to SEND, which is a different thing — don't let the working
+`noreply@xarxa.help` fool you into thinking inbound is configured.
+- **Make info@xarxa.help receive.** The zone is already on Cloudflare
+  (`burt`/`dahlia.ns.cloudflare.com`), so **Cloudflare Email Routing** does this
+  free in ~5 minutes: forward `info@` to the personal Gmail. Then flip
+  `EMAIL_LIVE` in `src/app/about/page.tsx` so the address becomes a real mailto
+  and its "soon" marker disappears.
+- **To reply *as* info@xarxa.help** (optional, still free): Gmail "Send mail as"
+  over Resend's SMTP — the domain is already verified for sending.
+- **Repoint DMARC `rua`** while in there: it currently points at
+  `postmaster@xarxa.help`, which cannot receive, so aggregate reports have been
+  discarded since go-live.
+- Paid mailboxes (Fastmail, Google Workspace) are only worth it when more than
+  one person answers mail. Forwarding covers months 1–4.
+
+### Feedback — next up
+The /about form emails `OPERATOR_EMAIL` and nothing else; there is no way to read
+past feedback inside xarxa. Fine while it's a handful, useless for spotting that
+five people reported the same thing.
+- **Internal feedback page.** A `Feedback` table (message, userId, path, locale,
+  createdAt, plus something like `handled`) written alongside the email in
+  `src/app/api/feedback/route.ts`, and a page gated to the operator account. Keep
+  the email — it's what actually gets read day to day; the table is the archive.
+- No admin role exists yet: gate on `session.user.email === env.OPERATOR_EMAIL`
+  rather than inventing a role system for one person.
+
 ### Profile — next up
 Skills were removed (2026-09-13): they were write-only — stored and shown on the
 profile, queried by nothing. No user directory exists, so they connected no one.
