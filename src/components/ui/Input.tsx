@@ -3,10 +3,12 @@ import { InputHTMLAttributes, forwardRef } from "react";
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   error?: string;
+  /** Explains what the field is for. Sits under the input, yields to error. */
+  hint?: string;
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, className = "", id, ...props }, ref) => {
+  ({ label, error, hint, className = "", id, ...props }, ref) => {
     return (
       <div className="w-full">
         {label && (
@@ -22,6 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           } ${className}`}
           {...props}
         />
+        {hint && !error && <p className="mt-1.5 text-xs text-muted">{hint}</p>}
         {error && <p className="mt-1.5 text-xs text-accent">{error}</p>}
       </div>
     );

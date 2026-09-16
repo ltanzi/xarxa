@@ -44,6 +44,8 @@
   "about": {
     "title": "Sobre xarxa",
     "description": "xarxa és un tauler comunitari per a l'intercanvi de serveis gratuïts. Tant individuals com col·lectius poden publicar el que necessiten o el que poden oferir, i s'organitzen independentment pel xat.",
+    "contactLabel": "Contacte",
+    "soon": "Aviat",
     "creditsLabel": "Animació de"
   },
   "auth": {
@@ -102,7 +104,8 @@
     "inPerson": "Presencial",
     "mode": "Modalitat",
     "tags": "Etiquetes",
-    "tagsHelp": "Separades per comes",
+    "tagsPlaceholder": "piano, principiant, nens",
+    "tagsHelp": "Paraules que la gent podria cercar. Separa-les amb comes.",
     "interested": "M'interessa",
     "interestSent": "Interès enviat",
     "connected": "Connectat",

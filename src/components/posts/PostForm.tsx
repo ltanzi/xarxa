@@ -251,12 +251,15 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         placeholder={t("posts.availabilityPlaceholder")}
       />
 
+      {/* The placeholder is a worked example rather than "Comma separated":
+          the syntax was never the confusing part, what tags are FOR was. */}
       <Input
         id="tags"
         label={t("posts.tags")}
         value={form.tags}
         onChange={(e) => updateField("tags", e.target.value)}
-        placeholder={t("posts.tagsHelp")}
+        placeholder={t("posts.tagsPlaceholder")}
+        hint={t("posts.tagsHelp")}
       />
 
       <Button type="submit" className="w-full" disabled={loading}>

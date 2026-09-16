@@ -44,6 +44,8 @@
   "about": {
     "title": "Acerca de",
     "description": "xarxa es un tablón comunitario para el intercambio de servicios gratuitos. Personas y colectivos publican lo que necesitan o lo que pueden ofrecer, y se organizan directamente por chat.",
+    "contactLabel": "Contacto",
+    "soon": "Pronto",
     "creditsLabel": "Animación de"
   },
   "auth": {
@@ -102,7 +104,8 @@
     "inPerson": "Presencial",
     "mode": "Modalidad",
     "tags": "Etiquetas",
-    "tagsHelp": "Separadas por comas",
+    "tagsPlaceholder": "piano, principiante, niños",
+    "tagsHelp": "Palabras que la gente podría buscar. Sepáralas con comas.",
     "interested": "Me interesa",
     "interestSent": "Interés enviado",
     "connected": "Conectado",
