@@ -34,6 +34,7 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
           availability: post.availability,
           location: post.location,
           neighborhood: post.neighborhood,
+          gift: post.gift,
           isRemote: post.isRemote,
           tags: post.tags,
         }}

@@ -120,6 +120,10 @@ model Post {
   description  String
   urgency      Urgency  @default(NORMAL)
   availability String?
+  // Optional, REQUEST posts only: a small thank-you the author offers for
+  // the help. Never money — the framing in the form copy does that work,
+  // and guideline 1 still says no money changes hands.
+  gift         String?
   location     String?
   // Optional, and only offered when location is Barcelona: one of the 73
   // official barris (see src/lib/barcelona.ts). Enough geography to judge

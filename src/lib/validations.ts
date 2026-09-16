@@ -72,6 +72,7 @@ export const postSchema = z
     availability: z.string().max(200).optional(),
     location: z.string().max(200).optional(),
     neighborhood: z.string().max(80).optional().nullable(),
+    gift: z.string().trim().max(120, "Keep the gift short").optional().nullable(),
     isRemote: z.boolean().optional(),
     tags: z.array(z.string().max(50)).max(20).optional(),
   })
@@ -102,6 +103,10 @@ export const postSchema = z
       isInBarcelona(data.location) && data.neighborhood && isBarcelonaBarri(data.neighborhood)
         ? data.neighborhood
         : null,
+    // Only a REQUEST can offer a thank-you. On an OFFER the same field would
+    // read as the helper naming a price, which guideline 1 rules out — so
+    // switching a post's type drops it rather than carrying it across.
+    gift: data.type === "REQUEST" ? data.gift?.trim() || null : null,
   }));
 
 export const profileSchema = z.object({

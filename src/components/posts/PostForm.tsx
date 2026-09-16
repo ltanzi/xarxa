@@ -28,6 +28,7 @@ interface PostFormData {
   availability?: string | null;
   location?: string | null;
   neighborhood?: string | null;
+  gift?: string | null;
   isRemote: boolean;
   tags: string[];
 }
@@ -63,6 +64,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
     availability: initialData?.availability || "",
     location: initialData?.location || "",
     neighborhood: initialData?.neighborhood || "",
+    gift: initialData?.gift || "",
     isRemote: initialData?.isRemote || false,
     tags: initialData?.tags?.join(", ") || "",
   });
@@ -253,6 +255,22 @@ export function PostForm({ postId, initialData }: PostFormProps) {
 
       {/* The placeholder is a worked example rather than "Comma separated":
           the syntax was never the confusing part, what tags are FOR was. */}
+      {/* Requests only. On an offer the same field would read as the helper
+          naming what they want in return; here it's the person being helped
+          saying thank you. The server drops it if the type changes. */}
+      {form.type === "REQUEST" && (
+        <Input
+          id="gift"
+          label={t("posts.gift")}
+          value={form.gift}
+          onChange={(e) => updateField("gift", e.target.value)}
+          placeholder={t("posts.giftPlaceholder")}
+          hint={t("posts.giftHint")}
+          error={errors.gift}
+          maxLength={120}
+        />
+      )}
+
       <Input
         id="tags"
         label={t("posts.tags")}
