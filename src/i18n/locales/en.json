@@ -225,7 +225,9 @@
     "offerHelp": "Offer help",
     "recentPosts": "Recent posts",
     "seeAll": "See all",
-    "snakeHint": "press any arrow"
+    "snakeHint": "press any arrow",
+    "snakeCurrent": "current",
+    "snakeBest": "best"
   },
   "board": {
     "title": "Board",

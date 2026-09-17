@@ -225,7 +225,9 @@
     "offerHelp": "Oferir ajuda",
     "recentPosts": "Publicacions recents",
     "seeAll": "Veure tot",
-    "snakeHint": "prem qualsevol fletxa"
+    "snakeHint": "prem qualsevol fletxa",
+    "snakeCurrent": "actual",
+    "snakeBest": "millor"
   },
   "board": {
     "title": "Tauler",

@@ -225,7 +225,9 @@
     "offerHelp": "Ofrecer ayuda",
     "recentPosts": "Publicaciones recientes",
     "seeAll": "Ver todo",
-    "snakeHint": "pulsa cualquier flecha"
+    "snakeHint": "pulsa cualquier flecha",
+    "snakeCurrent": "actual",
+    "snakeBest": "mejor"
   },
   "board": {
     "title": "Tablón",
