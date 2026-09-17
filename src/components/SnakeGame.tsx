@@ -65,7 +65,7 @@ export function SnakeGame() {
     let idleRow = 0;
     let bestScore = 0;
     try {
-      bestScore = Number(window.localStorage.getItem(BEST_SCORE_KEY)) || 0;
+      bestScore = Math.max(0, Number(window.localStorage.getItem(BEST_SCORE_KEY)) || 0);
     } catch {
       // Private windows and blocked site data throw on access; a missing
       // best is not worth failing the game over.
@@ -83,6 +83,7 @@ export function SnakeGame() {
      */
     let audioCtx: AudioContext | null = null;
     let audioBroken = false;
+    let audioLogged = false;
 
     function unlockAudio() {
       if (audioBroken) return;
@@ -120,8 +121,13 @@ export function SnakeGame() {
         osc.connect(amp).connect(audioCtx.destination);
         osc.start(now);
         osc.stop(now + seconds);
-      } catch {
-        // A failed beep is never worth interrupting the game for.
+      } catch (err) {
+        // A failed beep is never worth interrupting the game for, but silent
+        // permanent silence is impossible to diagnose — leave one trace.
+        if (!audioLogged) {
+          audioLogged = true;
+          console.debug("[SnakeGame audio]", err);
+        }
       }
     }
 
@@ -429,12 +435,21 @@ export function SnakeGame() {
       return Math.max(BOOST_MIN_TICK_MS, Math.round(base * BOOST_FACTOR));
     }
 
+    let tickFailed = false;
     function scheduleNext() {
       timeoutId = window.setTimeout(() => {
         try {
           tick();
         } catch (err) {
-          console.error("[SnakeGame tick]", err);
+          // Stop rather than reschedule: a deterministically throwing tick
+          // would log once per frame — up to 28 times a second under sprint —
+          // for as long as the tab stays open. The game is decorative, so a
+          // dead one is a far better outcome than a console flood.
+          if (!tickFailed) {
+            tickFailed = true;
+            console.error("[SnakeGame tick]", err);
+          }
+          return;
         }
         scheduleNext();
       }, currentDelay());

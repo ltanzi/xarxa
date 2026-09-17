@@ -74,9 +74,31 @@ export const postSchema = z
     neighborhood: z.string().max(80).optional().nullable(),
     gift: z.string().trim().max(120, "Keep the gift short").optional().nullable(),
     isRemote: z.boolean().optional(),
-    tags: z.array(z.string().max(50)).max(20).optional(),
+    tags: z
+      .array(z.string().max(50))
+      .max(20)
+      .optional()
+      // The board's ?search= param is comma-delimited, so a tag holding a
+      // comma would come back as two terms and never match itself. Collapse
+      // whitespace too, or "piano, jazz" becomes "piano  jazz".
+      .transform((v) =>
+        v?.map((s) => s.replace(/,/g, " ").replace(/\s+/g, " ").trim()).filter(Boolean),
+      ),
   })
   .superRefine((data, ctx) => {
+    // Only complain when the value would actually be stored. A stale barri on
+    // a post being moved out of Barcelona is dropped below, not rejected —
+    // that is the ordinary "I changed my mind" edit. But an unknown barri on a
+    // Barcelona post is invalid, not stale, and silently nulling it would mean
+    // renaming one entry in the hand-typed list quietly strips that
+    // neighbourhood from every post on its next edit.
+    if (isInBarcelona(data.location) && data.neighborhood && !isBarcelonaBarri(data.neighborhood)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Pick a neighbourhood from the list",
+        path: ["neighborhood"],
+      });
+    }
     const hasLocation = !!data.location && data.location.trim().length > 0;
     if (!hasLocation && !data.isRemote) {
       ctx.addIssue({
@@ -94,15 +116,11 @@ export const postSchema = z
     categoryOther: data.categories.includes("OTHER")
       ? data.categoryOther?.trim() || null
       : null,
-    // Same rule for the barri: it only means anything on a Barcelona post,
-    // so moving a post to another city drops it rather than leaving a
-    // Barcelona neighbourhood stamped on a post in Girona. Unknown values
-    // are dropped too — the picker only ever emits real barris, so anything
-    // else arrived by hand and isn't worth storing.
-    neighborhood:
-      isInBarcelona(data.location) && data.neighborhood && isBarcelonaBarri(data.neighborhood)
-        ? data.neighborhood
-        : null,
+    // The barri only means anything on a Barcelona post, so moving a post to
+    // another city drops it rather than leaving a Barcelona neighbourhood
+    // stamped on a post in Girona. Validity is handled in the superRefine
+    // above, which rejects rather than drops.
+    neighborhood: isInBarcelona(data.location) ? data.neighborhood || null : null,
     // Only a REQUEST can offer a thank-you. On an OFFER the same field would
     // read as the helper naming a price, which guideline 1 rules out — so
     // switching a post's type drops it rather than carrying it across.

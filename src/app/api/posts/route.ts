@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { postSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
@@ -23,7 +24,10 @@ export async function GET(request: NextRequest) {
     ? Math.min(MAX_PAGE_SIZE, Math.max(1, parsedLimit))
     : DEFAULT_PAGE_SIZE;
 
-  const where: Record<string, unknown> = {};
+  // Typed, not Record<string, unknown>: spreading an untyped object into
+  // Prisma is what let the board page catch schema drift while this route
+  // silently didn't.
+  const where: Prisma.PostWhereInput = {};
 
   if (type && (type === "OFFER" || type === "REQUEST")) {
     where.type = type;

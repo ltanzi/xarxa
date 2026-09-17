@@ -123,7 +123,10 @@ export function MultiSelect({
         role="combobox"
         aria-expanded={open}
         aria-haspopup="listbox"
-        aria-controls={listboxId}
+        // Only while the listbox exists: PostFilters keeps its panel in the
+        // DOM for this reason, but here the <ul> is unmounted when closed, so
+        // a permanent aria-controls would point at nothing.
+        aria-controls={open ? listboxId : undefined}
         aria-activedescendant={open && activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined}
         onClick={() => {
           setOpen((o) => !o);

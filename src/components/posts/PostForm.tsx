@@ -241,6 +241,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
               placeholder={t("posts.neighborhoodPlaceholder")}
               value={form.neighborhood}
               onChange={(val) => updateField("neighborhood", val)}
+              error={errors.neighborhood}
             />
           </div>
         )}

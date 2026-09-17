@@ -1,3 +1,5 @@
+import type { Category as PrismaCategory } from "@prisma/client";
+
 /**
  * The one list of post categories.
  *
@@ -38,6 +40,23 @@ export const CATEGORY_KEYS = [
 ] as const;
 
 export type CategoryKey = (typeof CATEGORY_KEYS)[number];
+
+/**
+ * Pins this list equal to the Prisma `Category` enum, in both directions.
+ *
+ * A key here that Prisma lacks already fails the build where these values
+ * reach a query. The reverse did not: a value added to schema.prisma alone
+ * compiles fine, because CategoryKey[] is assignable to Category[] — and
+ * then it never appears in the form or filters, is dropped from URLs by
+ * parseCategoryParam, and renders on cards as the literal string
+ * "categories.YOUR_KEY" because no locale has a label for it.
+ *
+ * `import type` so nothing from @prisma/client reaches the client bundle.
+ * Zero runtime cost: these are types, erased at compile.
+ */
+type AssertNever<T extends never> = T;
+type _NoValueOnlyInPrisma = AssertNever<Exclude<PrismaCategory, CategoryKey>>;
+type _NoValueOnlyHere = AssertNever<Exclude<CategoryKey, PrismaCategory>>;
 
 /** Most posts are one thing. The cap stops a post claiming the whole board. */
 export const MAX_CATEGORIES_PER_POST = 3;

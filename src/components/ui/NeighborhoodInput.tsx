@@ -8,11 +8,12 @@ interface NeighborhoodInputProps {
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
+  error?: string;
 }
 
 /** Ignore accents and case so "gracia" finds "la Vila de Gràcia". */
 function fold(s: string) {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
 /**
@@ -25,7 +26,7 @@ function fold(s: string) {
  * re-checked server-side in postSchema, which is what actually protects the
  * column.
  */
-export function NeighborhoodInput({ label, placeholder, value, onChange }: NeighborhoodInputProps) {
+export function NeighborhoodInput({ label, placeholder, value, onChange, error }: NeighborhoodInputProps) {
   const [query, setQuery] = useState(value);
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -125,13 +126,13 @@ export function NeighborhoodInput({ label, placeholder, value, onChange }: Neigh
           {label}
         </label>
       )}
-      <div className="flex items-center gap-2 border-b border-fg/15 focus-within:border-fg transition-colors">
+      <div className={`flex items-center gap-2 border-b transition-colors ${error ? "border-accent" : "border-fg/15 focus-within:border-fg"}`}>
         <input
           id={inputId}
           role="combobox"
           aria-expanded={open}
           aria-autocomplete="list"
-          aria-controls={listboxId}
+          aria-controls={open ? listboxId : undefined}
           aria-activedescendant={open && activeIndex >= 0 ? `${listboxId}-opt-${activeIndex}` : undefined}
           value={query}
           placeholder={placeholder}
@@ -188,6 +189,8 @@ export function NeighborhoodInput({ label, placeholder, value, onChange }: Neigh
           ))}
         </ul>
       )}
+
+      {error && <p className="mt-1.5 text-xs text-accent">{error}</p>}
     </div>
   );
 }
