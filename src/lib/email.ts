@@ -137,6 +137,53 @@ export async function sendReportAlertEmail(params: {
   if (error) throw new Error(`Resend send failed: ${error.message}`);
 }
 
+export async function sendFeedbackEmail(params: {
+  message: string;
+  from: { id: string; name: string; email: string };
+  locale: string;
+  path: string | null;
+}): Promise<void> {
+  if (!client || !env.OPERATOR_EMAIL) {
+    // Feedback is worth more than a clean log: if there's no way to mail it,
+    // put it where it can still be recovered from the server logs rather
+    // than dropping it on the floor.
+    // Keep the message itself out of production logs: feedback is where
+    // "I'm being harassed by X" lands, and logs have different retention and
+    // access than the operator's mailbox. In dev the full payload is the only
+    // way to see what was sent.
+    if (process.env.NODE_ENV === "production") {
+      console.warn("[email] feedback alert skipped (no RESEND_API_KEY or OPERATOR_EMAIL)", {
+        userId: params.from.id,
+        chars: params.message.length,
+        path: params.path,
+      });
+    } else {
+      console.warn("[email] feedback alert skipped (no RESEND_API_KEY or OPERATOR_EMAIL)", params);
+    }
+    return;
+  }
+  const { message, from, locale, path } = params;
+  const { error } = await client.emails.send({
+    from: env.EMAIL_FROM,
+    to: env.OPERATOR_EMAIL,
+    // Lets you hit reply in your mail client and answer the person directly.
+    // Only a real address: the route falls back to a "(no email)" sentinel
+    // when NextAuth has none, and Resend rejects a malformed Reply-To, which
+    // would lose the feedback entirely.
+    ...(from.email.includes("@") ? { replyTo: from.email } : {}),
+    subject: `xarxa: feedback from ${from.name}`,
+    text: [
+      message,
+      ``,
+      `—`,
+      `From: ${from.name} <${from.email}> (${env.NEXTAUTH_URL}/profile/${from.id})`,
+      path ? `Sent from: ${path}` : ``,
+      `Language: ${locale}`,
+    ].filter(Boolean).join("\n"),
+  });
+  if (error) throw new Error(`Resend send failed: ${error.message}`);
+}
+
 export async function sendPasswordResetEmail(
   email: string,
   locale: Locale,

@@ -24,7 +24,6 @@ interface ProfileFormProps {
     type: string;
     location?: string | null;
     bio?: string | null;
-    skills?: string[];
     profilePhoto?: string | null;
     preferredLanguage?: string | null;
     languages?: string[];
@@ -42,24 +41,10 @@ export function ProfileForm({ user }: ProfileFormProps) {
     bio: user.bio || "",
     preferredLanguage: (user.preferredLanguage || "en") as "en" | "es" | "ca",
   });
-  const [skills, setSkills] = useState<string[]>(user.skills || []);
-  const [skillInput, setSkillInput] = useState("");
   const [languages, setLanguages] = useState<string[]>(user.languages || []);
   const [photo, setPhoto] = useState(user.profilePhoto);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  function handleSkillKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      const val = skillInput.trim();
-      if (val && !skills.includes(val)) setSkills((prev) => [...prev, val]);
-      setSkillInput("");
-    }
-    if (e.key === "Backspace" && !skillInput && skills.length > 0) {
-      setSkills((prev) => prev.slice(0, -1));
-    }
-  }
 
 function updateField(field: string, value: string) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -107,7 +92,7 @@ function updateField(field: string, value: string) {
     const res = await fetch("/api/profile", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, skills, languages }),
+      body: JSON.stringify({ ...form, languages }),
     });
 
     if (res.ok) {
@@ -139,7 +124,7 @@ function updateField(field: string, value: string) {
                 await fetch("/api/profile", {
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ ...form, skills, languages, profilePhoto: null }),
+                  body: JSON.stringify({ ...form, languages, profilePhoto: null }),
                 });
                 setPhoto(null);
               }}
@@ -233,28 +218,6 @@ function updateField(field: string, value: string) {
         value={form.bio}
         onChange={(e) => updateField("bio", e.target.value)}
       />
-
-      {form.type === "PRIVATE" && (
-        <div>
-          <p className="text-xs font-mono uppercase tracking-wider text-muted mb-2">{t("profile.skills")}</p>
-          <div className="flex items-center gap-2 flex-wrap border-b border-fg/20 pb-2">
-            {skills.map((skill) => (
-              <span key={skill} className="inline-flex items-center gap-1.5 bg-fg text-bg text-xs font-mono px-3 py-1 rounded-full">
-                {skill}
-                <button type="button" onClick={() => setSkills((prev) => prev.filter((s) => s !== skill))} className="hover:opacity-60 transition-opacity">×</button>
-              </span>
-            ))}
-            <input
-              type="text"
-              value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}
-              onKeyDown={handleSkillKeyDown}
-              placeholder={skills.length === 0 ? t("profile.addSkill") : ""}
-              className="flex-1 min-w-[120px] bg-transparent text-sm placeholder:text-fg/30 focus:outline-none py-1"
-            />
-          </div>
-        </div>
-      )}
 
       <div className="flex gap-3">
         <Button type="submit" disabled={loading}>

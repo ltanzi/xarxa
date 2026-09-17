@@ -6,23 +6,29 @@ import Link from "next/link";
 import { Input } from "@/components/ui/Input";
 import { LocationInput } from "@/components/ui/LocationInput";
 import { Select } from "@/components/ui/Select";
+import { MultiSelect } from "@/components/ui/MultiSelect";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n/hook";
 import { postSchema } from "@/lib/validations";
+import { CATEGORY_KEYS, MAX_CATEGORIES_PER_POST } from "@/lib/categories";
+import { NeighborhoodInput } from "@/components/ui/NeighborhoodInput";
+import { isInBarcelona } from "@/lib/barcelona";
 
-const CATEGORY_KEYS = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"] as const;
 const TYPE_KEYS = ["OFFER", "REQUEST"] as const;
 const URGENCY_KEYS = ["LOW", "NORMAL", "URGENT"] as const;
 
 interface PostFormData {
   title: string;
   type: string;
-  category: string;
+  categories: string[];
+  categoryOther?: string | null;
   description: string;
   urgency?: string | null;
   availability?: string | null;
   location?: string | null;
+  neighborhood?: string | null;
+  gift?: string | null;
   isRemote: boolean;
   tags: string[];
 }
@@ -48,11 +54,18 @@ export function PostForm({ postId, initialData }: PostFormProps) {
   const [form, setForm] = useState({
     title: initialData?.title || "",
     type: initialType,
-    category: initialData?.category || "OTHER",
+    // No pre-selection. "Other" used to be the default, so it was also what
+    // you got by not choosing — which would now quietly fill the one bucket
+    // whose free-text answers we read to decide the next category. An empty
+    // start forces a deliberate pick.
+    categories: initialData?.categories || [],
+    categoryOther: initialData?.categoryOther || "",
     urgency: initialData?.urgency || "NORMAL",
     description: initialData?.description || "",
     availability: initialData?.availability || "",
     location: initialData?.location || "",
+    neighborhood: initialData?.neighborhood || "",
+    gift: initialData?.gift || "",
     isRemote: initialData?.isRemote || false,
     tags: initialData?.tags?.join(", ") || "",
   });
@@ -61,6 +74,11 @@ export function PostForm({ postId, initialData }: PostFormProps) {
   const [loading, setLoading] = useState(false);
 
   function updateField(field: string, value: string | boolean) {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  }
+
+  function updateList(field: string, value: string[]) {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
   }
@@ -139,7 +157,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         required
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Select
           id="type"
           label={t("posts.type") + " *"}
@@ -147,13 +165,7 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           value={form.type}
           onChange={(e) => updateField("type", e.target.value)}
         />
-        <Select
-          id="category"
-          label={t("posts.category") + " *"}
-          options={categories}
-          value={form.category}
-          onChange={(e) => updateField("category", e.target.value)}
-        />
+
         <Select
           id="urgency"
           label={t("posts.urgency")}
@@ -162,6 +174,32 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           onChange={(e) => updateField("urgency", e.target.value)}
         />
       </div>
+
+      <MultiSelect
+        id="categories"
+        label={t("posts.category") + " *"}
+        options={categories}
+        value={form.categories}
+        onChange={(next) => updateList("categories", next)}
+        placeholder={t("posts.categoryPlaceholder")}
+        hint={t("posts.categoryHint")}
+        error={errors.categories}
+        max={MAX_CATEGORIES_PER_POST}
+      />
+
+      {/* "Other" is a dead end on its own — this is where the author says
+          what it actually is, and where new categories come from. */}
+      {form.categories.includes("OTHER") && (
+        <Input
+          id="categoryOther"
+          label={t("posts.categoryOther")}
+          value={form.categoryOther}
+          onChange={(e) => updateField("categoryOther", e.target.value)}
+          placeholder={t("posts.categoryOtherPlaceholder")}
+          error={errors.categoryOther}
+          maxLength={50}
+        />
+      )}
 
       <Textarea
         id="description"
@@ -192,6 +230,21 @@ export function PostForm({ postId, initialData }: PostFormProps) {
           </div>
         </div>
         {errors.location && <p className="mt-1.5 text-xs text-accent">{errors.location}</p>}
+
+        {/* Barcelona only. Elsewhere the plain location is all we have, and
+            a barri picker would be nonsense; the server drops the value if
+            the location moves away, so a stale barri can't survive an edit. */}
+        {isInBarcelona(form.location) && (
+          <div className="mt-4 sm:w-1/2 sm:pr-2">
+            <NeighborhoodInput
+              label={t("posts.neighborhood")}
+              placeholder={t("posts.neighborhoodPlaceholder")}
+              value={form.neighborhood}
+              onChange={(val) => updateField("neighborhood", val)}
+              error={errors.neighborhood}
+            />
+          </div>
+        )}
       </div>
 
       <Input
@@ -202,12 +255,31 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         placeholder={t("posts.availabilityPlaceholder")}
       />
 
+      {/* Requests only. On an offer the same field would read as the helper
+          naming what they want in return; here it's the person being helped
+          saying thank you. The server drops it if the type changes. */}
+      {form.type === "REQUEST" && (
+        <Input
+          id="gift"
+          label={t("posts.gift")}
+          value={form.gift}
+          onChange={(e) => updateField("gift", e.target.value)}
+          placeholder={t("posts.giftPlaceholder")}
+          hint={t("posts.giftHint")}
+          error={errors.gift}
+          maxLength={120}
+        />
+      )}
+
+      {/* The placeholder is a worked example rather than "Comma separated":
+          the syntax was never the confusing part, what tags are FOR was. */}
       <Input
         id="tags"
         label={t("posts.tags")}
         value={form.tags}
         onChange={(e) => updateField("tags", e.target.value)}
-        placeholder={t("posts.tagsHelp")}
+        placeholder={t("posts.tagsPlaceholder")}
+        hint={t("posts.tagsHelp")}
       />
 
       <Button type="submit" className="w-full" disabled={loading}>

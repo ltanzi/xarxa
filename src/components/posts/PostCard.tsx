@@ -19,9 +19,15 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
             {t(`posts.${post.type.toLowerCase()}`)}
           </span>
-          <span className="font-mono text-[11px] text-muted">
-            {t(`categories.${post.category}`)}
-          </span>
+          {/* One label per category, in the order the author picked them.
+              An author's own words beat a generic "Other". */}
+          {post.categories.map((c) => (
+            <span key={c} className="font-mono text-[11px] text-muted">
+              {c === "OTHER" && post.categoryOther
+                ? post.categoryOther
+                : t(`categories.${c}`)}
+            </span>
+          ))}
           {post.urgency !== "NORMAL" && (
             <span className={`font-mono text-[11px] uppercase tracking-wider ${post.urgency === "URGENT" ? "text-accent" : "text-muted"}`}>
               {t(`urgency.${post.urgency}`)}
@@ -36,6 +42,25 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
         </div>
         <h3 className={`text-lg font-light break-words ${post.closed ? "text-muted" : ""}`}>{post.title}</h3>
         <p className="mt-2 text-sm text-muted line-clamp-2 leading-relaxed max-w-2xl">{post.description}</p>
+
+        {/* Tags were stored and searched but never shown, so nobody could
+            see what they were for. Each one links into the board's existing
+            ?search= param, which PostFilters turns back into a pill — so
+            clicking a tag demonstrates the whole mechanism in one go.
+            Capped at four: a card is a summary, the post page lists them all. */}
+        {post.tags.length > 0 && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {post.tags.slice(0, 4).map((tag) => (
+              <Link
+                key={tag}
+                href={`/board?search=${encodeURIComponent(tag)}`}
+                className="pointer-events-auto relative font-mono text-[11px] text-muted border border-fg/15 px-2 py-0.5 hover:border-fg hover:text-fg transition-colors"
+              >
+                {tag}
+              </Link>
+            ))}
+          </div>
+        )}
         <div className="mt-3 flex items-center gap-3 text-xs text-muted">
           <Link
             href={`/profile/${post.author.id}`}
@@ -46,7 +71,9 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
           {post.location && (
             <>
               <span>&middot;</span>
-              <span>{post.location}</span>
+              {/* The barri is the more useful half on a city-wide board —
+                  show it in place of "Barcelona", not alongside it. */}
+              <span>{post.neighborhood || post.location}</span>
             </>
           )}
           <span>&middot;</span>

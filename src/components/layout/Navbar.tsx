@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useTranslation } from "@/i18n/hook";
@@ -97,8 +98,23 @@ export function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex h-14 items-center justify-between text-sm">
-          <Link href="/" className="font-mono font-bold tracking-tight" onClick={() => setMenuOpen(false)}>
-            xarxa
+          {/* The wordmark replaces the typed "xarxa". It stays an <a> with
+              the same left edge because SnakeGame anchors its hint to
+              nav > a's bounding box. `priority` because it sits above the
+              fold on every page and a lazy logo pops in. */}
+          <Link href="/" className="flex items-center" onClick={() => setMenuOpen(false)}>
+            <Image
+              src="/xarxa.png"
+              alt="xarxa"
+              // Source is 2860x876. These are display dimensions at the same
+              // ratio, comfortably above the rendered 24px for retina —
+              // passing the intrinsic size made the optimizer serve a
+              // 3840px-wide file for a 78px logo.
+              width={261}
+              height={80}
+              priority
+              className="h-6 w-auto"
+            />
           </Link>
 
           {/* Desktop nav */}

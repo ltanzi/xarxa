@@ -25,6 +25,22 @@ const schema = z.object({
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
+}).superRefine((v, ctx) => {
+  // Both are optional so dev runs without mail credentials. In production
+  // their absence is silent and expensive: the UI still tells a user
+  // "Thank you - we'll read it :)" while the feedback, and every report
+  // alert, goes to a container log nobody watches. Fail at startup, which
+  // is the only point where this is still fixable.
+  if (v.NODE_ENV !== "production") return;
+  for (const key of ["RESEND_API_KEY", "OPERATOR_EMAIL"] as const) {
+    if (!v[key]) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: `${key} is required in production — without it feedback and report alerts are silently dropped`,
+        path: [key],
+      });
+    }
+  }
 });
 
 type Env = z.infer<typeof schema>;

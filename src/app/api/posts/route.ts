@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { requireVerifiedUser } from "@/lib/auth-utils";
 import { postSchema } from "@/lib/validations";
 import { limit, rateLimited } from "@/lib/rate-limit";
+import { parseCategoryParam } from "@/lib/categories";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -22,14 +24,17 @@ export async function GET(request: NextRequest) {
     ? Math.min(MAX_PAGE_SIZE, Math.max(1, parsedLimit))
     : DEFAULT_PAGE_SIZE;
 
-  const where: Record<string, unknown> = {};
-  const CATEGORIES = ["LEGAL", "EDUCATION", "HEALTH", "TECHNOLOGY", "MANUAL_WORK", "TRANSLATION", "OTHER"];
+  // Typed, not Record<string, unknown>: spreading an untyped object into
+  // Prisma is what let the board page catch schema drift while this route
+  // silently didn't.
+  const where: Prisma.PostWhereInput = {};
 
   if (type && (type === "OFFER" || type === "REQUEST")) {
     where.type = type;
   }
-  if (category && CATEGORIES.includes(category)) {
-    where.category = category;
+  const selectedCategories = parseCategoryParam(category);
+  if (selectedCategories.length > 0) {
+    where.categories = { hasSome: selectedCategories };
   }
   if (location) {
     where.location = { contains: location, mode: "insensitive" };

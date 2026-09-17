@@ -1,4 +1,6 @@
 import { z } from "zod";
+import { CATEGORY_KEYS, MAX_CATEGORIES_PER_POST } from "./categories";
+import { isBarcelonaBarri, isInBarcelona } from "./barcelona";
 
 function requireSurnameForPrivate(data: { type: string; surname?: string }, ctx: z.RefinementCtx) {
   if (data.type === "PRIVATE" && !data.surname?.trim()) {
@@ -55,23 +57,48 @@ export const postSchema = z
   .object({
     title: z.string().min(1, "Title is required").max(100, "Title must be 100 characters or fewer"),
     type: z.enum(["OFFER", "REQUEST"]),
-    category: z.enum([
-      "LEGAL",
-      "EDUCATION",
-      "HEALTH",
-      "TECHNOLOGY",
-      "MANUAL_WORK",
-      "TRANSLATION",
-      "OTHER",
-    ]),
+    // The form starts with nothing chosen, so the empty case is a real user
+    // path, not a malformed request — it needs a sentence, not Zod's
+    // "Invalid option: expected one of MANUAL_WORK|MOVING|…".
+    categories: z
+      .array(z.enum(CATEGORY_KEYS, { error: "Choose a category" }))
+      .min(1, "Choose a category")
+      .max(MAX_CATEGORIES_PER_POST, `Pick up to ${MAX_CATEGORIES_PER_POST} categories`)
+      // A double-click on the same option shouldn't be able to store it twice.
+      .transform((v) => [...new Set(v)]),
+    categoryOther: z.string().max(50, "Keep it under 50 characters").optional().nullable(),
     description: z.string().min(1, "Description is required").max(3000),
     urgency: z.enum(["LOW", "NORMAL", "URGENT"]).optional(),
     availability: z.string().max(200).optional(),
     location: z.string().max(200).optional(),
+    neighborhood: z.string().max(80).optional().nullable(),
+    gift: z.string().trim().max(120, "Keep the gift short").optional().nullable(),
     isRemote: z.boolean().optional(),
-    tags: z.array(z.string().max(50)).max(20).optional(),
+    tags: z
+      .array(z.string().max(50))
+      .max(20)
+      .optional()
+      // The board's ?search= param is comma-delimited, so a tag holding a
+      // comma would come back as two terms and never match itself. Collapse
+      // whitespace too, or "piano, jazz" becomes "piano  jazz".
+      .transform((v) =>
+        v?.map((s) => s.replace(/,/g, " ").replace(/\s+/g, " ").trim()).filter(Boolean),
+      ),
   })
   .superRefine((data, ctx) => {
+    // Only complain when the value would actually be stored. A stale barri on
+    // a post being moved out of Barcelona is dropped below, not rejected —
+    // that is the ordinary "I changed my mind" edit. But an unknown barri on a
+    // Barcelona post is invalid, not stale, and silently nulling it would mean
+    // renaming one entry in the hand-typed list quietly strips that
+    // neighbourhood from every post on its next edit.
+    if (isInBarcelona(data.location) && data.neighborhood && !isBarcelonaBarri(data.neighborhood)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Pick a neighbourhood from the list",
+        path: ["neighborhood"],
+      });
+    }
     const hasLocation = !!data.location && data.location.trim().length > 0;
     if (!hasLocation && !data.isRemote) {
       ctx.addIssue({
@@ -80,7 +107,25 @@ export const postSchema = z
         path: ["location"],
       });
     }
-  });
+  })
+  // Normalise here rather than in each route: both POST and PATCH spread
+  // parsed.data straight into Prisma. Without this, switching a post from
+  // OTHER off the list would leave its old subcategory behind.
+  .transform((data) => ({
+    ...data,
+    categoryOther: data.categories.includes("OTHER")
+      ? data.categoryOther?.trim() || null
+      : null,
+    // The barri only means anything on a Barcelona post, so moving a post to
+    // another city drops it rather than leaving a Barcelona neighbourhood
+    // stamped on a post in Girona. Validity is handled in the superRefine
+    // above, which rejects rather than drops.
+    neighborhood: isInBarcelona(data.location) ? data.neighborhood || null : null,
+    // Only a REQUEST can offer a thank-you. On an OFFER the same field would
+    // read as the helper naming a price, which guideline 1 rules out — so
+    // switching a post's type drops it rather than carrying it across.
+    gift: data.type === "REQUEST" ? data.gift?.trim() || null : null,
+  }));
 
 export const profileSchema = z.object({
   name: z.string().min(1, "Name is required").max(100),
@@ -88,7 +133,6 @@ export const profileSchema = z.object({
   type: z.enum(["PRIVATE", "COLLECTIVE"]),
   location: z.string().max(200).optional(),
   bio: z.string().max(1000).optional(),
-  skills: z.array(z.string().max(50)).max(20).optional(),
   preferredLanguage: z.enum(["en", "es", "ca"]).optional(),
   languages: z.array(z.string().max(50)).max(20).optional(),
   profilePhoto: z.string().nullable().optional(),
@@ -107,6 +151,13 @@ export const reportSchema = z.object({
   details: z.string().trim().max(1000).optional(),
 });
 
+export const feedbackSchema = z.object({
+  message: z.string().trim().min(1, "Write something first").max(2000, "Keep it under 2000 characters"),
+  // Which page they were on — context that makes vague feedback actionable.
+  // No reply address: only signed-in people can send, so we already have one.
+  path: z.string().max(200).optional().nullable(),
+});
+
 export const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
   newPassword: passwordSchema,
@@ -119,3 +170,4 @@ export type ProfileInput = z.infer<typeof profileSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
 export type ReportInput = z.infer<typeof reportSchema>;
 export type PasswordChangeInput = z.infer<typeof passwordChangeSchema>;
+export type FeedbackInput = z.infer<typeof feedbackSchema>;

@@ -57,9 +57,13 @@ export default async function PostPage({ params }: PostPageProps) {
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
             {t(`posts.${post.type.toLowerCase()}`)}
           </span>
-          <span className="font-mono text-[11px] text-muted">
-            {t(`categories.${post.category}`)}
-          </span>
+          {post.categories.map((c) => (
+            <span key={c} className="font-mono text-[11px] text-muted">
+              {c === "OTHER" && post.categoryOther
+                ? post.categoryOther
+                : t(`categories.${c}`)}
+            </span>
+          ))}
           {post.urgency !== "NORMAL" && (
             <span className={`font-mono text-[11px] uppercase tracking-wider ${post.urgency === "URGENT" ? "text-accent" : "text-muted"}`}>
               {t(`urgency.${post.urgency}`)}
@@ -92,8 +96,22 @@ export default async function PostPage({ params }: PostPageProps) {
               <div>
                 <span className="font-mono text-[11px] uppercase tracking-wider block mb-1">{t("posts.location")}</span>
                 <span className="text-fg">{post.location}</span>
+                {post.neighborhood && (
+                  <span className="block text-xs text-muted">{post.neighborhood}</span>
+                )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Given its own block rather than a line in the metadata row: it's a
+            gesture from the author, not another attribute of the request. */}
+        {post.gift && (
+          <div className="mt-8 border-l-2 border-fg/15 pl-4">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-muted block mb-1">
+              {t("posts.gift")}
+            </span>
+            <span className="text-fg">{post.gift}</span>
           </div>
         )}
 

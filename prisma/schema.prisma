@@ -16,13 +16,25 @@ enum PostType {
   REQUEST
 }
 
+// Nothing sorts by this column; src/lib/categories.ts owns the order the UI
+// shows. (Postgres does use declaration order for ORDER BY on an enum.)
 enum Category {
-  LEGAL
-  EDUCATION
-  HEALTH
-  TECHNOLOGY
   MANUAL_WORK
-  TRANSLATION
+  MOVING
+  GARDENING
+  ANIMALS
+  COOKING
+  CARE
+  HEALTH
+  EDUCATION
+  LANGUAGES
+  PAPERWORK
+  LEGAL
+  TECHNOLOGY
+  COMMUNICATION
+  CREATIVE
+  MUSIC
+  EVENTS
   OTHER
 }
 
@@ -55,7 +67,6 @@ model User {
   type         UserType  @default(PRIVATE)
   location     String?
   bio          String?
-  skills       String[]
   mission      String?
   profilePhoto      String?
   preferredLanguage String?
@@ -99,11 +110,28 @@ model Post {
   id           String   @id @default(cuid())
   title        String
   type         PostType
-  category     Category
+  // A post is rarely one thing — "help me move a piano" is Moving and
+  // Music. Capped at MAX_CATEGORIES_PER_POST in the Zod schema so a post
+  // can't claim the whole board.
+  categories   Category[]
+  // Free text the author types when they pick OTHER. Kept deliberately
+  // uncontrolled: reading what people actually write here is how a real
+  // category earns its place in the Category enum later.
+  categoryOther String?
   description  String
   urgency      Urgency  @default(NORMAL)
   availability String?
+  // Optional, REQUEST posts only — enforced in postSchema, not here. A small
+  // thank-you the author offers for the help. Never money: the framing in the
+  // form copy does that work, and guideline 1 still says no money changes
+  // hands.
+  gift         String?
   location     String?
+  // Optional, and only offered when the location looks like Barcelona — a
+  // rule held in postSchema, not by the database. One of the official barris
+  // (see src/lib/barcelona.ts). Enough geography to judge "could I get
+  // there?", nowhere near an address.
+  neighborhood String?
   isRemote     Boolean  @default(false)
   tags         String[]
   closed       Boolean  @default(false)
@@ -122,7 +150,7 @@ model Post {
   @@index([createdAt])
   @@index([authorId])
   @@index([type])
-  @@index([category])
+  @@index([categories], type: Gin)
   @@index([closed, createdAt])
 }
 

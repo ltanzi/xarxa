@@ -27,11 +27,14 @@ export default async function EditPostPage({ params }: EditPostPageProps) {
         initialData={{
           title: post.title,
           type: post.type,
-          category: post.category,
+          categories: post.categories,
+          categoryOther: post.categoryOther,
           urgency: post.urgency,
           description: post.description,
           availability: post.availability,
           location: post.location,
+          neighborhood: post.neighborhood,
+          gift: post.gift,
           isRemote: post.isRemote,
           tags: post.tags,
         }}
