@@ -55,8 +55,11 @@ export type CategoryKey = (typeof CATEGORY_KEYS)[number];
  * Zero runtime cost: these are types, erased at compile.
  */
 type AssertNever<T extends never> = T;
+/* eslint-disable @typescript-eslint/no-unused-vars -- compile-time assertions:
+   they exist to fail tsc, so being unused is the point. */
 type _NoValueOnlyInPrisma = AssertNever<Exclude<PrismaCategory, CategoryKey>>;
 type _NoValueOnlyHere = AssertNever<Exclude<CategoryKey, PrismaCategory>>;
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 /** Most posts are one thing. The cap stops a post claiming the whole board. */
 export const MAX_CATEGORIES_PER_POST = 3;
