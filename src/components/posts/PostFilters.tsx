@@ -35,6 +35,22 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
   const searchParamsRef = useRef(searchParams);
   useEffect(() => { searchParamsRef.current = searchParams; }, [searchParams]);
 
+  // `tags` is the one piece of URL state held in React state, and the
+  // initializer above only runs on mount. Clicking a tag on a post card is a
+  // soft navigation to /board, so this component reconciles instead of
+  // remounting: without this the board would filter down with no pill shown
+  // and no way to undo it, and the next keystroke would push the stale array
+  // back, silently dropping the tag.
+  const searchParam = searchParams.get("search") ?? "";
+  const lastPushedSearch = useRef<string | null>(null);
+  useEffect(() => {
+    // Ignore the echo of our own push, or typing would turn the in-progress
+    // input into a pill on every debounce tick.
+    if (searchParam === lastPushedSearch.current) return;
+    setTags(searchParam ? searchParam.split(",").filter(Boolean) : []);
+    setInput("");
+  }, [searchParam]);
+
   const selectedCategories: string[] = parseCategoryParam(searchParams.get("category"));
 
   const groups = [
@@ -84,6 +100,7 @@ export function PostFilters({ basePath = "/board" }: { basePath?: string }) {
     } else {
       params.delete("search");
     }
+    lastPushedSearch.current = allTerms.join(",");
     // A new search means a new result set — a stale ?page=3 from the old
     // one would show "no results" even when matches exist.
     params.delete("page");

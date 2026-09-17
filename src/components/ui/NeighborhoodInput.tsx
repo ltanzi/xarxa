@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useId } from "react";
+import { useState, useEffect, useRef, useId, useCallback } from "react";
 import { BARCELONA_BARRIS } from "@/lib/barcelona";
 
 interface NeighborhoodInputProps {
@@ -18,11 +18,12 @@ function fold(s: string) {
 /**
  * Type-to-filter picker over Barcelona's 73 barris.
  *
- * A plain <Select> would have meant scrolling a 73-item list; the local
- * list is small enough that filtering needs no network, unlike the city
- * field next to it. The committed value is always either "" or an exact
- * barri name — typing alone never sets it — so whatever reaches the server
- * is already one of the known values.
+ * A plain <Select> would have meant scrolling the whole list; it is small
+ * enough that filtering needs no network, unlike the city field next to it.
+ * The committed value is always either "" or an exact barri name — typing
+ * alone never sets it. That is a convenience, not a guarantee: the value is
+ * re-checked server-side in postSchema, which is what actually protects the
+ * column.
  */
 export function NeighborhoodInput({ label, placeholder, value, onChange }: NeighborhoodInputProps) {
   const [query, setQuery] = useState(value);
@@ -33,24 +34,54 @@ export function NeighborhoodInput({ label, placeholder, value, onChange }: Neigh
   const inputId = useId();
   const listboxId = useId();
 
-  useEffect(() => { setQuery(value); }, [value]);
+  // The last barri actually chosen. Held separately from `value` because the
+  // parent's value is cleared the moment the user starts editing — a
+  // half-typed string must never be saved — but cancelling has to put the
+  // old pick back, and by then `value` no longer remembers it.
+  const committedRef = useRef(value);
+  // What this component last sent up. Lets the sync effect below tell a real
+  // external change from the echo of our own onChange.
+  const pushedRef = useRef(value);
+
+  function push(next: string) {
+    pushedRef.current = next;
+    onChange(next);
+  }
+
+  useEffect(() => {
+    // Without the echo check this fires on our own `push("")` and wipes the
+    // text the user is mid-way through typing: one keystroke cleared the
+    // whole field.
+    if (value === pushedRef.current) return;
+    pushedRef.current = value;
+    committedRef.current = value;
+    setQuery(value);
+  }, [value]);
+
+  // Abandon a half-typed edit: restore the last real pick, including handing
+  // it back to the parent if editing had already invalidated it.
+  const cancelEdit = useCallback(() => {
+    setOpen(false);
+    setActiveIndex(-1);
+    setQuery(committedRef.current);
+    if (committedRef.current !== pushedRef.current) push(committedRef.current);
+    // push/onChange are stable enough here; the parent re-creates onChange each
+    // render, so depending on it would re-bind the listener every keystroke.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-        setActiveIndex(-1);
-        // Half-typed text is not a choice — snap back to the committed
-        // value so the field never shows something that wasn't saved.
-        setQuery(value);
+        cancelEdit();
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [value]);
+  }, [cancelEdit]);
 
   const matches =
-    query.trim() === "" || query === value
+    query.trim() === "" || query === committedRef.current
       ? BARCELONA_BARRIS
       : BARCELONA_BARRIS.filter(
           (b) => fold(b.name).includes(fold(query)) || fold(b.district).includes(fold(query)),
@@ -61,7 +92,8 @@ export function NeighborhoodInput({ label, placeholder, value, onChange }: Neigh
   }, [activeIndex, open]);
 
   function commit(name: string) {
-    onChange(name);
+    committedRef.current = name;
+    push(name);
     setQuery(name);
     setOpen(false);
     setActiveIndex(-1);
@@ -82,9 +114,7 @@ export function NeighborhoodInput({ label, placeholder, value, onChange }: Neigh
       e.preventDefault();
       if (activeIndex >= 0 && matches[activeIndex]) commit(matches[activeIndex].name);
     } else if (e.key === "Escape") {
-      setOpen(false);
-      setActiveIndex(-1);
-      setQuery(value);
+      cancelEdit();
     }
   }
 
@@ -112,7 +142,8 @@ export function NeighborhoodInput({ label, placeholder, value, onChange }: Neigh
             setActiveIndex(-1);
             // Editing invalidates the previous pick until a new one is made,
             // so a stale barri can't be saved alongside unrelated text.
-            if (value) onChange("");
+            // cancelEdit() can put it back from committedRef.
+            if (value) push("");
           }}
           onFocus={() => setOpen(true)}
           onKeyDown={handleKeyDown}

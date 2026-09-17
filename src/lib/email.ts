@@ -147,7 +147,19 @@ export async function sendFeedbackEmail(params: {
     // Feedback is worth more than a clean log: if there's no way to mail it,
     // put it where it can still be recovered from the server logs rather
     // than dropping it on the floor.
-    console.warn("[email] feedback alert skipped (no RESEND_API_KEY or OPERATOR_EMAIL)", params);
+    // Keep the message itself out of production logs: feedback is where
+    // "I'm being harassed by X" lands, and logs have different retention and
+    // access than the operator's mailbox. In dev the full payload is the only
+    // way to see what was sent.
+    if (process.env.NODE_ENV === "production") {
+      console.warn("[email] feedback alert skipped (no RESEND_API_KEY or OPERATOR_EMAIL)", {
+        userId: params.from.id,
+        chars: params.message.length,
+        path: params.path,
+      });
+    } else {
+      console.warn("[email] feedback alert skipped (no RESEND_API_KEY or OPERATOR_EMAIL)", params);
+    }
     return;
   }
   const { message, from, locale, path } = params;
@@ -155,7 +167,10 @@ export async function sendFeedbackEmail(params: {
     from: env.EMAIL_FROM,
     to: env.OPERATOR_EMAIL,
     // Lets you hit reply in your mail client and answer the person directly.
-    replyTo: from.email,
+    // Only a real address: the route falls back to a "(no email)" sentinel
+    // when NextAuth has none, and Resend rejects a malformed Reply-To, which
+    // would lose the feedback entirely.
+    ...(from.email.includes("@") ? { replyTo: from.email } : {}),
     subject: `xarxa: feedback from ${from.name}`,
     text: [
       message,

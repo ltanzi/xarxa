@@ -18,9 +18,11 @@ interface MultiSelectProps {
 
 /**
  * Sibling of <Select> for fields that take several values. Same visual
- * language (bottom rule, mono label, popup list) and the same keyboard
- * contract, with one deliberate difference: choosing an option does NOT
- * close the list, because the whole point is picking more than one.
+ * language (bottom rule, mono label, popup list) and the same close-on-blur
+ * and close-on-outside-click behaviour, with one deliberate difference:
+ * choosing an option does NOT close the list, because the whole point is
+ * picking more than one. It also opens at the top rather than at the
+ * current value, since there may be several.
  */
 export function MultiSelect({
   id,
@@ -101,9 +103,11 @@ export function MultiSelect({
     }
   }
 
+  // Fall back to the raw key rather than dropping it: a value with no matching
+  // option would otherwise disappear from the label while staying in state and
+  // being submitted. A visible wrong value beats an invisible one.
   const summary = value
-    .map((v) => options.find((o) => o.value === v)?.label)
-    .filter(Boolean)
+    .map((v) => options.find((o) => o.value === v)?.label ?? v)
     .join(", ");
 
   return (
@@ -125,6 +129,10 @@ export function MultiSelect({
           setOpen((o) => !o);
           setActiveIndex(open ? -1 : 0);
         }}
+        // Tabbing away used to leave the popup open — the same bug Select
+        // fixed. Safe here because the options preventDefault on mousedown,
+        // so clicking one never blurs the button in the first place.
+        onBlur={() => { setOpen(false); setActiveIndex(-1); }}
         onKeyDown={handleKeyDown}
         className={`block w-full truncate border-b bg-transparent px-0 py-2 text-sm text-left focus:outline-none transition-colors focus-visible:ring-1 focus-visible:ring-fg/40 ${
           error ? "border-accent" : "border-fg/15 focus:border-fg"
@@ -142,8 +150,9 @@ export function MultiSelect({
         >
           {options.map((opt, i) => {
             const selected = value.includes(opt.value);
-            // Not `disabled`: the option stays focusable and announced, it
-            // just can't be added while the cap is reached.
+            // aria-disabled rather than dropping the option: it stays in the
+            // listbox's option set, so the "n of 17" position and count a
+            // screen reader announces stay correct while selection is blocked.
             const blocked = atMax && !selected;
             return (
               <li

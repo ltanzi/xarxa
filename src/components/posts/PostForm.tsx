@@ -54,9 +54,10 @@ export function PostForm({ postId, initialData }: PostFormProps) {
   const [form, setForm] = useState({
     title: initialData?.title || "",
     type: initialType,
-    // No pre-selection: "Other" used to be the default, which meant it was
-    // also what you got by not choosing — the one bucket whose contents we
-    // actually read. An empty start forces a deliberate pick.
+    // No pre-selection. "Other" used to be the default, so it was also what
+    // you got by not choosing — which would now quietly fill the one bucket
+    // whose free-text answers we read to decide the next category. An empty
+    // start forces a deliberate pick.
     categories: initialData?.categories || [],
     categoryOther: initialData?.categoryOther || "",
     urgency: initialData?.urgency || "NORMAL",
@@ -253,8 +254,6 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         placeholder={t("posts.availabilityPlaceholder")}
       />
 
-      {/* The placeholder is a worked example rather than "Comma separated":
-          the syntax was never the confusing part, what tags are FOR was. */}
       {/* Requests only. On an offer the same field would read as the helper
           naming what they want in return; here it's the person being helped
           saying thank you. The server drops it if the type changes. */}
@@ -271,6 +270,8 @@ export function PostForm({ postId, initialData }: PostFormProps) {
         />
       )}
 
+      {/* The placeholder is a worked example rather than "Comma separated":
+          the syntax was never the confusing part, what tags are FOR was. */}
       <Input
         id="tags"
         label={t("posts.tags")}

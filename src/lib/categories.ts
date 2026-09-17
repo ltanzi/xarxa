@@ -12,8 +12,10 @@
  *
  * Adding one means: add the value here, add the same value to the
  * `Category` enum in prisma/schema.prisma, migrate, and add a label under
- * `categories.` in all three locale files. The parity test in the i18n
- * check will tell you if you miss a locale.
+ * `categories.` in all three locale files. NOTHING CHECKS THE LABELS —
+ * there is no test suite, and a missing one ships as the literal string
+ * "categories.YOUR_KEY" on every card, in every language. Grep the three
+ * files in src/i18n/locales/ before you push.
  */
 export const CATEGORY_KEYS = [
   "MANUAL_WORK",

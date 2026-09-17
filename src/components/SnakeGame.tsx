@@ -26,8 +26,9 @@ const HINT_COLOR = "rgba(40, 40, 40, 0.45)";
 
 export function SnakeGame() {
   const { t } = useTranslation();
-  // Refs, not deps: the canvas loop reads the current label each frame, so a
-  // language switch takes effect without tearing down and restarting the game.
+  // Refs, not deps: the canvas loop reads the current label on each tick, so
+  // a language switch takes effect without tearing down and restarting the
+  // game.
   const hintRef = useRef(t("landing.snakeHint"));
   hintRef.current = t("landing.snakeHint");
   const bestLabelRef = useRef(t("landing.snakeBest"));
@@ -169,7 +170,11 @@ export function SnakeGame() {
      */
     function paintsBox(el: Element, cs: CSSStyleDeclaration) {
       // Replaced elements have no text to measure; their box is all there is.
-      if (["IMG", "VIDEO", "CANVAS", "SVG", "IFRAME", "PICTURE"].includes(el.tagName)) return true;
+      // toUpperCase because SVG elements preserve case: an inline <svg>
+      // reports "svg", so a bare "SVG" entry here never matched and the
+      // element stayed passable.
+      const tag = el.tagName.toUpperCase();
+      if (["IMG", "VIDEO", "CANVAS", "SVG", "IFRAME", "PICTURE"].includes(tag)) return true;
       const bg = cs.backgroundColor;
       if (bg && bg !== "transparent" && !bg.startsWith("rgba(0, 0, 0, 0)")) return true;
       return (["top", "right", "bottom", "left"] as const).some((side) => {
@@ -322,10 +327,10 @@ export function SnakeGame() {
         // would be noise.
         if (bestScore > 0) parts.push(`${bestLabelRef.current} ${bestScore}`);
 
-        // X anchored to the navbar brand so "p of press" stays under
-        // the "x of xarxa" regardless of where the snake idles or
-        // which page is mounted. Y is pinned to the idle row rather than
-        // the live head, so the score doesn't chase the snake around.
+        // X anchored to the navbar brand so "p of press" sits under the
+        // "x of xarxa". Y uses the idle row once the snake is moving, so the
+        // score stays put instead of chasing it; while idle the two are the
+        // same row (reset() sets both), so the line never jumps.
         const y = (idle ? head.y : idleRow) * CELL + topOffset - CELL * 0.4;
         ctx!.fillText(parts.join("   ·   "), brandX, y);
       }
@@ -348,8 +353,10 @@ export function SnakeGame() {
       const obstacleHit = cellInObstacle(next.x, next.y);
 
       if (selfHit || obstacleHit) {
-        // Before reset(), which is also the startup path — putting the sound
-        // in there would beep at everyone who loads the page.
+        // Here rather than in reset(), which is also the startup path.
+        // tone() would refuse to play at load anyway (no audio context until
+        // the first keypress), but a crash sound belongs on the crash, not in
+        // a function whose other caller is initialisation.
         playCrash();
         reset();
         draw();
@@ -382,11 +389,13 @@ export function SnakeGame() {
 
       // Holding any arrow sprints. Tracked as a set because releasing one key
       // while another is still down should keep the sprint going.
+      // The OS repeats keydown while a key is held; this membership check is
+      // what stops every repeat re-entering the branch below and resetting the
+      // pending tick, which would stall the snake.
       if (!heldArrows.has(e.key)) {
         heldArrows.add(e.key);
-        // Only reschedule on the first press: the OS repeats keydown while a
-        // key is held, and rescheduling on every repeat would reset the timer
-        // forever and the snake would never take a step.
+        // Only the 0 -> 1 transition changes speed. A second arrow pressed
+        // while one is already down is already boosted.
         if (heldArrows.size === 1) reschedule();
       }
 
