@@ -124,6 +124,14 @@ export default async function BoardPage({ searchParams }: BoardPageProps) {
             <Link href="/board/new?type=OFFER" className="text-fg underline underline-offset-4 hover:no-underline">
               {t("landing.offerHelp")}
             </Link>
+            {/* An empty board is exactly where someone is wondering how any
+                of this is supposed to work. */}
+            <Link
+              href="/how-it-works"
+              className="block mt-3 text-xs underline underline-offset-4 hover:no-underline"
+            >
+              {t("howItWorks.link")}
+            </Link>
           </p>
         )
       ) : (

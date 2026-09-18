@@ -3,17 +3,26 @@ import { PostWithAuthor } from "@/types";
 import { formatDate } from "@/lib/date";
 import { getTranslations } from "@/i18n/server";
 
-export async function PostCard({ post }: { post: PostWithAuthor }) {
+/**
+ * `example` renders the same card with every link inert, for the sample post
+ * on /how-it-works. Reusing the real component rather than screenshotting it
+ * means the guide cannot drift from the board, and it translates itself —
+ * but a sample post must not be clickable, or someone tries to answer a
+ * request that doesn't exist.
+ */
+export async function PostCard({ post, example = false }: { post: PostWithAuthor; example?: boolean }) {
   const { t } = await getTranslations();
   const authorName = `${post.author.name}${post.author.type === "PRIVATE" && post.author.surname ? ` ${post.author.surname}` : ""}`;
 
   return (
-    <div className="group relative py-6 border-b border-fg/10 transition-opacity hover:opacity-60">
-      <Link
-        href={`/board/${post.id}`}
-        aria-label={post.title}
-        className="absolute inset-0"
-      />
+    <div className={`group relative py-6 border-b border-fg/10 ${example ? "" : "transition-opacity hover:opacity-60"}`}>
+      {!example && (
+        <Link
+          href={`/board/${post.id}`}
+          aria-label={post.title}
+          className="absolute inset-0"
+        />
+      )}
       <div className="pointer-events-none">
         <div className="flex items-baseline gap-4 mb-2">
           <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
@@ -50,24 +59,37 @@ export async function PostCard({ post }: { post: PostWithAuthor }) {
             Capped at four: a card is a summary, the post page lists them all. */}
         {post.tags.length > 0 && (
           <div className="mt-3 flex flex-wrap gap-2">
-            {post.tags.slice(0, 4).map((tag) => (
-              <Link
-                key={tag}
-                href={`/board?search=${encodeURIComponent(tag)}`}
-                className="pointer-events-auto relative font-mono text-[11px] text-muted border border-fg/15 px-2 py-0.5 hover:border-fg hover:text-fg transition-colors"
-              >
-                {tag}
-              </Link>
-            ))}
+            {post.tags.slice(0, 4).map((tag) =>
+              example ? (
+                <span
+                  key={tag}
+                  className="font-mono text-[11px] text-muted border border-fg/15 px-2 py-0.5"
+                >
+                  {tag}
+                </span>
+              ) : (
+                <Link
+                  key={tag}
+                  href={`/board?search=${encodeURIComponent(tag)}`}
+                  className="pointer-events-auto relative font-mono text-[11px] text-muted border border-fg/15 px-2 py-0.5 hover:border-fg hover:text-fg transition-colors"
+                >
+                  {tag}
+                </Link>
+              ),
+            )}
           </div>
         )}
         <div className="mt-3 flex items-center gap-3 text-xs text-muted">
-          <Link
-            href={`/profile/${post.author.id}`}
-            className="pointer-events-auto relative font-medium text-fg hover:underline underline-offset-4"
-          >
-            {authorName}
-          </Link>
+          {example ? (
+            <span className="font-medium text-fg">{authorName}</span>
+          ) : (
+            <Link
+              href={`/profile/${post.author.id}`}
+              className="pointer-events-auto relative font-medium text-fg hover:underline underline-offset-4"
+            >
+              {authorName}
+            </Link>
+          )}
           {post.location && (
             <>
               <span>&middot;</span>

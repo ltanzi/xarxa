@@ -162,6 +162,23 @@ export function SnakeGame() {
       brandX = brand ? Math.round(brand.getBoundingClientRect().left) : 24;
       cols = Math.floor(window.innerWidth / CELL);
       rows = Math.floor((window.innerHeight - topOffset) / CELL);
+
+      // Publish the top of the hint's lettering so the landing page's corner
+      // link can align its own top edge with it. It can't be a constant: the
+      // row grid is floored, so the hint moves by up to a cell as the window
+      // resizes. Mirrors the startY in reset().
+      const hintRow = Math.max(2, rows - 4);
+      const hintBaseline = hintRow * CELL + topOffset - CELL * 0.4;
+      ctx!.font = `14px ${bodyFont}`;
+      // Cap height, measured off a capital rather than the hint itself:
+      // "press any arrow" has no ascenders at all while "prem qualsevol
+      // fletxa" does, so measuring the real string would shift the link
+      // between languages.
+      const capHeight = ctx!.measureText("H").actualBoundingBoxAscent || 10;
+      document.documentElement.style.setProperty(
+        "--snake-hint-top",
+        `${Math.round(hintBaseline - capHeight)}px`,
+      );
     }
 
     /**
@@ -493,6 +510,8 @@ export function SnakeGame() {
       // Browsers cap how many audio contexts a page may hold; leaking one per
       // mount would eventually silence the game.
       audioCtx?.close().catch(() => {});
+      // Leave no stale value behind for a page without the game on it.
+      document.documentElement.style.removeProperty("--snake-hint-top");
     };
   }, []);
 

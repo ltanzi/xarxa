@@ -29,7 +29,10 @@ export default async function AboutPage() {
           <p className="text-base leading-relaxed text-fg">
             {t("about.description")}
           </p>
-          <p className="mt-6">
+          <p className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
+            <Link href="/how-it-works" className="text-sm underline underline-offset-4 hover:no-underline">
+              {t("howItWorks.link")}
+            </Link>
             <Link href="/guidelines" className="text-sm underline underline-offset-4 hover:no-underline">
               {t("guidelines.link")}
             </Link>

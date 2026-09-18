@@ -57,6 +57,30 @@ export default async function HomePage() {
           </div>
         </section>
       </div>
+
+      {/* Mirrors the snake's hint: the oval's top edge lands on the top of
+          "press any arrow" via --snake-hint-top, which SnakeGame publishes on
+          resize, and the same gutter via the nav's own container, so the
+          right edge sits where the wordmark's left edge does. The fallback
+          covers the cases where the game never starts — mobile and reduced
+          motion — where nothing sets the variable.
+          z-10 puts it over the canvas (-z-10) and under the nav (z-50). */}
+      <div
+        className="pointer-events-none fixed inset-x-0 z-10"
+        style={{ top: "var(--snake-hint-top, calc(100dvh - 92px))" }}
+      >
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex justify-end">
+          {/* The padding is inside the <a>, so the whole oval is the target,
+              not just the words. rounded-full matches the search pills — the
+              one rounded shape the design already uses. */}
+          <Link
+            href="/how-it-works"
+            className="pointer-events-auto rounded-full border border-fg/25 px-4 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors hover:border-fg hover:text-fg"
+          >
+            {t("howItWorks.link")}
+          </Link>
+        </div>
+      </div>
     </>
   );
 }
