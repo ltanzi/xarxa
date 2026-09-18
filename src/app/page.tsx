@@ -57,6 +57,17 @@ export default async function HomePage() {
           </div>
         </section>
       </div>
+
+      {/* Bottom-right, opposite the snake's hint and score, which anchor
+          bottom-left. z-10 puts it over the canvas (-z-10) and under the
+          nav (z-50). Like everything else on this page it becomes a snake
+          obstacle, which is consistent rather than a problem. */}
+      <Link
+        href="/how-it-works"
+        className="fixed bottom-6 right-6 z-10 font-mono text-[11px] uppercase tracking-widest text-muted hover:text-fg transition-colors"
+      >
+        {t("howItWorks.link")}
+      </Link>
     </>
   );
 }

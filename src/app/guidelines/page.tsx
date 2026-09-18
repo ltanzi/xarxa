@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "@/i18n/server";
 
 // One page serving onboarding, trust, and safety at once: the platform
@@ -29,6 +30,11 @@ export default async function GuidelinesPage() {
           </ol>
           <div className="mt-16 pt-8 border-t border-fg/10">
             <p className="text-sm text-muted leading-relaxed">{t("guidelines.safety")}</p>
+            <p className="mt-6">
+              <Link href="/how-it-works" className="text-sm underline underline-offset-4 hover:no-underline">
+                {t("howItWorks.link")}
+              </Link>
+            </p>
           </div>
         </div>
       </section>
