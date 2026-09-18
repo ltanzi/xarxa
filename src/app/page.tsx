@@ -69,9 +69,12 @@ export default async function HomePage() {
         style={{ bottom: "var(--snake-hint-bottom, 78px)" }}
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8 flex justify-end">
+          {/* The padding is inside the <a>, so the whole oval is the target,
+              not just the words. rounded-full matches the search pills — the
+              one rounded shape the design already uses. */}
           <Link
             href="/how-it-works"
-            className="pointer-events-auto font-mono text-[11px] uppercase tracking-widest text-muted hover:text-fg transition-colors"
+            className="pointer-events-auto rounded-full border border-fg/25 px-4 py-1.5 font-mono text-[11px] uppercase tracking-widest text-muted transition-colors hover:border-fg hover:text-fg"
           >
             {t("howItWorks.link")}
           </Link>
