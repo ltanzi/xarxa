@@ -58,16 +58,25 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Bottom-right, opposite the snake's hint and score, which anchor
-          bottom-left. z-10 puts it over the canvas (-z-10) and under the
-          nav (z-50). Like everything else on this page it becomes a snake
-          obstacle, which is consistent rather than a problem. */}
-      <Link
-        href="/how-it-works"
-        className="fixed bottom-6 right-6 z-10 font-mono text-[11px] uppercase tracking-widest text-muted hover:text-fg transition-colors"
+      {/* Mirrors the snake's hint: same line via --snake-hint-bottom, which
+          SnakeGame publishes on resize, and the same gutter via the nav's own
+          container, so the right edge lands where the wordmark's left edge
+          does. The fallback covers the cases where the game never starts —
+          mobile and reduced motion — where nothing sets the variable.
+          z-10 puts it over the canvas (-z-10) and under the nav (z-50). */}
+      <div
+        className="pointer-events-none fixed inset-x-0 z-10"
+        style={{ bottom: "var(--snake-hint-bottom, 78px)" }}
       >
-        {t("howItWorks.link")}
-      </Link>
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex justify-end">
+          <Link
+            href="/how-it-works"
+            className="pointer-events-auto font-mono text-[11px] uppercase tracking-widest text-muted hover:text-fg transition-colors"
+          >
+            {t("howItWorks.link")}
+          </Link>
+        </div>
+      </div>
     </>
   );
 }

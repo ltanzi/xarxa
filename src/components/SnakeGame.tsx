@@ -162,6 +162,17 @@ export function SnakeGame() {
       brandX = brand ? Math.round(brand.getBoundingClientRect().left) : 24;
       cols = Math.floor(window.innerWidth / CELL);
       rows = Math.floor((window.innerHeight - topOffset) / CELL);
+
+      // Publish the hint's baseline so the landing page's corner link can sit
+      // on exactly the same line. It can't be a constant: the row grid is
+      // floored, so the hint's distance from the bottom shifts by up to a
+      // cell as the window resizes. Mirrors the startY in reset().
+      const hintRow = Math.max(2, rows - 4);
+      const hintBaseline = hintRow * CELL + topOffset - CELL * 0.4;
+      document.documentElement.style.setProperty(
+        "--snake-hint-bottom",
+        `${Math.round(window.innerHeight - hintBaseline)}px`,
+      );
     }
 
     /**
@@ -493,6 +504,8 @@ export function SnakeGame() {
       // Browsers cap how many audio contexts a page may hold; leaking one per
       // mount would eventually silence the game.
       audioCtx?.close().catch(() => {});
+      // Leave no stale value behind for a page without the game on it.
+      document.documentElement.style.removeProperty("--snake-hint-bottom");
     };
   }, []);
 
