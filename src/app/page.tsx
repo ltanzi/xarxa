@@ -58,15 +58,16 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Mirrors the snake's hint: same line via --snake-hint-bottom, which
-          SnakeGame publishes on resize, and the same gutter via the nav's own
-          container, so the right edge lands where the wordmark's left edge
-          does. The fallback covers the cases where the game never starts —
-          mobile and reduced motion — where nothing sets the variable.
+      {/* Mirrors the snake's hint: the oval's top edge lands on the top of
+          "press any arrow" via --snake-hint-top, which SnakeGame publishes on
+          resize, and the same gutter via the nav's own container, so the
+          right edge sits where the wordmark's left edge does. The fallback
+          covers the cases where the game never starts — mobile and reduced
+          motion — where nothing sets the variable.
           z-10 puts it over the canvas (-z-10) and under the nav (z-50). */}
       <div
         className="pointer-events-none fixed inset-x-0 z-10"
-        style={{ bottom: "var(--snake-hint-bottom, 78px)" }}
+        style={{ top: "var(--snake-hint-top, calc(100dvh - 92px))" }}
       >
         <div className="mx-auto max-w-7xl px-6 lg:px-8 flex justify-end">
           {/* The padding is inside the <a>, so the whole oval is the target,
