@@ -54,7 +54,11 @@ export default async function PostPage({ params }: PostPageProps) {
 
       <div className="mt-8">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-6">
-          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+          <span
+            className={`font-mono text-[11px] uppercase tracking-wider ${
+              post.type === "OFFER" ? "text-offer" : "text-request"
+            }`}
+          >
             {t(`posts.${post.type.toLowerCase()}`)}
           </span>
           {post.categories.map((c) => (

@@ -138,7 +138,13 @@ export default async function DashboardPage() {
             {myPosts.map((post) => (
               <Link key={post.id} href={`/board/${post.id}`} className="block py-4 hover:opacity-60 transition-opacity">
                 <div className="flex items-baseline gap-4">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+                  {/* Same colour as on the board — the signal shouldn't
+                      change meaning between pages. */}
+                  <span
+                    className={`font-mono text-[11px] uppercase tracking-wider ${
+                      post.type === "OFFER" ? "text-offer" : "text-request"
+                    }`}
+                  >
                     {t(`posts.${post.type.toLowerCase()}`)}
                   </span>
                   <span className="text-sm">{post.title}</span>

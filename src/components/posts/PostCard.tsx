@@ -25,7 +25,13 @@ export async function PostCard({ post, example = false }: { post: PostWithAuthor
       )}
       <div className="pointer-events-none">
         <div className="flex items-baseline gap-4 mb-2">
-          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
+          {/* The one coloured thing on a card. Categories stay monochrome
+              on purpose — see the palette note in tailwind.config.ts. */}
+          <span
+            className={`font-mono text-[11px] uppercase tracking-wider ${
+              post.type === "OFFER" ? "text-offer" : "text-request"
+            }`}
+          >
             {t(`posts.${post.type.toLowerCase()}`)}
           </span>
           {/* One label per category, in the order the author picked them.

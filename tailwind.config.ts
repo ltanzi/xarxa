@@ -18,6 +18,20 @@ const config: Config = {
         // #C22D22 is 4.7:1 and visually near-identical.
         muted: "#6B6760",
         accent: "#C22D22",
+        // Offer vs request is the first thing anyone wants to know on the
+        // board, and it's a binary — the one distinction colour is actually
+        // good at. Categories deliberately stay monochrome: there are 17 of
+        // them and a post can carry three, so there'd be no answer to which
+        // colour wins.
+        //
+        // Measured against the #EDE8E0 paper ground: offer 5.01:1, request
+        // 5.78:1, both clear of AA's 4.5 for the 11px label they colour.
+        // Green/blue rather than green/red — red is taken by accent (urgent
+        // posts, errors), and green/blue survives the common colourblindness
+        // types. The word itself is always shown, so colour reinforces the
+        // label rather than carrying it alone.
+        offer: "#4A6B2F",
+        request: "#2F5D7C",
         soft: "#E0DBD2",
       },
       fontFamily: {
