@@ -28,7 +28,7 @@ export async function PostCard({ post, example = false }: { post: PostWithAuthor
           {/* The one coloured thing on a card. Categories stay monochrome
               on purpose — see the palette note in tailwind.config.ts. */}
           <span
-            className={`font-mono text-[11px] uppercase tracking-wider ${
+            className={`font-mono text-[11px] font-medium uppercase tracking-wider ${
               post.type === "OFFER" ? "text-offer" : "text-request"
             }`}
           >

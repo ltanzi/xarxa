@@ -141,7 +141,7 @@ export default async function DashboardPage() {
                   {/* Same colour as on the board — the signal shouldn't
                       change meaning between pages. */}
                   <span
-                    className={`font-mono text-[11px] uppercase tracking-wider ${
+                    className={`font-mono text-[11px] font-medium uppercase tracking-wider ${
                       post.type === "OFFER" ? "text-offer" : "text-request"
                     }`}
                   >

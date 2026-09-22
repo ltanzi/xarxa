@@ -55,7 +55,7 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="mt-8">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-6">
           <span
-            className={`font-mono text-[11px] uppercase tracking-wider ${
+            className={`font-mono text-[11px] font-medium uppercase tracking-wider ${
               post.type === "OFFER" ? "text-offer" : "text-request"
             }`}
           >
