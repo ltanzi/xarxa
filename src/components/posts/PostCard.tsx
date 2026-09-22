@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PostWithAuthor } from "@/types";
 import { formatDate } from "@/lib/date";
 import { getTranslations } from "@/i18n/server";
+import { PostTypeChip } from "./PostTypeChip";
 
 /**
  * `example` renders the same card with every link inert, for the sample post
@@ -25,9 +26,9 @@ export async function PostCard({ post, example = false }: { post: PostWithAuthor
       )}
       <div className="pointer-events-none">
         <div className="flex items-baseline gap-4 mb-2">
-          <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-            {t(`posts.${post.type.toLowerCase()}`)}
-          </span>
+          {/* The one coloured thing on a card. Categories stay monochrome
+              on purpose — see the palette note in tailwind.config.ts. */}
+          <PostTypeChip type={post.type} label={t(`posts.${post.type.toLowerCase()}`)} />
           {/* One label per category, in the order the author picked them.
               An author's own words beat a generic "Other". */}
           {post.categories.map((c) => (
