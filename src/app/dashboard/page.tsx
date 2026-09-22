@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { ConnectionActions } from "./ConnectionActions";
 import { getTranslations } from "@/i18n/server";
+import { PostTypeChip } from "@/components/posts/PostTypeChip";
 import { notifyUser } from "@/lib/socket";
 
 export default async function DashboardPage() {
@@ -138,15 +139,7 @@ export default async function DashboardPage() {
             {myPosts.map((post) => (
               <Link key={post.id} href={`/board/${post.id}`} className="block py-4 hover:opacity-60 transition-opacity">
                 <div className="flex items-baseline gap-4">
-                  {/* Same colour as on the board — the signal shouldn't
-                      change meaning between pages. */}
-                  <span
-                    className={`font-mono text-[11px] font-medium uppercase tracking-wider ${
-                      post.type === "OFFER" ? "text-offer" : "text-request"
-                    }`}
-                  >
-                    {t(`posts.${post.type.toLowerCase()}`)}
-                  </span>
+                  <PostTypeChip type={post.type} label={t(`posts.${post.type.toLowerCase()}`)} />
                   <span className="text-sm">{post.title}</span>
                   <span className="text-xs text-muted ml-auto">{post.connections.length}</span>
                 </div>

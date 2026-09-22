@@ -7,6 +7,7 @@ import { InterestButton } from "./InterestButton";
 import { PostActions } from "./PostActions";
 import { ReportButton } from "./ReportButton";
 import { getTranslations } from "@/i18n/server";
+import { PostTypeChip } from "@/components/posts/PostTypeChip";
 
 interface PostPageProps {
   params: Promise<{ id: string }>;
@@ -54,13 +55,7 @@ export default async function PostPage({ params }: PostPageProps) {
 
       <div className="mt-8">
         <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-6">
-          <span
-            className={`font-mono text-[11px] font-medium uppercase tracking-wider ${
-              post.type === "OFFER" ? "text-offer" : "text-request"
-            }`}
-          >
-            {t(`posts.${post.type.toLowerCase()}`)}
-          </span>
+          <PostTypeChip type={post.type} label={t(`posts.${post.type.toLowerCase()}`)} />
           {post.categories.map((c) => (
             <span key={c} className="font-mono text-[11px] text-muted">
               {c === "OTHER" && post.categoryOther
