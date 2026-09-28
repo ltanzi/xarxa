@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import Link from "next/link";
 import { ConnectionActions } from "./ConnectionActions";
 import { getTranslations } from "@/i18n/server";
+import { PostTypeChip } from "@/components/posts/PostTypeChip";
 import { notifyUser } from "@/lib/socket";
 
 export default async function DashboardPage() {
@@ -138,9 +139,7 @@ export default async function DashboardPage() {
             {myPosts.map((post) => (
               <Link key={post.id} href={`/board/${post.id}`} className="block py-4 hover:opacity-60 transition-opacity">
                 <div className="flex items-baseline gap-4">
-                  <span className="font-mono text-[11px] uppercase tracking-wider text-muted">
-                    {t(`posts.${post.type.toLowerCase()}`)}
-                  </span>
+                  <PostTypeChip type={post.type} label={t(`posts.${post.type.toLowerCase()}`)} />
                   <span className="text-sm">{post.title}</span>
                   <span className="text-xs text-muted ml-auto">{post.connections.length}</span>
                 </div>
