@@ -170,7 +170,7 @@ Dark mode variant user liked. Near-black bg (#0D0D0D), off-white text (#E8E4DC),
 - **Edge:** Cloudflare DNS-only (gray cloud) at the registrar; Resend handles transactional email
 - **Backups:** pg_dump + restic → Backblaze B2 bucket `xarxa-backups`
 - **Runbook:** `docs/runbook.md` (decision tree, common commands, rollback, restore drill)
-- **Deploy:** SSH in, `cd /opt/xarxa && ./deploy-prod.sh`. Health-gated (`up --wait` on `/api/health`); images tagged `xarxa-app:<sha>` (last 5 kept). Instant rollback: `COMMIT_SHA=<good-sha> docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app`
+- **Deploy:** SSH in, `cd /opt/xarxa && ./deploy-prod.sh`. Health-gated (`up --wait` on `/api/health`); images tagged `xarxa-app:<sha>` (last 5 kept). Instant rollback: `docker tag xarxa-app:<good-sha> xarxa-app:latest && docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app`. **`xarxa-app:latest` is the live release**: it's what `xarxa.service` starts at boot. Deploys move it only after passing, and a rollback must retag it, or the next reboot brings back the bad release.
 - **Migrations:** `prisma migrate deploy` in the deploy script (baselined `0_init` 2026-08-26). New schema work: `npx prisma migrate dev --name <change>` locally, commit the folder. Never `db push` against prod.
 - **CI:** `.github/workflows/ci.yml` — tsc (app + server, asserts dist/ is a single file), lint, build on every PR. Type/lint errors fail the build (ignore flags removed).
 

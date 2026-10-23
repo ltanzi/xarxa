@@ -13,11 +13,21 @@
 # https://xarxa.help/, then prunes build cache and keeps only the 5 most
 # recent SHA images so the disk stays bounded.
 #
+# xarxa-app:latest ALWAYS means "the release that is live". It is what a
+# plain `docker compose up -d` starts, which is exactly what xarxa.service
+# runs at boot. It moves only when a deploy has passed its healthcheck and
+# smoke test, and when someone rolls back. Until 2026-10-23 nothing moved
+# it: the first reboot after go-live started a 26 August image against a
+# migrated database, and /board failed.
+#
 # INSTANT ROLLBACK (no rebuild — the old image is still on disk):
-#   COMMIT_SHA=<good-sha> docker compose --env-file /etc/xarxa/.env \
-#     -f docker-compose.prod.yml up -d --no-deps --wait app
-# (git checkout <good-sha> && ./deploy-prod.sh --keep-head still works
-# too, but rebuilds from scratch.)
+#   docker tag xarxa-app:<good-sha> xarxa-app:latest
+#   docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml \
+#     up -d --no-deps --wait app
+# Retag first. Rolling back with COMMIT_SHA=<sha> alone runs the right
+# image but leaves `latest` on the bad release, so the next reboot brings
+# it back. (git checkout <good-sha> && ./deploy-prod.sh --keep-head still
+# works too, but rebuilds from scratch.)
 
 set -euo pipefail
 
@@ -50,19 +60,25 @@ docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml run --rm \
   app npx prisma migrate deploy
 
 echo "→ Restarting app (waiting for healthcheck)…"
-PREV_TAG=$(docker inspect --format '{{.Config.Image}}' xarxa-app-1 2>/dev/null || echo "")
+# `latest` hasn't moved yet, so if anything below fails it still names the
+# previous good release: rolling back is a plain `up` with no COMMIT_SHA.
+ROLLBACK="docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app"
 if ! docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app; then
   echo "✗ New container never became healthy."
-  [ -n "$PREV_TAG" ] && echo "  Roll back with: COMMIT_SHA=${PREV_TAG#xarxa-app:} docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app"
+  echo "  Roll back with: $ROLLBACK"
   exit 1
 fi
 
 echo "→ Smoke test…"
 if ! curl -sfL https://xarxa.help/ > /dev/null; then
   echo "✗ Smoke failed — check 'docker compose logs app' and 'docker compose logs caddy'"
-  [ -n "$PREV_TAG" ] && echo "  Roll back with: COMMIT_SHA=${PREV_TAG#xarxa-app:} docker compose --env-file /etc/xarxa/.env -f docker-compose.prod.yml up -d --no-deps --wait app"
+  echo "  Roll back with: $ROLLBACK"
   exit 1
 fi
+
+# Only now is this release known-good, so only now does it become what a
+# reboot starts.
+docker tag "xarxa-app:$SHA" xarxa-app:latest
 
 # Keep the disk bounded: without this, every deploy leaves ~1GB of build cache
 # and an orphaned image behind (measured 19GB accumulated before this was

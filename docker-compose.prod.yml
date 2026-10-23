@@ -31,9 +31,11 @@ services:
 
   app:
     # Tagging by commit SHA makes rollback a 10-second container swap
-    # (COMMIT_SHA=<good-sha> docker compose up -d --no-deps app) instead
-    # of a full rebuild on an already-misbehaving box. The deploy script
-    # keeps the last few SHA images and prunes older ones.
+    # instead of a full rebuild on an already-misbehaving box. The deploy
+    # script keeps the last few SHA images and prunes older ones.
+    # Without COMMIT_SHA this resolves to `latest`, and that is what the
+    # boot unit starts. So deploy-prod.sh moves `latest` onto each release
+    # that passes, and a rollback must retag it (see deploy-prod.sh).
     image: xarxa-app:${COMMIT_SHA:-latest}
     build:
       context: .
