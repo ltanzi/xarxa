@@ -33,6 +33,25 @@ available RAM < 300MB.
 The wrapper reads `RESEND_API_KEY` and `OPERATOR_EMAIL` from `/etc/xarxa/.env`.
 Add `OPERATOR_EMAIL=l.tanzi@methinks.ai` to that file if it isn't already set.
 
+### Automatic reboots
+
+unattended-upgrades installs security updates but by default never
+reboots, so kernel and libc fixes sit on disk inactive. The box ran from
+go-live (24 June) to 23 October without a reboot, 16 kernels behind.
+`/etc/apt/apt.conf.d/52xarxa-auto-reboot` turns reboots on, and they happen
+only when an update needs one:
+
+```
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
+Unattended-Upgrade::Automatic-Reboot-Time "05:10";
+```
+
+05:10 UTC sits clear of every cron above (00/04/08… backups, 03:30
+uploads, 04:15 expiry, :00/:30 health). The site is down for about 30 seconds.
+This relies on `xarxa-app:latest` being the live release (see §3); a
+reboot is a plain `docker compose up -d`.
+
 ---
 
 ## 1. Site is down — decision tree
@@ -120,9 +139,15 @@ kept on disk, tagged `xarxa-app:<sha>`:
 ```bash
 cd /opt/xarxa
 docker images xarxa-app         # see which SHAs are available
-COMMIT_SHA=<good-sha> docker compose --env-file /etc/xarxa/.env \
+docker tag xarxa-app:<good-sha> xarxa-app:latest
+docker compose --env-file /etc/xarxa/.env \
   -f docker-compose.prod.yml up -d --no-deps --wait app
 ```
+
+Retag rather than just passing `COMMIT_SHA=<good-sha>`. That would run the
+right image but leave `latest` on the bad release, and `latest` is what the
+boot unit starts, so the next reboot would quietly undo the rollback. (This
+is how the first reboot after go-live came up on a 26 August image.)
 
 **Slow path (full rebuild)** — for a SHA whose image was already pruned:
 
